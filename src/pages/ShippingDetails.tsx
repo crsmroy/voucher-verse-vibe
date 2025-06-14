@@ -1,16 +1,17 @@
-
-
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navigation from '@/components/Navigation';
 import { ArrowLeft } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const ShippingDetails = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
@@ -23,6 +24,53 @@ const ShippingDetails = () => {
     pincode: '',
     landmark: ''
   });
+
+  useEffect(() => {
+    // Check if we have product data from navigation or localStorage
+    console.log('Shipping page - checking for product data...');
+    console.log('Location state:', location.state);
+    console.log('LocalStorage productData:', localStorage.getItem('productData'));
+  }, [location.state]);
+
+  const handleContinueToPayment = () => {
+    // Validate required fields
+    if (!formData.fullName || !formData.phone || !formData.address || !formData.city || !formData.state || !formData.pincode) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields marked with *",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Store shipping data in localStorage
+    localStorage.setItem('shippingData', JSON.stringify(formData));
+
+    // Get product data and pass it along
+    let productData = null;
+    if (location.state?.productData) {
+      productData = location.state.productData;
+    } else {
+      try {
+        const storedProductData = localStorage.getItem('productData');
+        if (storedProductData && storedProductData !== '{}' && storedProductData !== 'null') {
+          productData = JSON.parse(storedProductData);
+        }
+      } catch (error) {
+        console.error('Error parsing product data:', error);
+      }
+    }
+
+    console.log('Navigating to payment with product data:', productData);
+
+    // Navigate to payment with both shipping and product data
+    navigate('/payment', {
+      state: {
+        productData: productData,
+        shippingData: formData
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
@@ -256,11 +304,12 @@ const ShippingDetails = () => {
                     ← Back to Product
                   </Button>
                 </Link>
-                <Link to="/payment" className="flex-1">
-                  <Button className="w-full btn-glow gradient-primary text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
-                    Continue to Payment →
-                  </Button>
-                </Link>
+                <Button 
+                  onClick={handleContinueToPayment}
+                  className="flex-1 w-full btn-glow gradient-primary text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300"
+                >
+                  Continue to Payment →
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -271,4 +320,3 @@ const ShippingDetails = () => {
 };
 
 export default ShippingDetails;
-
