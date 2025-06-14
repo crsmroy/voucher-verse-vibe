@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -47,8 +48,8 @@ const Payment = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
       <Navigation />
       
-      {/* Animated Background */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-20 left-10 w-32 h-32 gradient-primary rounded-full opacity-10 float"></div>
         <div className="absolute top-40 right-20 w-24 h-24 gradient-secondary rounded-lg rotate-45 opacity-15 float" style={{animationDelay: '1s'}}></div>
         <div className="absolute bottom-20 left-1/4 w-40 h-40 gradient-tertiary rounded-full opacity-8 float" style={{animationDelay: '2s'}}></div>
@@ -60,53 +61,53 @@ const Payment = () => {
           variant="outline"
           size="sm"
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 bg-white/90 backdrop-blur-sm hover:bg-white"
+          className="flex items-center gap-2 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
         </Button>
       </div>
       
-      <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="pt-28 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           {/* Progress Indicator */}
-          <div className="flex items-center justify-center mb-12">
-            <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-center mb-16">
+            <div className="flex items-center space-x-6">
               <div className="flex items-center">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">✓</div>
-                <span className="ml-2 text-sm font-medium text-green-600">Product</span>
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">✓</div>
+                <span className="ml-3 text-base font-semibold text-green-600">Product</span>
               </div>
-              <div className="w-12 h-0.5 bg-green-500"></div>
+              <div className="w-16 h-1 bg-green-500 rounded-full"></div>
               <div className="flex items-center">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">✓</div>
-                <span className="ml-2 text-sm font-medium text-green-600">Shipping</span>
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">✓</div>
+                <span className="ml-3 text-base font-semibold text-green-600">Shipping</span>
               </div>
-              <div className="w-12 h-0.5 bg-neon-pink"></div>
+              <div className="w-16 h-1 gradient-primary rounded-full"></div>
               <div className="flex items-center">
-                <div className="w-8 h-8 gradient-primary rounded-full flex items-center justify-center text-white font-bold">3</div>
-                <span className="ml-2 text-sm font-medium text-neon-pink">Payment</span>
+                <div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-lg">3</div>
+                <span className="ml-3 text-base font-semibold text-transparent bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text">Payment</span>
               </div>
             </div>
           </div>
 
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-12 slide-in">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Complete <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Payment</span>
             </h1>
-            <p className="text-xl text-gray-600">Almost there! Complete your payment to start processing your order.</p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Almost there! Complete your payment to start processing your order.</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* QR Code Section */}
-            <Card className="hover:shadow-xl transition-shadow duration-300">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                  <span className="text-3xl">📱</span>
+            <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-500 slide-in">
+              <CardHeader className="pb-8">
+                <CardTitle className="text-3xl font-bold flex items-center gap-3 text-gray-900">
+                  <span className="text-4xl">📱</span>
                   Scan & Pay
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-center space-y-6">
+              <CardContent className="text-center space-y-6 p-8">
                 <div className="relative">
                   <div className="w-64 h-64 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center pulse-glow">
                     <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center">
@@ -138,14 +139,14 @@ const Payment = () => {
             </Card>
 
             {/* Upload Section */}
-            <Card className="hover:shadow-xl transition-shadow duration-300">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                  <span className="text-3xl">📸</span>
+            <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm hover:shadow-3xl transition-all duration-500 slide-in">
+              <CardHeader className="pb-8">
+                <CardTitle className="text-3xl font-bold flex items-center gap-3 text-gray-900">
+                  <span className="text-4xl">📸</span>
                   Upload Proof
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 p-8">
                 <div className="space-y-4">
                   <div>
                     <Label className="text-base font-medium flex items-center gap-2 mb-3">
@@ -186,7 +187,7 @@ const Payment = () => {
                       placeholder="Enter UPI transaction ID"
                       value={transactionId}
                       onChange={(e) => setTransactionId(e.target.value)}
-                      className="h-12 text-base"
+                      className="h-12 text-base border-2 focus:border-neon-pink transition-colors"
                     />
                   </div>
                 </div>
@@ -220,7 +221,7 @@ const Payment = () => {
           </div>
 
           {/* Success Message */}
-          <Card className="mt-8 bg-gradient-to-r from-lime-green/10 to-teal/10 border-lime-green/20">
+          <Card className="mt-8 shadow-2xl border-0 bg-gradient-to-r from-lime-green/10 to-teal/10 backdrop-blur-sm slide-in">
             <CardContent className="p-6 text-center">
               <div className="text-4xl mb-4">🎉</div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">What happens next?</h3>
