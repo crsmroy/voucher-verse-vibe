@@ -28,7 +28,7 @@ const ProductForm = () => {
   ];
 
   const platforms = [
-    { value: 'amazon', label: 'Amazon/Marketplace', color: 'bg-orange-500' },
+    { value: 'amazon', label: 'Amazon', color: 'bg-orange-500' },
     { value: 'flipkart', label: 'Flipkart', color: 'bg-blue-500' },
     { value: 'myntra', label: 'Myntra', color: 'bg-pink-500' },
     { value: 'nykaa', label: 'Nykaa', color: 'bg-purple-500' },
