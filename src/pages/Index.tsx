@@ -1,10 +1,10 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Instagram, Facebook, Youtube, X, MessageCircle } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import ViewerCounter from '@/components/ViewerCounter';
 
 const Index = () => {
   const steps = [
@@ -498,7 +498,7 @@ const Index = () => {
               <p className="text-gray-400 mb-4">
                 Your trusted partner for smart shopping and amazing savings.
               </p>
-              <div className="flex space-x-4">
+              <div className="flex space-x-4 mb-4">
                 <a 
                   href="#" 
                   className="w-10 h-10 bg-neon-pink rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
@@ -530,6 +530,7 @@ const Index = () => {
                   <MessageCircle size={20} className="text-white" />
                 </a>
               </div>
+              <ViewerCounter />
             </div>
             
             <div>
