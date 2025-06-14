@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -86,11 +85,11 @@ const ShippingDetails = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-8 p-8">
-              {/* Personal Information Section */}
+              {/* Receiver's Information Section */}
               <div className="space-y-6">
                 <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
                   <span className="text-2xl">👤</span>
-                  Personal Information
+                  Receiver's Information
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-3">
