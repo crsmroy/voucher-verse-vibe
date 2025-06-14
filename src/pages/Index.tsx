@@ -17,8 +17,8 @@ const Index = () => {
     },
     {
       number: '02', 
-      title: 'Delivered from Major Platforms',
-      description: 'Your order is shipped directly from Flipkart/Amazon/Marketplace — fast and reliable delivery!',
+      title: 'Delivered from Flipkart/Amazon/Marketplace',
+      description: 'Your order is shipped directly from the actual website — fast and reliable delivery!',
       icon: '🚚',
       color: 'from-electric-blue to-teal'
     },
