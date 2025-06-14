@@ -342,7 +342,7 @@ const Index = () => {
             >
               <CarouselContent className="-ml-2 md:-ml-4">
                 {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                     <Card className="hover:shadow-xl transition-all duration-500 hover:-translate-y-2 bg-white/80 h-full">
                       <CardContent className="p-6 space-y-4 flex flex-col h-full">
                         <div className="flex gap-1 mb-2">
