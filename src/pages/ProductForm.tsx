@@ -28,12 +28,42 @@ const ProductForm = () => {
   ];
 
   const platforms = [
-    { value: 'amazon', label: 'Amazon', color: 'bg-orange-500' },
-    { value: 'flipkart', label: 'Flipkart', color: 'bg-blue-500' },
-    { value: 'myntra', label: 'Myntra', color: 'bg-pink-500' },
-    { value: 'nykaa', label: 'Nykaa', color: 'bg-purple-500' },
-    { value: 'meesho', label: 'Meesho', color: 'bg-red-500' },
-    { value: 'ajio', label: 'Ajio', color: 'bg-yellow-500' }
+    { 
+      value: 'amazon', 
+      label: 'Amazon', 
+      color: 'bg-orange-500',
+      icon: '📦' 
+    },
+    { 
+      value: 'flipkart', 
+      label: 'Flipkart', 
+      color: 'bg-blue-500',
+      icon: '🛒' 
+    },
+    { 
+      value: 'myntra', 
+      label: 'Myntra', 
+      color: 'bg-pink-500',
+      icon: '👗' 
+    },
+    { 
+      value: 'nykaa', 
+      label: 'Nykaa', 
+      color: 'bg-purple-500',
+      icon: '💄' 
+    },
+    { 
+      value: 'meesho', 
+      label: 'Meesho', 
+      color: 'bg-red-500',
+      icon: '🛍️' 
+    },
+    { 
+      value: 'ajio', 
+      label: 'Ajio', 
+      color: 'bg-yellow-500',
+      icon: '👕' 
+    }
   ];
 
   const getVoucherAmounts = () => {
@@ -284,7 +314,8 @@ const ProductForm = () => {
                           onClick={() => setFormData({...formData, voucherPlatform: platform.value})}
                         >
                           <div className="flex items-center justify-between">
-                            <div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl">{platform.icon}</span>
                               <div className="font-medium">{platform.label}</div>
                             </div>
                             <div className={`w-8 h-8 ${platform.color} rounded-full flex items-center justify-center text-white font-bold`}>
