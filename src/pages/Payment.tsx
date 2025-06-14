@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,89 +11,10 @@ import { ArrowLeft } from 'lucide-react';
 
 const Payment = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [transactionId, setTransactionId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [finalAmount, setFinalAmount] = useState(0);
   const { toast } = useToast();
-
-  useEffect(() => {
-    console.log('=== PAYMENT PAGE DEBUG ===');
-    console.log('Location state:', location.state);
-    console.log('LocalStorage productData:', localStorage.getItem('productData'));
-    console.log('LocalStorage shippingData:', localStorage.getItem('shippingData'));
-    
-    // Try to get product data from multiple sources
-    let productData = null;
-    let dataSource = 'none';
-    
-    // First try location state
-    if (location.state?.productData) {
-      productData = location.state.productData;
-      dataSource = 'location.state';
-      console.log('✅ Found product data in location state:', productData);
-    }
-    // Then try localStorage
-    else {
-      try {
-        const storedProductData = localStorage.getItem('productData');
-        console.log('Raw localStorage productData:', storedProductData);
-        
-        if (storedProductData && storedProductData !== '{}' && storedProductData !== 'null') {
-          productData = JSON.parse(storedProductData);
-          dataSource = 'localStorage';
-          console.log('✅ Found product data in localStorage:', productData);
-        } else {
-          console.log('❌ localStorage productData is empty or invalid');
-        }
-      } catch (error) {
-        console.error('❌ Error parsing localStorage productData:', error);
-      }
-    }
-    
-    console.log('Data source:', dataSource);
-    console.log('Product data object:', productData);
-    
-    if (productData && productData.price) {
-      console.log('Raw price value:', productData.price);
-      console.log('Price type:', typeof productData.price);
-      
-      // Handle different price formats
-      let priceString = productData.price;
-      if (typeof priceString === 'number') {
-        priceString = priceString.toString();
-      }
-      
-      // Remove any currency symbols and whitespace
-      priceString = priceString.toString().replace(/[₹,$\s]/g, '');
-      console.log('Cleaned price string:', priceString);
-      
-      const basePrice = parseFloat(priceString) || 0;
-      console.log('Parsed base price:', basePrice);
-      
-      if (basePrice > 0) {
-        // Calculate final amount with service fee
-        const serviceFee = basePrice * 0.05; // 5% service fee
-        const total = basePrice + serviceFee;
-        console.log('Service fee (5%):', serviceFee);
-        console.log('Total amount:', total);
-        
-        const roundedTotal = Math.round(total);
-        console.log('✅ Setting final amount to:', roundedTotal);
-        setFinalAmount(roundedTotal);
-      } else {
-        console.log('❌ Base price is 0 or invalid, using fallback');
-        setFinalAmount(3500);
-      }
-    } else {
-      console.log('❌ No valid product data or price found');
-      console.log('Using fallback amount: 3500');
-      setFinalAmount(3500);
-    }
-    
-    console.log('=== END DEBUG ===');
-  }, [location.state]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -201,7 +123,7 @@ const Payment = () => {
                   <h3 className="text-xl font-bold text-gray-900">UPI Payment</h3>
                   <p className="text-gray-600">Scan this QR code with any UPI app</p>
                   <div className="bg-gradient-to-r from-lime-green/20 to-teal/20 p-4 rounded-lg">
-                    <p className="font-bold text-2xl text-green-600">₹{finalAmount.toLocaleString('en-IN')}</p>
+                    <p className="font-bold text-2xl text-green-600">₹3,500</p>
                     <p className="text-sm text-gray-600">Amount to Pay</p>
                   </div>
                 </div>
