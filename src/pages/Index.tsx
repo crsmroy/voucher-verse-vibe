@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -290,7 +289,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Customer Testimonials Section */}
+      {/* Customer Testimonials Section with Carousel */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -302,27 +301,42 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="hover:shadow-xl transition-all duration-500 hover:-translate-y-2 bg-white/80">
-                <CardContent className="p-6 space-y-4">
-                  <div className="flex gap-1 mb-2">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <span key={i} className="text-yellow-400 text-xl">⭐</span>
-                    ))}
-                  </div>
-                  
-                  <p className="text-gray-700 italic leading-relaxed">
-                    "{testimonial.review}"
-                  </p>
-                  
-                  <div className="border-t pt-4">
-                    <div className="font-bold text-gray-900">{testimonial.name}</div>
-                    <div className="text-sm text-gray-600">Purchased: {testimonial.product}</div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="relative">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[autoplayPlugin()]}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {testimonials.map((testimonial, index) => (
+                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                    <Card className="hover:shadow-xl transition-all duration-500 hover:-translate-y-2 bg-white/80 h-full">
+                      <CardContent className="p-6 space-y-4 flex flex-col h-full">
+                        <div className="flex gap-1 mb-2">
+                          {[...Array(testimonial.rating)].map((_, i) => (
+                            <span key={i} className="text-yellow-400 text-xl">⭐</span>
+                          ))}
+                        </div>
+                        
+                        <p className="text-gray-700 italic leading-relaxed flex-grow">
+                          "{testimonial.review}"
+                        </p>
+                        
+                        <div className="border-t pt-4 mt-auto">
+                          <div className="font-bold text-gray-900">{testimonial.name}</div>
+                          <div className="text-sm text-gray-600">Purchased: {testimonial.product}</div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex" />
+              <CarouselNext className="hidden md:flex" />
+            </Carousel>
           </div>
         </div>
       </section>
