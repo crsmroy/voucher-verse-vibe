@@ -1,5 +1,3 @@
-
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,8 +17,8 @@ const Index = () => {
     },
     {
       number: '02', 
-      title: 'Delivered from Flipkart/Amazon',
-      description: 'Your order is shipped directly from the original website — fast and reliable delivery!',
+      title: 'Delivered from Flipkart/Amazon/Marketplace',
+      description: 'Your order is shipped directly from the actual website — fast and reliable delivery!',
       icon: '🚚',
       color: 'from-electric-blue to-teal'
     },
@@ -54,51 +52,51 @@ const Index = () => {
   const testimonials = [
     {
       name: 'Rahul Kumar',
-      review: 'Saved ₹2000 on my laptop purchase! Amazing service and super fast delivery.',
-      rating: 5,
-      product: 'Laptop'
-    },
-    {
-      name: 'Priya Sharma',
-      review: 'Love how easy it is to use. Got my favorite dress at 20% off!',
-      rating: 5,
-      product: 'Fashion'
-    },
-    {
-      name: 'Amit Patel',
-      review: 'Trustworthy service. They delivered exactly what they promised.',
+      review: 'I still laugh at the ukulele I bought last year — never touched it again. But this time, I made a smarter choice with FreedomVouchers!',
       rating: 5,
       product: 'Electronics'
     },
     {
-      name: 'Sneha Gupta',
-      review: 'Incredible savings on home appliances! Customer support was very helpful throughout.',
+      name: 'Priya Sharma',
+      review: 'I just bought an air fryer from the wellness list and ended up getting my favorite skincare stuff with the voucher. Honestly, I wish I knew about this earlier!',
       rating: 5,
       product: 'Home & Kitchen'
     },
     {
-      name: 'Vikram Singh',
-      review: 'Got my gaming headset at 30% discount. Quality is perfect and shipping was quick!',
-      rating: 5,
-      product: 'Gaming'
-    },
-    {
-      name: 'Anjali Mehta',
-      review: 'Best platform for online shopping deals. Saved over ₹5000 in just one month!',
+      name: 'Amit Patel',
+      review: 'Thank you so much for these vouchers — finally bought that perfume and cosmetics I\'ve been eyeing for months. Felt like a personal treat!',
       rating: 5,
       product: 'Beauty Products'
     },
     {
-      name: 'Rohan Das',
-      review: 'Smooth experience from start to finish. Got my phone at an unbeatable price.',
+      name: 'Sneha Gupta',
+      review: 'Please list Zomato/Swiggy vouchers too! 5 stars for your amazing service 🔥',
       rating: 5,
-      product: 'Mobile'
+      product: 'Food & Dining'
+    },
+    {
+      name: 'Vikram Singh',
+      review: 'That treadmill is literally a clothes rack now. I wish I found this site earlier. But this time, I didn\'t waste a single rupee.',
+      rating: 5,
+      product: 'Fitness Equipment'
+    },
+    {
+      name: 'Anjali Mehta',
+      review: 'Bought a mixer grinder using my wellness budget and for once, I didn\'t feel guilty. The voucher I got felt like a bonus gift to myself!',
+      rating: 5,
+      product: 'Kitchen Appliances'
+    },
+    {
+      name: 'Rohan Das',
+      review: 'This platform is a game-changer!',
+      rating: 5,
+      product: 'General'
     },
     {
       name: 'Kavya Reddy',
-      review: 'Amazing voucher system! Books and stationery at such great discounts.',
+      review: 'Honestly, I thought it was a scam at first. But I gave it a try — and wow, this isn\'t like those fake sites. Thank you so much!',
       rating: 5,
-      product: 'Books'
+      product: 'Trust & Reliability'
     }
   ];
 
@@ -644,4 +642,3 @@ const Index = () => {
 };
 
 export default Index;
-
