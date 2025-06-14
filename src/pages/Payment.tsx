@@ -18,48 +18,80 @@ const Payment = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log('=== PAYMENT PAGE DEBUG ===');
     console.log('Location state:', location.state);
     console.log('LocalStorage productData:', localStorage.getItem('productData'));
     console.log('LocalStorage shippingData:', localStorage.getItem('shippingData'));
     
     // Try to get product data from multiple sources
     let productData = null;
+    let dataSource = 'none';
     
     // First try location state
     if (location.state?.productData) {
       productData = location.state.productData;
-      console.log('Found product data in location state:', productData);
+      dataSource = 'location.state';
+      console.log('✅ Found product data in location state:', productData);
     }
     // Then try localStorage
     else {
       try {
         const storedProductData = localStorage.getItem('productData');
-        if (storedProductData && storedProductData !== '{}') {
+        console.log('Raw localStorage productData:', storedProductData);
+        
+        if (storedProductData && storedProductData !== '{}' && storedProductData !== 'null') {
           productData = JSON.parse(storedProductData);
-          console.log('Found product data in localStorage:', productData);
+          dataSource = 'localStorage';
+          console.log('✅ Found product data in localStorage:', productData);
+        } else {
+          console.log('❌ localStorage productData is empty or invalid');
         }
       } catch (error) {
-        console.error('Error parsing localStorage productData:', error);
+        console.error('❌ Error parsing localStorage productData:', error);
       }
     }
     
+    console.log('Data source:', dataSource);
+    console.log('Product data object:', productData);
+    
     if (productData && productData.price) {
-      // Remove any currency symbols and parse the price
-      const priceString = productData.price.toString().replace(/[₹,$]/g, '');
+      console.log('Raw price value:', productData.price);
+      console.log('Price type:', typeof productData.price);
+      
+      // Handle different price formats
+      let priceString = productData.price;
+      if (typeof priceString === 'number') {
+        priceString = priceString.toString();
+      }
+      
+      // Remove any currency symbols and whitespace
+      priceString = priceString.toString().replace(/[₹,$\s]/g, '');
+      console.log('Cleaned price string:', priceString);
+      
       const basePrice = parseFloat(priceString) || 0;
-      console.log('Base price:', basePrice);
+      console.log('Parsed base price:', basePrice);
       
-      // Calculate final amount with service fee
-      const serviceFee = basePrice * 0.05; // 5% service fee
-      const total = basePrice + serviceFee;
-      console.log('Final amount with service fee:', total);
-      
-      setFinalAmount(Math.round(total));
+      if (basePrice > 0) {
+        // Calculate final amount with service fee
+        const serviceFee = basePrice * 0.05; // 5% service fee
+        const total = basePrice + serviceFee;
+        console.log('Service fee (5%):', serviceFee);
+        console.log('Total amount:', total);
+        
+        const roundedTotal = Math.round(total);
+        console.log('✅ Setting final amount to:', roundedTotal);
+        setFinalAmount(roundedTotal);
+      } else {
+        console.log('❌ Base price is 0 or invalid, using fallback');
+        setFinalAmount(3500);
+      }
     } else {
-      console.log('No product data found, using fallback amount');
-      // Fallback amount if no product data is available
+      console.log('❌ No valid product data or price found');
+      console.log('Using fallback amount: 3500');
       setFinalAmount(3500);
     }
+    
+    console.log('=== END DEBUG ===');
   }, [location.state]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
