@@ -1,5 +1,3 @@
-
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,8 +17,8 @@ const Index = () => {
     },
     {
       number: '02', 
-      title: 'Delivered from Flipkart/Amazon',
-      description: 'Your order is shipped directly from the original website — fast and reliable delivery!',
+      title: 'Delivered from Flipkart/Amazon/Marketplace',
+      description: 'Your order is shipped directly from the actual website — fast and reliable delivery!',
       icon: '🚚',
       color: 'from-electric-blue to-teal'
     },
@@ -644,4 +642,3 @@ const Index = () => {
 };
 
 export default Index;
-
