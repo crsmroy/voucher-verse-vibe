@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -172,7 +173,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
-            <div className="space-y-8 slide-in">
+            <div className="space-y-8 slide-in text-center lg:text-left">
               <div className="space-y-4">
                 <h1 className="text-5xl md:text-7xl font-bold leading-tight">
                   <span className="bg-gradient-to-r from-neon-pink via-electric-blue to-warm-orange bg-clip-text text-transparent">
@@ -181,13 +182,13 @@ const Index = () => {
                   <br />
                   <span className="text-gray-900">Vouchers</span>
                 </h1>
-                <p className="text-xl text-gray-600 max-w-lg">
+                <p className="text-xl text-gray-600 max-w-lg mx-auto lg:mx-0">
                   Save money on every purchase with our premium voucher reselling service. 
                   Get the products you love at unbeatable prices! 🎯
                 </p>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link to="/product">
                   <Button 
                     size="lg" 
@@ -209,7 +210,7 @@ const Index = () => {
               </div>
 
               {/* Stats */}
-              <div className="flex gap-8 pt-8">
+              <div className="flex gap-8 pt-8 justify-center lg:justify-start">
                 <div className="text-center">
                   <div className="text-3xl font-bold bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">500+</div>
                   <div className="text-gray-600">Happy Customers</div>
