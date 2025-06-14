@@ -52,7 +52,7 @@ const ProductForm = () => {
     
     const gstRate = selectedCategory ? selectedCategory.gst : 18;
     
-    const premiumPrice = (basePrice * quantity) - voucherAmount;
+    const premiumPrice = (basePrice * quantity) + voucherAmount; // ADD voucher amount
     const commission = premiumPrice * 0.20; // 20% commission
     const gstAmount = premiumPrice * (gstRate / 100);
     const totalPrice = premiumPrice + commission + gstAmount;
@@ -62,7 +62,7 @@ const ProductForm = () => {
       commission,
       gstAmount,
       totalPrice,
-      savings: (basePrice * quantity) - totalPrice
+      savings: (basePrice * quantity) - totalPrice // This shows how much they save vs buying directly
     };
   };
 
