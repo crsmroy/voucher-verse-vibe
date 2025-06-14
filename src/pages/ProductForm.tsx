@@ -36,41 +36,11 @@ const ProductForm = () => {
 
   const getVoucherAmounts = () => {
     const price = parseFloat(formData.price) || 0;
-    const maxAmount = price * formData.quantity;
-    
-    if (maxAmount < 250) return [];
-    
-    // Calculate the maximum number of ₹250 steps possible
-    const maxSteps = Math.floor(maxAmount / 250);
-    
-    // If we have 5 or fewer steps, include all of them
-    if (maxSteps <= 5) {
-      const amounts = [];
-      for (let i = 1; i <= maxSteps; i++) {
-        amounts.push(i * 250);
-      }
-      return amounts;
-    }
-    
-    // Otherwise, pick up to 5 evenly spaced values
     const amounts = [];
-    const step = Math.floor(maxSteps / 5);
-    
-    // Start from a reasonable multiple of 250
-    let currentStep = Math.max(3, step); // Start from at least ₹750 or higher
-    
-    for (let i = 0; i < 4; i++) {
-      amounts.push(currentStep * 250);
-      currentStep += step;
+    for (let i = 250; i <= price; i += 250) {
+      amounts.push(i);
     }
-    
-    // Add the last value as close as possible to maxAmount
-    const lastValue = Math.floor(maxAmount / 250) * 250;
-    if (lastValue > amounts[amounts.length - 1]) {
-      amounts.push(lastValue);
-    }
-    
-    return amounts.slice(0, 5); // Ensure we don't exceed 5 options
+    return amounts;
   };
 
   const calculatePricing = () => {
