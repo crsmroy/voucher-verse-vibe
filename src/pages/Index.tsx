@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,30 +10,30 @@ const Index = () => {
   const steps = [
     {
       number: '01',
-      title: 'Choose Your Product',
-      description: 'Browse and select any product from your favorite online stores',
-      icon: '🛍️',
+      title: 'Get Product + Perks',
+      description: 'Buy your desired product and receive brand vouchers for your personal use.',
+      icon: '🎁',
       color: 'from-neon-pink to-warm-orange'
     },
     {
       number: '02', 
-      title: 'We Buy For You',
-      description: 'Our team purchases the item at the best price with premium vouchers',
-      icon: '💳',
+      title: 'Delivered from Flipkart/Amazon',
+      description: 'Your order is shipped directly from the original website — fast and reliable delivery!',
+      icon: '🚚',
       color: 'from-electric-blue to-teal'
     },
     {
       number: '03',
-      title: 'Get Your Savings',
-      description: 'Receive your product while saving money with our voucher system',
-      icon: '💰',
+      title: 'Get GST Invoice',
+      description: 'Get GST invoice from us on the premium amount you\'ve paid.',
+      icon: '📄',
       color: 'from-lime-green to-electric-blue'
     },
     {
       number: '04',
-      title: 'Choose Your Voucher',
-      description: 'Select from vouchers of almost every ecommerce giant like Amazon, Flipkart, Myntra for your personal use',
-      icon: '🎫',
+      title: 'Claim & Get Reimbursed',
+      description: 'Submit the invoice to your company and get your full amount reimbursed smoothly.',
+      icon: '💼',
       color: 'from-warm-orange to-neon-pink'
     }
   ];
