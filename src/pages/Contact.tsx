@@ -275,7 +275,7 @@ const Contact = () => {
                       <p className="text-gray-600">{faq.answer}</p>
                     </div>
                   </div>
-                </Car dContent>
+                </CardContent>
               </Card>
             ))}
           </div>
