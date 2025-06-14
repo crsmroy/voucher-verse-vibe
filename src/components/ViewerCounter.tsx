@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { Eye } from 'lucide-react';
 
 const ViewerCounter = () => {
-  const [viewCount, setViewCount] = useState(100000);
+  const [viewCount, setViewCount] = useState(7000);
 
   useEffect(() => {
-    // Increment viewer count every 3-5 seconds randomly
+    // Increment viewer count every 4 minutes
     const interval = setInterval(() => {
-      setViewCount(prev => prev + Math.floor(Math.random() * 3) + 1);
-    }, Math.random() * 2000 + 3000); // Random interval between 3-5 seconds
+      setViewCount(prev => prev + 1);
+    }, 240000); // 4 minutes = 240,000 milliseconds
 
     return () => clearInterval(interval);
   }, []);
