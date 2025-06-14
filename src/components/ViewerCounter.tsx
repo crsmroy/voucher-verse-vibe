@@ -4,9 +4,9 @@ import { Eye } from 'lucide-react';
 
 const ViewerCounter = () => {
   const [viewCount, setViewCount] = useState(() => {
-    // Initialize from localStorage or default to 7000
-    const savedCount = localStorage.getItem('viewerCount');
-    return savedCount ? parseInt(savedCount, 10) : 7000;
+    // Clear existing localStorage and start fresh at 7000
+    localStorage.removeItem('viewerCount');
+    return 7000;
   });
 
   useEffect(() => {
