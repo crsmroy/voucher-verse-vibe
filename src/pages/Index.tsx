@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -139,16 +138,56 @@ const Index = () => {
     <div className="min-h-screen bg-white overflow-hidden">
       <Navigation />
       
-      {/* Animated Background Shapes */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 gradient-primary rounded-full opacity-20 float"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 gradient-secondary rounded-lg rotate-45 opacity-30 float" style={{animationDelay: '1s'}}></div>
-        <div className="absolute bottom-20 left-1/4 w-40 h-40 gradient-tertiary rounded-full opacity-15 float" style={{animationDelay: '2s'}}></div>
+      {/* Enhanced Modern Animated Background Shapes */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Original basic shapes */}
+        <div className="absolute top-20 left-10 w-32 h-32 gradient-primary rounded-full opacity-15 float"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 gradient-secondary rounded-lg rotate-45 opacity-20 float" style={{animationDelay: '1s'}}></div>
+        <div className="absolute bottom-20 left-1/4 w-40 h-40 gradient-tertiary rounded-full opacity-12 float" style={{animationDelay: '2s'}}></div>
         <div className="absolute top-1/2 right-10 w-20 h-20 bg-warm-orange rounded-full opacity-25 float" style={{animationDelay: '0.5s'}}></div>
+        
+        {/* Modern gradient blobs - large background elements */}
+        <div className="absolute top-16 left-1/3 w-48 h-48 bg-gradient-to-br from-purple-400 via-pink-300 to-blue-400 rounded-full opacity-10 float blur-sm" style={{animationDelay: '0.8s'}}></div>
+        <div className="absolute bottom-32 right-1/4 w-56 h-56 bg-gradient-to-tr from-green-300 via-blue-400 to-purple-500 rounded-full opacity-8 float blur-sm" style={{animationDelay: '2.2s'}}></div>
+        <div className="absolute top-1/3 left-12 w-40 h-40 bg-gradient-to-bl from-yellow-300 via-orange-400 to-red-400 rounded-full opacity-12 float blur-sm" style={{animationDelay: '1.5s'}}></div>
+        
+        {/* Interactive-style circular elements with dots */}
+        <div className="absolute top-24 right-1/3 w-28 h-28 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-18 float flex items-center justify-center" style={{animationDelay: '0.3s'}}>
+          <div className="w-3 h-3 bg-white rounded-full opacity-60"></div>
+        </div>
+        <div className="absolute bottom-48 left-1/2 w-32 h-32 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full opacity-16 float flex items-center justify-center" style={{animationDelay: '1.9s'}}>
+          <div className="w-4 h-4 bg-white rounded-full opacity-70"></div>
+        </div>
+        
+        {/* Pill-shaped elements */}
+        <div className="absolute top-48 left-20 w-24 h-12 bg-gradient-to-r from-indigo-400 to-cyan-400 rounded-full opacity-20 float" style={{animationDelay: '1.2s'}}></div>
+        <div className="absolute bottom-40 right-16 w-28 h-14 bg-gradient-to-r from-rose-400 to-pink-500 rounded-full opacity-17 float" style={{animationDelay: '2.8s'}}></div>
+        
+        {/* Modern geometric shapes */}
+        <div className="absolute top-60 right-20 w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg rotate-12 opacity-22 float" style={{animationDelay: '0.6s'}}></div>
+        <div className="absolute bottom-60 left-24 w-16 h-16 bg-gradient-to-tr from-violet-400 to-purple-500 rounded-lg rotate-45 opacity-19 float" style={{animationDelay: '2.1s'}}></div>
+        <div className="absolute top-2/3 right-1/4 w-18 h-18 bg-gradient-to-bl from-amber-400 to-orange-500 rounded-lg rotate-30 opacity-24 float" style={{animationDelay: '1.7s'}}></div>
+        
+        {/* Small accent circles */}
+        <div className="absolute top-32 left-2/3 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full opacity-30 float" style={{animationDelay: '0.4s'}}></div>
+        <div className="absolute bottom-24 left-1/3 w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full opacity-28 float" style={{animationDelay: '2.5s'}}></div>
+        <div className="absolute top-3/4 left-16 w-6 h-6 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full opacity-32 float" style={{animationDelay: '1.3s'}}></div>
+        
+        {/* Frosted glass effect elements */}
+        <div className="absolute top-44 right-12 w-36 h-20 bg-white/10 backdrop-blur-sm rounded-2xl opacity-15 float border border-white/20" style={{animationDelay: '2.7s'}}></div>
+        <div className="absolute bottom-52 left-1/4 w-28 h-28 bg-white/8 backdrop-blur-sm rounded-full opacity-12 float border border-white/15" style={{animationDelay: '1.4s'}}></div>
+        
+        {/* Icon-style elements with symbols */}
+        <div className="absolute top-1/4 left-1/2 w-14 h-14 bg-gradient-to-r from-sky-400 to-blue-500 rounded-lg opacity-25 float flex items-center justify-center text-white text-xs font-bold" style={{animationDelay: '0.9s'}}>
+          {'</>'}
+        </div>
+        <div className="absolute bottom-36 right-1/3 w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-23 float flex items-center justify-center text-white text-lg" style={{animationDelay: '2.4s'}}>
+          ⚡
+        </div>
       </div>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative">
+      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
@@ -226,7 +265,7 @@ const Index = () => {
       </section>
 
       {/* Popular Products Section with Carousel */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30">
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -277,7 +316,7 @@ const Index = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -329,7 +368,7 @@ const Index = () => {
       </section>
 
       {/* Customer Testimonials Section with Carousel */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30">
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
