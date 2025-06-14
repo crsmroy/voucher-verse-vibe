@@ -1,7 +1,7 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Navigation from '@/components/Navigation';
 
 const Index = () => {
@@ -33,7 +33,11 @@ const Index = () => {
     { name: 'Electronics', icon: '📱', percentage: '35%', color: 'from-electric-blue to-teal' },
     { name: 'Fashion & Clothing', icon: '👕', percentage: '28%', color: 'from-neon-pink to-warm-orange' },
     { name: 'Home & Kitchen', icon: '🏠', percentage: '22%', color: 'from-lime-green to-electric-blue' },
-    { name: 'Books & Media', icon: '📚', percentage: '15%', color: 'from-warm-orange to-neon-pink' }
+    { name: 'Books & Media', icon: '📚', percentage: '15%', color: 'from-warm-orange to-neon-pink' },
+    { name: 'Sports & Fitness', icon: '⚽', percentage: '18%', color: 'from-teal to-electric-blue' },
+    { name: 'Beauty & Health', icon: '💄', percentage: '12%', color: 'from-neon-pink to-lime-green' },
+    { name: 'Toys & Games', icon: '🎮', percentage: '8%', color: 'from-warm-orange to-teal' },
+    { name: 'Automotive', icon: '🚗', percentage: '5%', color: 'from-electric-blue to-neon-pink' }
   ];
 
   const testimonials = [
@@ -147,7 +151,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Popular Products Section */}
+      {/* Popular Products Section with Carousel */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -159,26 +163,40 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {popularProducts.map((product, index) => (
-              <Card key={index} className="hover:shadow-xl transition-all duration-500 group hover:-translate-y-2">
-                <CardContent className="p-6 text-center space-y-4">
-                  <div className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-r ${product.color} flex items-center justify-center text-white text-2xl group-hover:scale-110 transition-transform duration-300`}>
-                    {product.icon}
-                  </div>
-                  
-                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-neon-pink transition-colors duration-300">
-                    {product.name}
-                  </h3>
-                  
-                  <div className="text-2xl font-bold bg-gradient-to-r from-electric-blue to-teal bg-clip-text text-transparent">
-                    {product.percentage}
-                  </div>
-                  
-                  <p className="text-gray-600 text-sm">of total orders</p>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="relative">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {popularProducts.map((product, index) => (
+                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                    <Card className="hover:shadow-xl transition-all duration-500 group hover:-translate-y-2">
+                      <CardContent className="p-6 text-center space-y-4">
+                        <div className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-r ${product.color} flex items-center justify-center text-white text-2xl group-hover:scale-110 transition-transform duration-300`}>
+                          {product.icon}
+                        </div>
+                        
+                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-neon-pink transition-colors duration-300">
+                          {product.name}
+                        </h3>
+                        
+                        <div className="text-2xl font-bold bg-gradient-to-r from-electric-blue to-teal bg-clip-text text-transparent">
+                          {product.percentage}
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm">of total orders</p>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex" />
+              <CarouselNext className="hidden md:flex" />
+            </Carousel>
           </div>
         </div>
       </section>
