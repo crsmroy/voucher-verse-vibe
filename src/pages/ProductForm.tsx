@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
 
 const ProductForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     productLink: '',
     price: '',
@@ -125,6 +126,20 @@ const ProductForm = () => {
       totalPrice,
       savings: (basePrice * quantity) - totalPrice // This shows how much they save vs buying directly
     };
+  };
+
+  const handleContinueToShipping = () => {
+    const pricing = calculatePricing();
+    
+    // Store all the data in localStorage for use in payment page
+    const orderData = {
+      product: formData,
+      pricing: pricing,
+      timestamp: new Date().toISOString()
+    };
+    
+    localStorage.setItem('currentOrder', JSON.stringify(orderData));
+    navigate('/shipping');
   };
 
   const pricing = calculatePricing();
@@ -379,14 +394,13 @@ const ProductForm = () => {
                         )}
                       </div>
                       
-                      <Link to="/shipping" className="block">
-                        <Button 
-                          className="w-full btn-glow gradient-primary text-white h-12 text-lg font-semibold"
-                          disabled={!formData.productLink || !formData.price || !formData.category || !formData.voucherAmount || !formData.voucherPlatform}
-                        >
-                          Continue to Shipping →
-                        </Button>
-                      </Link>
+                      <Button 
+                        onClick={handleContinueToShipping}
+                        className="w-full btn-glow gradient-primary text-white h-12 text-lg font-semibold"
+                        disabled={!formData.productLink || !formData.price || !formData.category || !formData.voucherAmount || !formData.voucherPlatform}
+                      >
+                        Continue to Shipping →
+                      </Button>
                     </>
                   )}
                   

@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,30 @@ const Payment = () => {
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [transactionId, setTransactionId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [finalAmount, setFinalAmount] = useState(3500); // Default fallback
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Try to get the order data from localStorage
+    const orderData = localStorage.getItem('currentOrder');
+    
+    if (orderData) {
+      try {
+        const parsed = JSON.parse(orderData);
+        console.log('Order data found:', parsed);
+        
+        if (parsed.pricing && parsed.pricing.totalPrice) {
+          const amount = Math.round(parsed.pricing.totalPrice);
+          console.log('Setting final amount to:', amount);
+          setFinalAmount(amount);
+        }
+      } catch (error) {
+        console.error('Error parsing order data:', error);
+      }
+    } else {
+      console.log('No order data found in localStorage');
+    }
+  }, []);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -123,7 +146,7 @@ const Payment = () => {
                   <h3 className="text-xl font-bold text-gray-900">UPI Payment</h3>
                   <p className="text-gray-600">Scan this QR code with any UPI app</p>
                   <div className="bg-gradient-to-r from-lime-green/20 to-teal/20 p-4 rounded-lg">
-                    <p className="font-bold text-2xl text-green-600">₹3,500</p>
+                    <p className="font-bold text-2xl text-green-600">₹{finalAmount.toLocaleString()}</p>
                     <p className="text-sm text-gray-600">Amount to Pay</p>
                   </div>
                 </div>
