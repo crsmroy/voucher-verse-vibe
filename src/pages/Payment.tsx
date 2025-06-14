@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -19,16 +18,45 @@ const Payment = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Get product details from localStorage or location state
-    const productData = location.state?.productData || JSON.parse(localStorage.getItem('productData') || '{}');
+    console.log('Location state:', location.state);
+    console.log('LocalStorage productData:', localStorage.getItem('productData'));
+    console.log('LocalStorage shippingData:', localStorage.getItem('shippingData'));
     
-    if (productData.price) {
-      // Calculate final amount (you can add service fees, taxes, etc. here)
-      const basePrice = parseFloat(productData.price) || 0;
-      const serviceFee = basePrice * 0.05; // 5% service fee example
+    // Try to get product data from multiple sources
+    let productData = null;
+    
+    // First try location state
+    if (location.state?.productData) {
+      productData = location.state.productData;
+      console.log('Found product data in location state:', productData);
+    }
+    // Then try localStorage
+    else {
+      try {
+        const storedProductData = localStorage.getItem('productData');
+        if (storedProductData && storedProductData !== '{}') {
+          productData = JSON.parse(storedProductData);
+          console.log('Found product data in localStorage:', productData);
+        }
+      } catch (error) {
+        console.error('Error parsing localStorage productData:', error);
+      }
+    }
+    
+    if (productData && productData.price) {
+      // Remove any currency symbols and parse the price
+      const priceString = productData.price.toString().replace(/[₹,$]/g, '');
+      const basePrice = parseFloat(priceString) || 0;
+      console.log('Base price:', basePrice);
+      
+      // Calculate final amount with service fee
+      const serviceFee = basePrice * 0.05; // 5% service fee
       const total = basePrice + serviceFee;
-      setFinalAmount(total);
+      console.log('Final amount with service fee:', total);
+      
+      setFinalAmount(Math.round(total));
     } else {
+      console.log('No product data found, using fallback amount');
       // Fallback amount if no product data is available
       setFinalAmount(3500);
     }
