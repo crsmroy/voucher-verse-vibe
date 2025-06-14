@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,13 +31,24 @@ const Contact = () => {
     <div className="min-h-screen bg-gradient-to-br from-neon-pink/5 via-electric-blue/5 to-teal/5 overflow-hidden">
       <Navigation />
       
-      {/* Animated Background Elements */}
+      {/* Enhanced Animated Background Elements */}
       <div className="fixed inset-0 pointer-events-none">
+        {/* Original elements */}
         <div className="absolute top-10 left-10 w-32 h-32 gradient-primary rounded-full opacity-10 float"></div>
         <div className="absolute top-1/4 right-20 w-24 h-24 gradient-secondary rounded-lg rotate-45 opacity-15 float" style={{animationDelay: '1s'}}></div>
         <div className="absolute bottom-1/4 left-1/3 w-40 h-40 gradient-tertiary rounded-full opacity-8 float" style={{animationDelay: '2s'}}></div>
         <div className="absolute top-1/2 right-10 w-20 h-20 bg-warm-orange rounded-full opacity-20 float" style={{animationDelay: '0.5s'}}></div>
         <div className="absolute bottom-10 right-1/4 w-16 h-16 bg-lime-green rounded-lg rotate-12 opacity-25 float" style={{animationDelay: '1.5s'}}></div>
+        
+        {/* New geometrical elements */}
+        <div className="absolute top-16 left-1/2 w-28 h-28 bg-neon-pink rounded-lg rotate-30 opacity-12 float" style={{animationDelay: '0.3s'}}></div>
+        <div className="absolute top-2/3 right-1/3 w-22 h-22 bg-electric-blue rounded-full opacity-16 float" style={{animationDelay: '1.8s'}}></div>
+        <div className="absolute bottom-20 left-16 w-18 h-18 bg-teal rounded-lg rotate-60 opacity-22 float" style={{animationDelay: '2.6s'}}></div>
+        <div className="absolute top-32 right-12 w-34 h-34 gradient-primary rounded-full opacity-9 float" style={{animationDelay: '3.1s'}}></div>
+        <div className="absolute bottom-40 left-1/4 w-24 h-24 bg-lime-green rounded-lg rotate-15 opacity-19 float" style={{animationDelay: '0.7s'}}></div>
+        <div className="absolute top-3/4 left-20 w-20 h-20 bg-warm-orange rounded-full opacity-17 float" style={{animationDelay: '2.3s'}}></div>
+        <div className="absolute top-20 right-1/4 w-14 h-14 gradient-secondary rounded-lg rotate-45 opacity-21 float" style={{animationDelay: '1.1s'}}></div>
+        <div className="absolute bottom-32 right-1/3 w-26 h-26 bg-neon-pink rounded-full opacity-13 float" style={{animationDelay: '2.9s'}}></div>
         
         {/* Floating Emojis */}
         <div className="absolute top-20 left-1/4 text-4xl float" style={{animationDelay: '0.8s'}}>💬</div>
