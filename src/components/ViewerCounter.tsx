@@ -15,10 +15,11 @@ const ViewerCounter = () => {
   }, []);
 
   const formatViewCount = (count: number) => {
+    // Don't format numbers below 10,000 to avoid confusion
     if (count >= 1000000) {
       return (count / 1000000).toFixed(1) + 'M';
     }
-    if (count >= 1000) {
+    if (count >= 10000) {
       return (count / 1000).toFixed(1) + 'K';
     }
     return count.toString();
