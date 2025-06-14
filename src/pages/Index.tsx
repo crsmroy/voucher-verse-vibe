@@ -58,6 +58,36 @@ const Index = () => {
       review: 'Trustworthy service. They delivered exactly what they promised.',
       rating: 5,
       product: 'Electronics'
+    },
+    {
+      name: 'Sneha Gupta',
+      review: 'Incredible savings on home appliances! Customer support was very helpful throughout.',
+      rating: 5,
+      product: 'Home & Kitchen'
+    },
+    {
+      name: 'Vikram Singh',
+      review: 'Got my gaming headset at 30% discount. Quality is perfect and shipping was quick!',
+      rating: 5,
+      product: 'Gaming'
+    },
+    {
+      name: 'Anjali Mehta',
+      review: 'Best platform for online shopping deals. Saved over ₹5000 in just one month!',
+      rating: 5,
+      product: 'Beauty Products'
+    },
+    {
+      name: 'Rohan Das',
+      review: 'Smooth experience from start to finish. Got my phone at an unbeatable price.',
+      rating: 5,
+      product: 'Mobile'
+    },
+    {
+      name: 'Kavya Reddy',
+      review: 'Amazing voucher system! Books and stationery at such great discounts.',
+      rating: 5,
+      product: 'Books'
     }
   ];
 
