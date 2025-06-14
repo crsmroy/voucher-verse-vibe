@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -255,6 +256,13 @@ const ShippingDetails = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Shipping Note */}
+          <div className="mt-8 p-6 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+            <p className="text-sm text-gray-700">
+              <span className="font-semibold">Note:</span> Shipping will be handled directly by the respective marketplace (e.g., Amazon, Flipkart). All terms and conditions, including delivery timelines, return/refund policies, and support, will be as per the policies of the selected marketplace.
+            </p>
+          </div>
         </div>
       </div>
     </div>
