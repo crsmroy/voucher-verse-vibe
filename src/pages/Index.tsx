@@ -231,7 +231,7 @@ const Index = () => {
                     size="lg" 
                     className="btn-glow gradient-primary text-white border-0 px-8 py-4 text-lg font-semibold hover:shadow-2xl group"
                   >
-                    Start Saving Now
+                    Start Shopping Now
                     <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
                   </Button>
                 </Link>
@@ -253,8 +253,8 @@ const Index = () => {
                   <div className="text-gray-600">Happy Customers</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-electric-blue to-teal bg-clip-text text-transparent">₹2L+</div>
-                  <div className="text-gray-600">Money Saved</div>
+                  <div className="text-3xl font-bold bg-gradient-to-r from-electric-blue to-teal bg-clip-text text-transparent">₹50L+</div>
+                  <div className="text-gray-600">Amount Reimbursed</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold bg-gradient-to-r from-warm-orange to-lime-green bg-clip-text text-transparent">24/7</div>
