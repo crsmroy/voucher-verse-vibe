@@ -169,6 +169,25 @@ const Index = () => {
                 align: "start",
                 loop: true,
               }}
+              plugins={[
+                {
+                  init(embla) {
+                    const autoplay = () => {
+                      if (embla.canScrollNext()) {
+                        embla.scrollNext();
+                      } else {
+                        embla.scrollTo(0);
+                      }
+                    };
+                    
+                    const intervalId = setInterval(autoplay, 3000);
+                    
+                    embla.on('destroy', () => {
+                      clearInterval(intervalId);
+                    });
+                  }
+                }
+              ]}
               className="w-full"
             >
               <CarouselContent className="-ml-2 md:-ml-4">
