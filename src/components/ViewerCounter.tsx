@@ -3,26 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { Eye } from 'lucide-react';
 
 const ViewerCounter = () => {
-  const [viewCount, setViewCount] = useState(() => {
-    // Clear existing localStorage and start fresh at 7000
-    localStorage.removeItem('viewerCount');
-    return 7000;
-  });
+  const [viewCount, setViewCount] = useState(1000000);
 
   useEffect(() => {
     // Increment by 1 when component mounts (visitor visits the website)
-    const newCount = viewCount + 1;
-    setViewCount(newCount);
-    localStorage.setItem('viewerCount', newCount.toString());
+    setViewCount(prev => prev + 1);
 
-    // Increment viewer count every 1 minute for ongoing activity
+    // Increment viewer count every 3-5 seconds randomly for ongoing activity
     const interval = setInterval(() => {
-      setViewCount(prev => {
-        const updatedCount = prev + 1;
-        localStorage.setItem('viewerCount', updatedCount.toString());
-        return updatedCount;
-      });
-    }, 60000); // 60 seconds = 1 minute
+      setViewCount(prev => prev + Math.floor(Math.random() * 3) + 1);
+    }, Math.random() * 2000 + 3000); // Random interval between 3-5 seconds
 
     return () => clearInterval(interval);
   }, []);
