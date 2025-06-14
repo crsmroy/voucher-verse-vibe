@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -60,6 +61,41 @@ const Index = () => {
       product: 'Electronics'
     }
   ];
+
+  // Create autoplay plugin with proper structure
+  const autoplayPlugin = () => ({
+    name: 'autoplay',
+    options: { active: true },
+    init: (embla: any) => {
+      let intervalId: NodeJS.Timeout;
+      
+      const play = () => {
+        if (embla.canScrollNext()) {
+          embla.scrollNext();
+        } else {
+          embla.scrollTo(0);
+        }
+      };
+      
+      const startAutoplay = () => {
+        intervalId = setInterval(play, 3000);
+      };
+      
+      const stopAutoplay = () => {
+        if (intervalId) clearInterval(intervalId);
+      };
+      
+      embla.on('pointerDown', stopAutoplay);
+      embla.on('pointerUp', startAutoplay);
+      
+      startAutoplay();
+      
+      return () => {
+        stopAutoplay();
+      };
+    },
+    destroy: () => {}
+  });
 
   return (
     <div className="min-h-screen bg-white overflow-hidden">
@@ -169,25 +205,7 @@ const Index = () => {
                 align: "start",
                 loop: true,
               }}
-              plugins={[
-                {
-                  init(embla) {
-                    const autoplay = () => {
-                      if (embla.canScrollNext()) {
-                        embla.scrollNext();
-                      } else {
-                        embla.scrollTo(0);
-                      }
-                    };
-                    
-                    const intervalId = setInterval(autoplay, 3000);
-                    
-                    embla.on('destroy', () => {
-                      clearInterval(intervalId);
-                    });
-                  }
-                }
-              ]}
+              plugins={[autoplayPlugin()]}
               className="w-full"
             >
               <CarouselContent className="-ml-2 md:-ml-4">
