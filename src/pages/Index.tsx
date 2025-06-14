@@ -51,52 +51,36 @@ const Index = () => {
 
   const testimonials = [
     {
-      name: 'Rahul Kumar',
       review: 'I still laugh at the ukulele I bought last year — never touched it again. But this time, I made a smarter choice with FreedomVouchers!',
-      rating: 5,
-      product: 'Electronics'
+      rating: 5
     },
     {
-      name: 'Priya Sharma',
       review: 'I just bought an air fryer from the wellness list and ended up getting my favorite skincare stuff with the voucher. Honestly, I wish I knew about this earlier!',
-      rating: 5,
-      product: 'Home & Kitchen'
+      rating: 5
     },
     {
-      name: 'Amit Patel',
       review: 'Thank you so much for these vouchers — finally bought that perfume and cosmetics I\'ve been eyeing for months. Felt like a personal treat!',
-      rating: 5,
-      product: 'Beauty Products'
+      rating: 5
     },
     {
-      name: 'Sneha Gupta',
       review: 'Please list Zomato/Swiggy vouchers too! 5 stars for your amazing service 🔥',
-      rating: 5,
-      product: 'Food & Dining'
+      rating: 5
     },
     {
-      name: 'Vikram Singh',
       review: 'That treadmill is literally a clothes rack now. I wish I found this site earlier. But this time, I didn\'t waste a single rupee.',
-      rating: 5,
-      product: 'Fitness Equipment'
+      rating: 5
     },
     {
-      name: 'Anjali Mehta',
       review: 'Bought a mixer grinder using my wellness budget and for once, I didn\'t feel guilty. The voucher I got felt like a bonus gift to myself!',
-      rating: 5,
-      product: 'Kitchen Appliances'
+      rating: 5
     },
     {
-      name: 'Rohan Das',
       review: 'This platform is a game-changer!',
-      rating: 5,
-      product: 'General'
+      rating: 5
     },
     {
-      name: 'Kavya Reddy',
       review: 'Honestly, I thought it was a scam at first. But I gave it a try — and wow, this isn\'t like those fake sites. Thank you so much!',
-      rating: 5,
-      product: 'Trust & Reliability'
+      rating: 5
     }
   ];
 
@@ -508,11 +492,6 @@ const Index = () => {
                         <p className="text-gray-700 italic leading-relaxed flex-grow">
                           "{testimonial.review}"
                         </p>
-                        
-                        <div className="border-t pt-4 mt-auto">
-                          <div className="font-bold text-gray-900">{testimonial.name}</div>
-                          <div className="text-sm text-gray-600">Purchased: {testimonial.product}</div>
-                        </div>
                       </CardContent>
                     </Card>
                   </CarouselItem>
