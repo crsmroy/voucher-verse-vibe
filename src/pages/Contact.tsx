@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Navigation from '@/components/Navigation';
 import { useToast } from '@/hooks/use-toast';
+import { Facebook, Instagram, Youtube } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -70,19 +71,19 @@ const Contact = () => {
 
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Information */}
-            <div className="space-y-8">
+            <div className="space-y-6">
               <Card className="hover:shadow-xl transition-all duration-500 hover:-translate-y-1 bg-white/80 backdrop-blur-lg">
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 gradient-primary rounded-full flex items-center justify-center text-white text-xl">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center text-white text-lg">
                       📧
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">Email Us</h3>
-                      <p className="text-gray-600">We'll respond within 24 hours</p>
+                      <h3 className="text-lg font-bold text-gray-900">Email Us</h3>
+                      <p className="text-sm text-gray-600">We'll respond within 24 hours</p>
                     </div>
                   </div>
-                  <div className="space-y-2 text-gray-700">
+                  <div className="space-y-1 text-gray-700 text-sm">
                     <p className="font-medium">support@freedomvouchers.com</p>
                     <p>orders@freedomvouchers.com</p>
                   </div>
@@ -90,56 +91,36 @@ const Contact = () => {
               </Card>
 
               <Card className="hover:shadow-xl transition-all duration-500 hover:-translate-y-1 bg-white/80 backdrop-blur-lg">
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 gradient-secondary rounded-full flex items-center justify-center text-white text-xl">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-10 h-10 gradient-secondary rounded-full flex items-center justify-center text-white text-lg">
                       📞
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">Call Us</h3>
-                      <p className="text-gray-600">Available 24/7 for urgent queries</p>
+                      <h3 className="text-lg font-bold text-gray-900">Call Us</h3>
+                      <p className="text-sm text-gray-600">Available 24/7 for urgent queries</p>
                     </div>
                   </div>
-                  <div className="space-y-2 text-gray-700">
+                  <div className="space-y-1 text-gray-700 text-sm">
                     <p className="font-medium">+91 99999 99999</p>
-                    <p className="text-sm text-gray-500">Mon-Sun: 9 AM - 9 PM</p>
+                    <p className="text-xs text-gray-500">Mon-Sun: 9 AM - 9 PM</p>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-xl transition-all duration-500 hover:-translate-y-1 bg-white/80 backdrop-blur-lg">
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 gradient-tertiary rounded-full flex items-center justify-center text-white text-xl">
-                      💬
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">Live Chat</h3>
-                      <p className="text-gray-600">Instant support when you need it</p>
-                    </div>
-                  </div>
-                  <Button className="btn-glow gradient-primary text-white border-0 hover:shadow-xl">
-                    Start Chat Now 🚀
-                  </Button>
                 </CardContent>
               </Card>
 
               {/* Social Media */}
               <Card className="hover:shadow-xl transition-all duration-500 hover:-translate-y-1 bg-white/80 backdrop-blur-lg">
-                <CardContent className="p-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-6">Follow Us</h3>
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-neon-pink rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                      <span className="text-white text-xl">📱</span>
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Follow Us</h3>
+                  <div className="flex gap-3">
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
+                      <Facebook className="text-white" size={18} />
                     </div>
-                    <div className="w-12 h-12 bg-electric-blue rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                      <span className="text-white text-xl">📘</span>
+                    <div className="w-10 h-10 bg-pink-500 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
+                      <Instagram className="text-white" size={18} />
                     </div>
-                    <div className="w-12 h-12 bg-warm-orange rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                      <span className="text-white text-xl">📸</span>
-                    </div>
-                    <div className="w-12 h-12 bg-teal rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                      <span className="text-white text-xl">🐦</span>
+                    <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
+                      <Youtube className="text-white" size={18} />
                     </div>
                   </div>
                 </CardContent>
@@ -148,17 +129,17 @@ const Contact = () => {
 
             {/* Contact Form */}
             <Card className="hover:shadow-xl transition-all duration-500 pulse-glow bg-white/90 backdrop-blur-lg">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                  <span className="text-3xl">📝</span>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-bold flex items-center gap-2">
+                  <span className="text-2xl">📝</span>
                   Any suggestion/feedback for us
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="text-base font-medium flex items-center gap-2">
+              <CardContent className="pt-0">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
                         👤 Your Name
                       </Label>
                       <Input
@@ -166,13 +147,13 @@ const Contact = () => {
                         placeholder="Enter your full name"
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="h-12 bg-white/70 border-2 focus:border-neon-pink transition-colors"
+                        className="h-10 bg-white/70 border-2 focus:border-neon-pink transition-colors"
                         required
                       />
                     </div>
                     
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-base font-medium flex items-center gap-2">
+                    <div className="space-y-1">
+                      <Label htmlFor="email" className="text-sm font-medium flex items-center gap-2">
                         📧 Email Address
                       </Label>
                       <Input
@@ -181,14 +162,14 @@ const Contact = () => {
                         placeholder="your@email.com"
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="h-12 bg-white/70 border-2 focus:border-electric-blue transition-colors"
+                        className="h-10 bg-white/70 border-2 focus:border-electric-blue transition-colors"
                         required
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-base font-medium flex items-center gap-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="phone" className="text-sm font-medium flex items-center gap-2">
                       📞 Phone Number
                     </Label>
                     <Input
@@ -196,18 +177,18 @@ const Contact = () => {
                       placeholder="+91 99999 99999"
                       value={formData.phone}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      className="h-12 bg-white/70 border-2 focus:border-teal transition-colors"
+                      className="h-10 bg-white/70 border-2 focus:border-teal transition-colors"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="message" className="text-base font-medium flex items-center gap-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="message" className="text-sm font-medium flex items-center gap-2">
                       💬 Message
                     </Label>
                     <Textarea
                       id="message"
                       placeholder="Tell us how we can help you..."
-                      rows={5}
+                      rows={4}
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
                       className="bg-white/70 border-2 focus:border-lime-green transition-colors resize-none"
@@ -217,7 +198,7 @@ const Contact = () => {
 
                   <Button 
                     type="submit"
-                    className="w-full btn-glow gradient-primary text-white h-12 text-lg font-semibold border-0"
+                    className="w-full btn-glow gradient-primary text-white h-10 text-base font-semibold border-0"
                   >
                     Send Message 🚀
                   </Button>
