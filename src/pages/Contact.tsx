@@ -12,7 +12,6 @@ const Contact = () => {
     name: '',
     email: '',
     phone: '',
-    subject: '',
     message: ''
   });
   const { toast } = useToast();
@@ -24,7 +23,7 @@ const Contact = () => {
       title: "Message Sent! 🎉",
       description: "We'll get back to you within 24 hours.",
     });
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    setFormData({ name: '', email: '', phone: '', message: '' });
   };
 
   return (
@@ -152,7 +151,7 @@ const Contact = () => {
               <CardHeader>
                 <CardTitle className="text-2xl font-bold flex items-center gap-2">
                   <span className="text-3xl">📝</span>
-                  Send us a Message
+                  Any suggestion/feedback for us
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -198,20 +197,6 @@ const Contact = () => {
                       value={formData.phone}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
                       className="h-12 bg-white/70 border-2 focus:border-teal transition-colors"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="subject" className="text-base font-medium flex items-center gap-2">
-                      🏷️ Subject
-                    </Label>
-                    <Input
-                      id="subject"
-                      placeholder="What is this about?"
-                      value={formData.subject}
-                      onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                      className="h-12 bg-white/70 border-2 focus:border-warm-orange transition-colors"
-                      required
                     />
                   </div>
 
