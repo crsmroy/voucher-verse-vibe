@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -84,13 +85,13 @@ const ProductForm = () => {
     const gstRate = selectedCategory ? selectedCategory.gst : 18;
     
     const premiumPrice = (basePrice * quantity) + voucherAmount; // ADD voucher amount
-    const commission = premiumPrice * 0.20; // 20% commission
+    const serviceFee = premiumPrice * 0.20; // 20% service fee
     const gstAmount = premiumPrice * (gstRate / 100);
-    const totalPrice = premiumPrice + commission + gstAmount;
+    const totalPrice = premiumPrice + serviceFee + gstAmount;
     
     return {
       premiumPrice,
-      commission,
+      serviceFee,
       gstAmount,
       totalPrice,
       savings: (basePrice * quantity) - totalPrice // This shows how much they save vs buying directly
@@ -313,8 +314,8 @@ const ProductForm = () => {
                         </div>
                         
                         <div className="flex justify-between text-orange-600">
-                          <span>Commission (20%)</span>
-                          <span>₹{pricing.commission.toFixed(2)}</span>
+                          <span>Service Fee (20%)</span>
+                          <span>₹{pricing.serviceFee.toFixed(2)}</span>
                         </div>
                         
                         <div className="flex justify-between text-sm text-gray-600">
@@ -327,6 +328,11 @@ const ProductForm = () => {
                             <span>Total to Pay</span>
                             <span className="text-electric-blue">₹{pricing.totalPrice.toFixed(2)}</span>
                           </div>
+                        </div>
+                        
+                        <div className="text-xs text-gray-500 leading-relaxed px-2 py-2 bg-gray-50 rounded-lg">
+                          A small service fee helps us keep things running and make this rewarding for both of us — now and in the long run.
+                          Thanks for your support! 🙏
                         </div>
                         
                         {pricing.savings > 0 && (
