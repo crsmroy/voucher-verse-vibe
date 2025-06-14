@@ -221,8 +221,7 @@ const Index = () => {
                   <span className="text-gray-900">Vouchers</span>
                 </h1>
                 <p className="text-xl text-gray-600 max-w-lg mx-auto lg:mx-0">
-                  Save money on every purchase with our premium voucher reselling service. 
-                  Get the products you love at unbeatable prices! 🎯
+                  Get freedom from limited company-listed products — and enjoy brand vouchers on every purchase for your personal use. 🎯
                 </p>
               </div>
               
