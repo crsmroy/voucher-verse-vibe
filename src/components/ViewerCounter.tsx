@@ -15,14 +15,14 @@ const ViewerCounter = () => {
     setViewCount(newCount);
     localStorage.setItem('viewerCount', newCount.toString());
 
-    // Increment viewer count every 3-5 seconds randomly for ongoing activity
+    // Increment viewer count every 1 minute for ongoing activity
     const interval = setInterval(() => {
       setViewCount(prev => {
-        const updatedCount = prev + Math.floor(Math.random() * 3) + 1;
+        const updatedCount = prev + 1;
         localStorage.setItem('viewerCount', updatedCount.toString());
         return updatedCount;
       });
-    }, Math.random() * 2000 + 3000); // Random interval between 3-5 seconds
+    }, 60000); // 60 seconds = 1 minute
 
     return () => clearInterval(interval);
   }, []);
