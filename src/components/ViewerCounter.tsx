@@ -3,12 +3,25 @@ import React, { useState, useEffect } from 'react';
 import { Eye } from 'lucide-react';
 
 const ViewerCounter = () => {
-  const [viewCount, setViewCount] = useState(7000);
+  const [viewCount, setViewCount] = useState(() => {
+    // Get initial count from localStorage or default to 7000
+    const savedCount = localStorage.getItem('viewerCount');
+    return savedCount ? parseInt(savedCount, 10) : 7000;
+  });
+
+  useEffect(() => {
+    // Save count to localStorage whenever it changes
+    localStorage.setItem('viewerCount', viewCount.toString());
+  }, [viewCount]);
 
   useEffect(() => {
     // Increment viewer count every 4 minutes
     const interval = setInterval(() => {
-      setViewCount(prev => prev + 1);
+      setViewCount(prev => {
+        const newCount = prev + 1;
+        localStorage.setItem('viewerCount', newCount.toString());
+        return newCount;
+      });
     }, 240000); // 4 minutes = 240,000 milliseconds
 
     return () => clearInterval(interval);
