@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -74,8 +73,9 @@ const ProductForm = () => {
       
       {/* Animated Background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 right-10 w-32 h-32 gradient-tertiary rounded-full opacity-10 float"></div>
-        <div className="absolute bottom-20 left-10 w-24 h-24 gradient-primary rounded-lg rotate-45 opacity-15 float"></div>
+        <div className="absolute top-20 left-10 w-32 h-32 gradient-primary rounded-full opacity-10 float"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 gradient-secondary rounded-lg rotate-45 opacity-15 float" style={{animationDelay: '1s'}}></div>
+        <div className="absolute bottom-20 left-1/4 w-40 h-40 gradient-tertiary rounded-full opacity-8 float" style={{animationDelay: '2s'}}></div>
       </div>
 
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
