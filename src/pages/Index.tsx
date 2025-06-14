@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -125,6 +124,44 @@ const Index = () => {
       
       embla.on('pointerDown', stopAutoplay);
       embla.on('pointerUp', startAutoplay);
+      
+      startAutoplay();
+      
+      return () => {
+        stopAutoplay();
+      };
+    },
+    destroy: () => {}
+  });
+
+  // Enhanced autoplay for testimonials with smoother transitions
+  const testimonialsAutoplayPlugin = () => ({
+    name: 'testimonials-autoplay',
+    options: { active: true },
+    init: (embla: any) => {
+      let intervalId: NodeJS.Timeout;
+      
+      const play = () => {
+        if (embla.canScrollNext()) {
+          embla.scrollNext();
+        } else {
+          embla.scrollTo(0);
+        }
+      };
+      
+      const startAutoplay = () => {
+        intervalId = setInterval(play, 4000); // Slightly slower for testimonials
+      };
+      
+      const stopAutoplay = () => {
+        if (intervalId) clearInterval(intervalId);
+      };
+      
+      // Pause on hover/interaction
+      embla.on('pointerDown', stopAutoplay);
+      embla.on('pointerUp', startAutoplay);
+      embla.on('mouseEnter', stopAutoplay);
+      embla.on('mouseLeave', startAutoplay);
       
       startAutoplay();
       
@@ -263,6 +300,8 @@ const Index = () => {
               opts={{
                 align: "start",
                 loop: true,
+                dragFree: false,
+                containScroll: "trimSnaps",
               }}
               plugins={[autoplayPlugin()]}
               className="w-full"
@@ -349,7 +388,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Customer Testimonials Section with Carousel */}
+      {/* Customer Testimonials Section with Enhanced Carousel */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -366,8 +405,12 @@ const Index = () => {
               opts={{
                 align: "start",
                 loop: true,
+                dragFree: false,
+                containScroll: "trimSnaps",
+                slidesToScroll: 1,
+                duration: 25, // Smooth transition duration
               }}
-              plugins={[autoplayPlugin()]}
+              plugins={[testimonialsAutoplayPlugin()]}
               className="w-full"
             >
               <CarouselContent className="-ml-2 md:-ml-4">
