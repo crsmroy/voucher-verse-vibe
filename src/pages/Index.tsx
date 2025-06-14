@@ -249,12 +249,8 @@ const Index = () => {
               {/* Stats */}
               <div className="flex gap-8 pt-8 justify-center lg:justify-start">
                 <div className="text-center">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent" style={{ WebkitTextStroke: '0.1px black' }}>500+</div>
+                  <div className="text-3xl font-bold bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent" style={{ WebkitTextStroke: '0.1px black' }}>100+</div>
                   <div className="text-gray-600">Happy Customers</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-electric-blue to-teal bg-clip-text text-transparent" style={{ WebkitTextStroke: '0.1px black' }}>₹50L+</div>
-                  <div className="text-gray-600">Amount Reimbursed</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold bg-gradient-to-r from-warm-orange to-lime-green bg-clip-text text-transparent" style={{ WebkitTextStroke: '0.1px black' }}>24/7</div>
