@@ -249,15 +249,15 @@ const Index = () => {
               {/* Stats */}
               <div className="flex gap-8 pt-8 justify-center lg:justify-start">
                 <div className="text-center">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent" style={{textShadow: '0 0 1px rgba(0,0,0,0.3), 1px 1px 0 rgba(0,0,0,0.2)'}}>500+</div>
+                  <div className="text-3xl font-bold bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent border border-gray-300/50 rounded-lg px-3 py-1 inline-block">500+</div>
                   <div className="text-gray-600">Happy Customers</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-electric-blue to-teal bg-clip-text text-transparent" style={{textShadow: '0 0 1px rgba(0,0,0,0.3), 1px 1px 0 rgba(0,0,0,0.2)'}}>₹50L+</div>
+                  <div className="text-3xl font-bold bg-gradient-to-r from-electric-blue to-teal bg-clip-text text-transparent border border-gray-300/50 rounded-lg px-3 py-1 inline-block">₹50L+</div>
                   <div className="text-gray-600">Amount Reimbursed</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-warm-orange to-lime-green bg-clip-text text-transparent" style={{textShadow: '0 0 1px rgba(0,0,0,0.3), 1px 1px 0 rgba(0,0,0,0.2)'}}>24/7</div>
+                  <div className="text-3xl font-bold bg-gradient-to-r from-warm-orange to-lime-green bg-clip-text text-transparent border border-gray-300/50 rounded-lg px-3 py-1 inline-block">24/7</div>
                   <div className="text-gray-600">Support Channel Available</div>
                 </div>
               </div>
