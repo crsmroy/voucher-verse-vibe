@@ -388,6 +388,89 @@ const Index = () => {
         </div>
       </section>
 
+      {/* What We Do Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50/30 to-purple-50/30 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              What We <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Do</span> and How We <span className="bg-gradient-to-r from-warm-orange to-lime-green bg-clip-text text-transparent">Serve</span> You?
+            </h2>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+                Stop Wasting Your Wellbeing Budget on Things You'll Never Use.
+              </h3>
+            </div>
+
+            <div className="space-y-8 text-lg text-gray-700 leading-relaxed">
+              <div className="grid md:grid-cols-3 gap-8 mb-12">
+                <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6 text-center">
+                    <div className="text-4xl mb-4">🎸</div>
+                    <p className="text-gray-700">
+                      Did you ever learn to play that guitar/ukelele you bought with your last wellbeing reimbursement?
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6 text-center">
+                    <div className="text-4xl mb-4">🏃‍♂️</div>
+                    <p className="text-gray-700">
+                      Or you are now thinking about selling that treadmill now collecting dust in the corner of your storeroom?
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6 text-center">
+                    <div className="text-4xl mb-4">⏰</div>
+                    <p className="text-gray-700">
+                      Or maybe you're that last-minute buyer — rushing to use your wellness budget before it expires, ending up with something you'll never use?
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="text-center space-y-6">
+                <p className="text-xl text-gray-800 font-semibold">
+                  We get it. Your company gives you a reimbursement amount, but the product list is boring, limited, or just not what you need. So you either waste it… or force yourself to buy something — anything.
+                </p>
+
+                <div className="bg-white rounded-2xl p-8 shadow-lg border-l-4 border-neon-pink">
+                  <h4 className="text-2xl font-bold bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent mb-4">
+                    FreedomVouchers is here to fix that.
+                  </h4>
+                  <p className="text-xl text-gray-700 mb-6">
+                    Buy what you actually want — from Flipkart, Amazon, or any platform and get brand vouchers for your own personal use - be it your makeup, clothes or anything.
+                  </p>
+                </div>
+
+                <div className="space-y-4 text-xl font-semibold text-gray-800">
+                  <p>No more buying showpieces. No more wasting money. Just freedom, choice, and extra value.</p>
+                  <p className="bg-gradient-to-r from-warm-orange to-lime-green bg-clip-text text-transparent">
+                    Don't just buy something to spend your budget. Buy what matters. Spend smart. Get rewarded.
+                  </p>
+                </div>
+
+                <div className="pt-8">
+                  <Link to="/product">
+                    <Button 
+                      size="lg" 
+                      className="btn-glow gradient-primary text-white border-0 px-8 py-4 text-lg font-semibold"
+                    >
+                      Start Shopping Smart 🎯
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Customer Testimonials Section with Enhanced Carousel */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
