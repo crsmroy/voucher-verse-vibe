@@ -1,7 +1,9 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Instagram, Facebook, Youtube, X, MessageCircle } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 
 const Index = () => {
@@ -431,15 +433,36 @@ const Index = () => {
                 Your trusted partner for smart shopping and amazing savings.
               </p>
               <div className="flex space-x-4">
-                <div className="w-10 h-10 bg-neon-pink rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                  <span>📧</span>
-                </div>
-                <div className="w-10 h-10 bg-electric-blue rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                  <span>📱</span>
-                </div>
-                <div className="w-10 h-10 bg-warm-orange rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300">
-                  <span>💬</span>
-                </div>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-neon-pink rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
+                >
+                  <Instagram size={20} className="text-white" />
+                </a>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
+                >
+                  <Facebook size={20} className="text-white" />
+                </a>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
+                >
+                  <Youtube size={20} className="text-white" />
+                </a>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-black rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
+                >
+                  <X size={20} className="text-white" />
+                </a>
+                <a 
+                  href="#" 
+                  className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
+                >
+                  <MessageCircle size={20} className="text-white" />
+                </a>
               </div>
             </div>
             
