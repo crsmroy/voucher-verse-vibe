@@ -14,7 +14,8 @@ const ProductForm = () => {
     price: '',
     quantity: 1,
     category: '',
-    voucher: ''
+    voucherAmount: '',
+    voucherPlatform: ''
   });
 
   const categories = [
@@ -25,31 +26,43 @@ const ProductForm = () => {
     { value: 'sports', label: 'Sports & Fitness', gst: 18, color: 'from-teal to-lime-green' }
   ];
 
-  const vouchers = [
-    { value: 'amazon-10', label: 'Amazon 10% Off', discount: 10, color: 'bg-orange-500' },
-    { value: 'flipkart-15', label: 'Flipkart 15% Off', discount: 15, color: 'bg-blue-500' },
-    { value: 'myntra-20', label: 'Myntra 20% Off', discount: 20, color: 'bg-pink-500' },
-    { value: 'nykaa-12', label: 'Nykaa 12% Off', discount: 12, color: 'bg-purple-500' }
+  const platforms = [
+    { value: 'amazon', label: 'Amazon', color: 'bg-orange-500' },
+    { value: 'flipkart', label: 'Flipkart', color: 'bg-blue-500' },
+    { value: 'myntra', label: 'Myntra', color: 'bg-pink-500' },
+    { value: 'nykaa', label: 'Nykaa', color: 'bg-purple-500' },
+    { value: 'meesho', label: 'Meesho', color: 'bg-red-500' },
+    { value: 'ajio', label: 'Ajio', color: 'bg-yellow-500' }
   ];
+
+  const getVoucherAmounts = () => {
+    const price = parseFloat(formData.price) || 0;
+    const amounts = [];
+    for (let i = 250; i <= price; i += 250) {
+      amounts.push(i);
+    }
+    return amounts;
+  };
 
   const calculatePricing = () => {
     const basePrice = parseFloat(formData.price) || 0;
+    const quantity = formData.quantity;
+    const voucherAmount = parseFloat(formData.voucherAmount) || 0;
     const selectedCategory = categories.find(cat => cat.value === formData.category);
-    const selectedVoucher = vouchers.find(v => v.value === formData.voucher);
     
     const gstRate = selectedCategory ? selectedCategory.gst : 18;
-    const discount = selectedVoucher ? selectedVoucher.discount : 0;
     
-    const discountedPrice = basePrice * (1 - discount / 100);
-    const gstAmount = discountedPrice * (gstRate / 100);
-    const totalPrice = discountedPrice + gstAmount;
+    const premiumPrice = (basePrice * quantity) - voucherAmount;
+    const commission = premiumPrice * 0.20; // 20% commission
+    const gstAmount = premiumPrice * (gstRate / 100);
+    const totalPrice = premiumPrice + commission + gstAmount;
     
     return {
-      originalPrice: basePrice,
-      discountedPrice,
+      premiumPrice,
+      commission,
       gstAmount,
       totalPrice,
-      savings: basePrice - totalPrice
+      savings: (basePrice * quantity) - totalPrice
     };
   };
 
@@ -67,6 +80,15 @@ const ProductForm = () => {
 
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
+          {/* Back Button */}
+          <div className="mb-6">
+            <Link to="/">
+              <Button variant="outline" className="flex items-center gap-2">
+                ← Back to Home
+              </Button>
+            </Link>
+          </div>
+
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -107,7 +129,7 @@ const ProductForm = () => {
                         placeholder="Enter price"
                         value={formData.price}
                         onChange={(e) => setFormData({...formData, price: e.target.value})}
-                        className="mt-2 h-12 text-base"
+                        className="mt-2 h-12 text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </div>
                     
@@ -144,7 +166,7 @@ const ProductForm = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <span className="text-2xl">🏷️</span>
-                    Category & GST
+                    Choose Category of Product
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -184,29 +206,45 @@ const ProductForm = () => {
                     Choose Your Voucher
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    {vouchers.map((voucher) => (
-                      <div
-                        key={voucher.value}
-                        className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-                          formData.voucher === voucher.value
-                            ? 'border-electric-blue bg-electric-blue/10 transform scale-105'
-                            : 'border-gray-200 hover:border-electric-blue/50 hover:bg-gray-50'
-                        }`}
-                        onClick={() => setFormData({...formData, voucher: voucher.value})}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium">{voucher.label}</div>
-                            <div className="text-sm text-gray-600">Save {voucher.discount}%</div>
-                          </div>
-                          <div className={`w-8 h-8 ${voucher.color} rounded-full flex items-center justify-center text-white font-bold`}>
-                            {voucher.discount}
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-base font-medium">Voucher Amount (₹)</Label>
+                    <Select value={formData.voucherAmount} onValueChange={(value) => setFormData({...formData, voucherAmount: value})}>
+                      <SelectTrigger className="mt-2 h-12">
+                        <SelectValue placeholder="Select voucher amount" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getVoucherAmounts().map((amount) => (
+                          <SelectItem key={amount} value={amount.toString()}>₹{amount}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label className="text-base font-medium">Platform</Label>
+                    <div className="grid sm:grid-cols-2 gap-3 mt-2">
+                      {platforms.map((platform) => (
+                        <div
+                          key={platform.value}
+                          className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                            formData.voucherPlatform === platform.value
+                              ? 'border-electric-blue bg-electric-blue/10 transform scale-105'
+                              : 'border-gray-200 hover:border-electric-blue/50 hover:bg-gray-50'
+                          }`}
+                          onClick={() => setFormData({...formData, voucherPlatform: platform.value})}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="font-medium">{platform.label}</div>
+                            </div>
+                            <div className={`w-8 h-8 ${platform.color} rounded-full flex items-center justify-center text-white font-bold`}>
+                              ✓
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -226,16 +264,14 @@ const ProductForm = () => {
                     <>
                       <div className="space-y-3">
                         <div className="flex justify-between">
-                          <span>Original Price</span>
-                          <span className="line-through text-gray-500">₹{pricing.originalPrice.toFixed(2)}</span>
+                          <span>Premium Price</span>
+                          <span>₹{pricing.premiumPrice.toFixed(2)}</span>
                         </div>
                         
-                        {formData.voucher && (
-                          <div className="flex justify-between text-green-600">
-                            <span>After Voucher</span>
-                            <span>₹{pricing.discountedPrice.toFixed(2)}</span>
-                          </div>
-                        )}
+                        <div className="flex justify-between text-orange-600">
+                          <span>Commission (20%)</span>
+                          <span>₹{pricing.commission.toFixed(2)}</span>
+                        </div>
                         
                         <div className="flex justify-between text-sm text-gray-600">
                           <span>GST ({categories.find(c => c.value === formData.category)?.gst || 18}%)</span>
@@ -261,7 +297,7 @@ const ProductForm = () => {
                       <Link to="/shipping" className="block">
                         <Button 
                           className="w-full btn-glow gradient-primary text-white h-12 text-lg font-semibold"
-                          disabled={!formData.productLink || !formData.price || !formData.category || !formData.voucher}
+                          disabled={!formData.productLink || !formData.price || !formData.category || !formData.voucherAmount || !formData.voucherPlatform}
                         >
                           Continue to Shipping →
                         </Button>

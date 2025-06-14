@@ -29,6 +29,34 @@ const Index = () => {
     }
   ];
 
+  const popularProducts = [
+    { name: 'Electronics', icon: '📱', percentage: '35%', color: 'from-electric-blue to-teal' },
+    { name: 'Fashion & Clothing', icon: '👕', percentage: '28%', color: 'from-neon-pink to-warm-orange' },
+    { name: 'Home & Kitchen', icon: '🏠', percentage: '22%', color: 'from-lime-green to-electric-blue' },
+    { name: 'Books & Media', icon: '📚', percentage: '15%', color: 'from-warm-orange to-neon-pink' }
+  ];
+
+  const testimonials = [
+    {
+      name: 'Rahul Kumar',
+      review: 'Saved ₹2000 on my laptop purchase! Amazing service and super fast delivery.',
+      rating: 5,
+      product: 'Laptop'
+    },
+    {
+      name: 'Priya Sharma',
+      review: 'Love how easy it is to use. Got my favorite dress at 20% off!',
+      rating: 5,
+      product: 'Fashion'
+    },
+    {
+      name: 'Amit Patel',
+      review: 'Trustworthy service. They delivered exactly what they promised.',
+      rating: 5,
+      product: 'Electronics'
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       <Navigation />
@@ -99,29 +127,14 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Right Visual */}
+            {/* Right Image Container */}
             <div className="relative">
               <div className="relative z-10 bg-white rounded-3xl shadow-2xl p-8 pulse-glow">
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-2xl font-bold text-gray-900">Your Savings</h3>
-                    <span className="text-3xl">💎</span>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center p-4 bg-gradient-to-r from-neon-pink/10 to-electric-blue/10 rounded-xl">
-                      <span className="font-medium">Original Price</span>
-                      <span className="text-xl font-bold text-gray-600 line-through">₹5,000</span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center p-4 bg-gradient-to-r from-lime-green/10 to-teal/10 rounded-xl">
-                      <span className="font-medium">With FreedomVouchers</span>
-                      <span className="text-2xl font-bold text-green-600">₹3,500</span>
-                    </div>
-                    
-                    <div className="text-center p-4 gradient-secondary rounded-xl">
-                      <span className="text-white text-xl font-bold">You Save ₹1,500! 🎉</span>
-                    </div>
+                <div className="w-full h-64 md:h-80 lg:h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
+                  <div className="text-center text-gray-500">
+                    <div className="text-6xl mb-4">🖼️</div>
+                    <p className="text-lg font-medium">Your Image Here</p>
+                    <p className="text-sm">Responsive Container</p>
                   </div>
                 </div>
               </div>
@@ -134,8 +147,44 @@ const Index = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
+      {/* Popular Products Section */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              Most <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Popular</span> Products
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              See what our customers love to buy the most and get inspired for your next purchase
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {popularProducts.map((product, index) => (
+              <Card key={index} className="hover:shadow-xl transition-all duration-500 group hover:-translate-y-2">
+                <CardContent className="p-6 text-center space-y-4">
+                  <div className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-r ${product.color} flex items-center justify-center text-white text-2xl group-hover:scale-110 transition-transform duration-300`}>
+                    {product.icon}
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-neon-pink transition-colors duration-300">
+                    {product.name}
+                  </h3>
+                  
+                  <div className="text-2xl font-bold bg-gradient-to-r from-electric-blue to-teal bg-clip-text text-transparent">
+                    {product.percentage}
+                  </div>
+                  
+                  <p className="text-gray-600 text-sm">of total orders</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -182,6 +231,43 @@ const Index = () => {
                 Start Your First Order 🚀
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Customer Testimonials Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              What Our <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Customers</span> Say
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Real reviews from real customers who saved money with FreedomVouchers
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="hover:shadow-xl transition-all duration-500 hover:-translate-y-2 bg-white/80">
+                <CardContent className="p-6 space-y-4">
+                  <div className="flex gap-1 mb-2">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <span key={i} className="text-yellow-400 text-xl">⭐</span>
+                    ))}
+                  </div>
+                  
+                  <p className="text-gray-700 italic leading-relaxed">
+                    "{testimonial.review}"
+                  </p>
+                  
+                  <div className="border-t pt-4">
+                    <div className="font-bold text-gray-900">{testimonial.name}</div>
+                    <div className="text-sm text-gray-600">Purchased: {testimonial.product}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
