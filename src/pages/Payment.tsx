@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,10 +11,28 @@ import { ArrowLeft } from 'lucide-react';
 
 const Payment = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [transactionId, setTransactionId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [finalAmount, setFinalAmount] = useState(0);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Get product details from localStorage or location state
+    const productData = location.state?.productData || JSON.parse(localStorage.getItem('productData') || '{}');
+    
+    if (productData.price) {
+      // Calculate final amount (you can add service fees, taxes, etc. here)
+      const basePrice = parseFloat(productData.price) || 0;
+      const serviceFee = basePrice * 0.05; // 5% service fee example
+      const total = basePrice + serviceFee;
+      setFinalAmount(total);
+    } else {
+      // Fallback amount if no product data is available
+      setFinalAmount(3500);
+    }
+  }, [location.state]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -123,7 +141,7 @@ const Payment = () => {
                   <h3 className="text-xl font-bold text-gray-900">UPI Payment</h3>
                   <p className="text-gray-600">Scan this QR code with any UPI app</p>
                   <div className="bg-gradient-to-r from-lime-green/20 to-teal/20 p-4 rounded-lg">
-                    <p className="font-bold text-2xl text-green-600">₹3,500</p>
+                    <p className="font-bold text-2xl text-green-600">₹{finalAmount.toLocaleString('en-IN')}</p>
                     <p className="text-sm text-gray-600">Amount to Pay</p>
                   </div>
                 </div>
