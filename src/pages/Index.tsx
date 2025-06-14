@@ -386,7 +386,7 @@ const Index = () => {
 
       {/* What We Do Section */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-3xl shadow-lg p-8 md:p-12 lg:p-16">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -447,12 +447,12 @@ const Index = () => {
 
                   <div className="space-y-4 text-xl font-semibold text-gray-800">
                     <p>No more buying showpieces. No more wasting money. Just freedom, choice, and extra value.</p>
-                    <p className="bg-gradient-to-r from-warm-orange to-lime-green bg-clip-text text-transparent">
-                      Don't just buy something to spend your budget. Buy what matters. Spend smart. Get rewarded.
-                    </p>
                   </div>
 
-                  <div className="pt-8">
+                  <div className="pt-4">
+                    <p className="text-xl font-semibold bg-gradient-to-r from-warm-orange to-lime-green bg-clip-text text-transparent mb-6">
+                      Don't just buy something to spend your budget. Buy what matters. Spend smart. Get rewarded.
+                    </p>
                     <Link to="/product">
                       <Button 
                         size="lg" 
