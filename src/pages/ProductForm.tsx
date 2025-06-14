@@ -138,7 +138,9 @@ const ProductForm = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Shop <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Smart</span>
             </h1>
-            <p className="text-xl text-gray-600">Just 3 steps and a couple of minutes away from finally making your wellness budget work for you</p>
+            <p className="text-xl bg-gradient-to-r from-neon-pink via-electric-blue to-warm-orange bg-clip-text text-transparent font-semibold pulse-glow">
+              Just 3 steps and a couple of minutes away from finally making your wellness budget work for you
+            </p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
