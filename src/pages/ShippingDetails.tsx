@@ -1,16 +1,20 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navigation from '@/components/Navigation';
+import { ArrowLeft } from 'lucide-react';
 
 const ShippingDetails = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
+    alternatePhone: '',
+    whatsappNumber: '',
     email: '',
     address: '',
     city: '',
@@ -22,6 +26,19 @@ const ShippingDetails = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
       <Navigation />
+      
+      {/* Back Button */}
+      <div className="fixed top-20 left-4 z-50">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 bg-white/90 backdrop-blur-sm hover:bg-white"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </Button>
+      </div>
       
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -89,9 +106,37 @@ const ShippingDetails = () => {
                 </div>
               </div>
 
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="alternatePhone" className="text-base font-medium flex items-center gap-2">
+                    📱 Alternate Phone Number
+                  </Label>
+                  <Input
+                    id="alternatePhone"
+                    placeholder="+91 88888 88888"
+                    value={formData.alternatePhone}
+                    onChange={(e) => setFormData({...formData, alternatePhone: e.target.value})}
+                    className="h-12 text-base"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="whatsappNumber" className="text-base font-medium flex items-center gap-2">
+                    💬 WhatsApp Number <span className="text-sm text-gray-500">(Optional - for billing details)</span>
+                  </Label>
+                  <Input
+                    id="whatsappNumber"
+                    placeholder="+91 77777 77777"
+                    value={formData.whatsappNumber}
+                    onChange={(e) => setFormData({...formData, whatsappNumber: e.target.value})}
+                    className="h-12 text-base"
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-base font-medium flex items-center gap-2">
-                  📧 Email Address
+                  📧 Email Address <span className="text-sm text-gray-500">(Optional)</span>
                 </Label>
                 <Input
                   id="email"
