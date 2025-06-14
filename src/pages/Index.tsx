@@ -26,6 +26,13 @@ const Index = () => {
       description: 'Receive your product while saving money with our voucher system',
       icon: '💰',
       color: 'from-lime-green to-electric-blue'
+    },
+    {
+      number: '04',
+      title: 'Choose Your Voucher',
+      description: 'Select from vouchers of almost every ecommerce giant like Amazon, Flipkart, Myntra for your personal use',
+      icon: '🎫',
+      color: 'from-warm-orange to-neon-pink'
     }
   ];
 
@@ -275,11 +282,11 @@ const Index = () => {
               How It <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Works</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Three simple steps to start saving money on all your favorite products
+              Four simple steps to start saving money on all your favorite products
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => (
               <Card key={index} className="relative overflow-hidden hover:shadow-xl transition-all duration-500 group hover:-translate-y-2">
                 <CardContent className="p-8 text-center space-y-4">
