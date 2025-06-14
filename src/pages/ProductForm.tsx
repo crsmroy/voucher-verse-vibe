@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -139,7 +138,7 @@ const ProductForm = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Shop <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Smart</span>
             </h1>
-            <p className="text-xl text-gray-600">Tell us what you want to buy and we'll get it for you at the best price!</p>
+            <p className="text-xl text-gray-600">Just 3 steps and a couple of minutes away from finally making your wellness budget work for you</p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
