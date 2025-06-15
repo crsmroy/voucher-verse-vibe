@@ -58,7 +58,7 @@ const AdminPanel = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Added missing state for page functionality
+  // Date filters
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
 
@@ -68,15 +68,6 @@ const AdminPanel = () => {
   // Sorting state
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-
-  // Stats
-  const [totalOrders, setTotalOrders] = useState(0);
-  const [pendingCount, setPendingCount] = useState(0);
-  const [verifiedCount, setVerifiedCount] = useState(0);
-  const [completedCount, setCompletedCount] = useState(0);
-  const [cancelledCount, setCancelledCount] = useState(0);
-  const [revenue, setRevenue] = useState(0);
-  const [serviceFeeTotal, setServiceFeeTotal] = useState(0);
 
   // Orders
   const [orders, setOrders] = useState<any[]>([]);
@@ -283,10 +274,8 @@ const AdminPanel = () => {
   const sortOrders = (orders: any[]) => {
     if (!sortField) return orders;
     return [...orders].sort((a, b) => {
-      // Use JS string compare for all fields (including numbers as string)
       let valA = a[sortField];
       let valB = b[sortField];
-
       // Try numeric sort if values look like numbers
       const numA = parseFloat(valA);
       const numB = parseFloat(valB);
@@ -295,7 +284,6 @@ const AdminPanel = () => {
         if (numA > numB) return sortDirection === "asc" ? 1 : -1;
         return 0;
       }
-
       // Fallback to string sort (case insensitive)
       valA = valA ? valA.toString().toLowerCase() : "";
       valB = valB ? valB.toString().toLowerCase() : "";
@@ -321,7 +309,7 @@ const AdminPanel = () => {
     return true;
   });
 
-  // Summary/statistics calculations should now use filteredRawOrders
+  // Calculated stats (NOT useState, just constants)
   const totalOrders = filteredRawOrders.length;
   const pendingCount = filteredRawOrders.filter((o) => o.status === "pending").length;
   const verifiedCount = filteredRawOrders.filter((o) => o.status === "verified").length;
