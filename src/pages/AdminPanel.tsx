@@ -183,7 +183,6 @@ const AdminPanel = () => {
     const matchesSearch = searchTerm === '' || 
       order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.emailAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.transactionId.toLowerCase().includes(searchTerm.toLowerCase());
       
@@ -521,7 +520,6 @@ const AdminPanel = () => {
                     <TableRow>
                       <TableHead>Order Id</TableHead>
                       <TableHead>Product Link</TableHead>
-                      <TableHead>Product</TableHead>
                       <TableHead>Price</TableHead>
                       <TableHead>Quantity</TableHead>
                       <TableHead>Category</TableHead>
@@ -557,7 +555,6 @@ const AdminPanel = () => {
                             View Link
                           </a>
                         </TableCell>
-                        <TableCell className="max-w-32 truncate">{order.product}</TableCell>
                         <TableCell>
                           {order.price.replace(/^₹\s?/, "")}
                         </TableCell>
