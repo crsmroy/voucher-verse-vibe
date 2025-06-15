@@ -203,6 +203,16 @@ const AdminPanel = () => {
     }
   };
 
+  // List of fields that should be sorted as numbers
+  const numericFields = [
+    "price",
+    "quantity",
+    "voucherAmount",
+    "premiumPrice",
+    "serviceFee",
+    "totalToPay"
+  ];
+
   // Sorting logic for table headers
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -283,18 +293,23 @@ const AdminPanel = () => {
   // Apply status and search filters to the raw orders before mapping for display
   const sortOrders = (orders: any[]) => {
     if (!sortField) return orders;
+    const isNumericField = numericFields.includes(sortField);
     return [...orders].sort((a, b) => {
       let valA = a[sortField];
       let valB = b[sortField];
-      // Try numeric sort if values look like numbers
-      const numA = parseFloat(valA);
-      const numB = parseFloat(valB);
-      if (!isNaN(numA) && !isNaN(numB)) {
-        if (numA < numB) return sortDirection === "asc" ? -1 : 1;
-        if (numA > numB) return sortDirection === "asc" ? 1 : -1;
-        return 0;
+
+      // For numeric fields, sort as numbers
+      if (isNumericField) {
+        const numA = parseFloat(valA);
+        const numB = parseFloat(valB);
+        if (!isNaN(numA) && !isNaN(numB)) {
+          if (numA < numB) return sortDirection === "asc" ? -1 : 1;
+          if (numA > numB) return sortDirection === "asc" ? 1 : -1;
+          return 0;
+        }
       }
-      // Fallback to string sort (case insensitive)
+
+      // For non-numeric and alphanumeric fields (like orderId), sort as string
       valA = valA ? valA.toString().toLowerCase() : "";
       valB = valB ? valB.toString().toLowerCase() : "";
       if (valA < valB) return sortDirection === "asc" ? -1 : 1;
