@@ -65,6 +65,10 @@ const AdminPanel = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
+  // Sorting state
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
   // Stats
   const [totalOrders, setTotalOrders] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
@@ -276,6 +280,32 @@ const AdminPanel = () => {
 
   // --- Enhanced Filtering Logic for Orders ---
   // Apply status and search filters to the raw orders before mapping for display
+  const sortOrders = (orders: any[]) => {
+    if (!sortField) return orders;
+    return [...orders].sort((a, b) => {
+      // Use JS string compare for all fields (including numbers as string)
+      let valA = a[sortField];
+      let valB = b[sortField];
+
+      // Try numeric sort if values look like numbers
+      const numA = parseFloat(valA);
+      const numB = parseFloat(valB);
+      if (!isNaN(numA) && !isNaN(numB)) {
+        if (numA < numB) return sortDirection === "asc" ? -1 : 1;
+        if (numA > numB) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      }
+
+      // Fallback to string sort (case insensitive)
+      valA = valA ? valA.toString().toLowerCase() : "";
+      valB = valB ? valB.toString().toLowerCase() : "";
+      if (valA < valB) return sortDirection === "asc" ? -1 : 1;
+      if (valA > valB) return sortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  };
+
+  // Filtered and sorted orders mapping
   const filteredRawOrders = orders.filter((order: any) => {
     // Status filter (if not "all")
     if (statusFilter !== "all" && order.status !== statusFilter) return false;
@@ -291,8 +321,16 @@ const AdminPanel = () => {
     return true;
   });
 
-  // For displaying in the table, map new DB field names to UI field names
-  const filteredOrders = filteredRawOrders.map((order: any) => ({
+  // Summary/statistics calculations should now use filteredRawOrders
+  const totalOrders = filteredRawOrders.length;
+  const pendingCount = filteredRawOrders.filter((o) => o.status === "pending").length;
+  const verifiedCount = filteredRawOrders.filter((o) => o.status === "verified").length;
+  const completedCount = filteredRawOrders.filter((o) => o.status === "completed").length;
+  const cancelledCount = filteredRawOrders.filter((o) => o.status === "cancelled").length;
+  const revenue = filteredRawOrders.reduce((acc, o) => acc + (o.total_to_pay || 0), 0);
+  const serviceFeeTotal = filteredRawOrders.reduce((acc, o) => acc + (o.service_fee || 0), 0);
+
+  const filteredOrders = sortOrders(filteredRawOrders).map((order: any) => ({
     orderId: order.order_id,
     productLink: order.product_link,
     product: order.product,
@@ -560,31 +598,56 @@ const AdminPanel = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Order Id</TableHead>
-                      <TableHead>Product Link</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Voucher Amount</TableHead>
-                      <TableHead>Platform</TableHead>
-                      <TableHead>Premium Price</TableHead>
-                      <TableHead>Service Fee</TableHead>
-                      <TableHead>GST</TableHead>
-                      <TableHead>Total To Pay</TableHead>
-                      <TableHead>Full Name</TableHead>
-                      <TableHead>Phone Number</TableHead>
-                      <TableHead>Alternate Phone Number</TableHead>
-                      <TableHead>Whatsapp Number</TableHead>
-                      <TableHead>Email Address</TableHead>
-                      <TableHead>Full Address</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>State</TableHead>
-                      <TableHead>Pincode</TableHead>
-                      <TableHead>Landmark</TableHead>
-                      <TableHead>Payment Proof Link</TableHead>
-                      <TableHead>Transaction Id</TableHead>
-                      <TableHead>DateTime</TableHead>
-                      <TableHead>Status</TableHead>
+                      {[
+                        { key: "orderId", label: "Order Id" },
+                        { key: "productLink", label: "Product Link" },
+                        { key: "price", label: "Price" },
+                        { key: "quantity", label: "Quantity" },
+                        { key: "category", label: "Category" },
+                        { key: "voucherAmount", label: "Voucher Amount" },
+                        { key: "platform", label: "Platform" },
+                        { key: "premiumPrice", label: "Premium Price" },
+                        { key: "serviceFee", label: "Service Fee" },
+                        { key: "gst", label: "GST" },
+                        { key: "totalToPay", label: "Total To Pay" },
+                        { key: "fullName", label: "Full Name" },
+                        { key: "phoneNumber", label: "Phone Number" },
+                        { key: "alternatePhoneNumber", label: "Alternate Phone Number" },
+                        { key: "whatsappNumber", label: "Whatsapp Number" },
+                        { key: "emailAddress", label: "Email Address" },
+                        { key: "fullAddress", label: "Full Address" },
+                        { key: "city", label: "City" },
+                        { key: "state", label: "State" },
+                        { key: "pincode", label: "Pincode" },
+                        { key: "landmark", label: "Landmark" },
+                        { key: "paymentProofLink", label: "Payment Proof Link" },
+                        { key: "transactionId", label: "Transaction Id" },
+                        { key: "dateTime", label: "DateTime" },
+                        { key: "status", label: "Status" },
+                      ].map((col) => (
+                        <TableHead
+                          key={col.key}
+                          className="cursor-pointer select-none"
+                          onClick={() => handleSort(col.key)}
+                        >
+                          <span className="inline-flex items-center">
+                            {col.label}
+                            {sortField === col.key ? (
+                              sortDirection === "asc" ? (
+                                <span className="ml-1">
+                                  {/* Up Arrow icon (lucide) */}
+                                  <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 5l7 7-1.41 1.42L13 9.83V19h-2V9.83l-4.59 4.59L5 12z" /></svg>
+                                </span>
+                              ) : (
+                                <span className="ml-1">
+                                  {/* Down Arrow icon (lucide) */}
+                                  <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 19l-7-7 1.41-1.42L11 14.17V5h2v9.17l4.59-4.59L19 12z" /></svg>
+                                </span>
+                              )
+                            ) : null}
+                          </span>
+                        </TableHead>
+                      ))}
                       <TableHead>Action</TableHead>
                     </TableRow>
                   </TableHeader>
