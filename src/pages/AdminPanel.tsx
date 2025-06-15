@@ -16,6 +16,7 @@ import {
   DialogDescription,
   DialogClose,
 } from '@/components/ui/dialog';
+import { ClipboardList, Hourglass, Check, DollarSign } from "lucide-react";
 
 const initialAddForm = {
   orderId: '',
@@ -213,6 +214,23 @@ const AdminPanel = () => {
     });
   };
 
+  // Utility: Parse ₹ values (e.g. "₹24,900" => 24900)
+  const parseRupee = (value: string) => {
+    if (!value) return 0;
+    return Number(value.replace(/[^\d.]/g, "").replace(/,/g, "")) || 0;
+  };
+
+  // Calculate totals/counts for cards
+  const totalOrders = orders.length;
+  const pendingCount = orders.filter((o) => o.status === "pending").length;
+  const verifiedCount = orders.filter((o) => o.status === "verified").length;
+  const completedCount = orders.filter((o) => o.status === "completed").length;
+
+  // "Total to Pay" aggregate (Revenue)
+  const revenue = orders.reduce((acc, order) => acc + parseRupee(order.totalToPay), 0);
+  // "Service Fee" aggregate
+  const serviceFeeTotal = orders.reduce((acc, order) => acc + parseRupee(order.serviceFee), 0);
+
   // --- Add Order form logic ---
   const openAddOrderDialog = () => {
     setAddForm({
@@ -267,27 +285,77 @@ const AdminPanel = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
-            {[
-              { title: 'Total Orders', value: orders.length.toString(), color: 'from-neon-pink to-warm-orange', icon: '📋' },
-              { title: 'Pending', value: orders.filter(o => o.status === 'pending').length.toString(), color: 'from-electric-blue to-teal', icon: '⏳' },
-              { title: 'Completed', value: orders.filter(o => o.status === 'completed').length.toString(), color: 'from-lime-green to-electric-blue', icon: '✅' },
-              { title: 'Revenue', value: '₹2.4L', color: 'from-warm-orange to-neon-pink', icon: '💰' }
-            ].map((stat, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600">{stat.title}</p>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    </div>
-                    <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${stat.color} flex items-center justify-center text-white text-xl`}>
-                      {stat.icon}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="grid md:grid-cols-6 gap-6 mb-8">
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Orders</p>
+                  <p className="text-2xl font-bold text-gray-900">{totalOrders}</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-neon-pink to-warm-orange flex items-center justify-center text-white text-xl">
+                  <ClipboardList size={28} />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Pending</p>
+                  <p className="text-2xl font-bold text-gray-900">{pendingCount}</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-electric-blue to-teal flex items-center justify-center text-white text-xl">
+                  <Hourglass size={28} />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Verified</p>
+                  <p className="text-2xl font-bold text-gray-900">{verifiedCount}</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-400 to-green-300 flex items-center justify-center text-white text-xl">
+                  <Check size={28} />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Completed</p>
+                  <p className="text-2xl font-bold text-gray-900">{completedCount}</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-lime-green to-electric-blue flex items-center justify-center text-white text-xl">
+                  <Check size={28} />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Revenue</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ₹{revenue.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                  </p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-warm-orange to-neon-pink flex items-center justify-center text-white text-xl">
+                  <DollarSign size={28} />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Service Fee</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ₹{serviceFeeTotal.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                  </p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-fuchsia-400 flex items-center justify-center text-white text-xl">
+                  <DollarSign size={28} />
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Orders Table */}
