@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -158,7 +158,7 @@ const Index = () => {
   });
 
   return (
-    <div className="min-h-screen bg-white overflow-hidden">
+    <div>
       <Navigation />
       
       {/* Simplified Background Shapes - Fewer Elements */}
@@ -616,6 +616,12 @@ const Index = () => {
           </div>
         </div>
       </footer>
+      
+      <div className="flex justify-center mt-6">
+        <Link to="/auth" className="text-blue-600 underline hover:text-blue-800 mr-3">
+          Go to Admin Login
+        </Link>
+      </div>
     </div>
   );
 };
