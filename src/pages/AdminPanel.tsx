@@ -1,15 +1,26 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import Navigation from '@/components/Navigation';
 
 const AdminPanel = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [confirmationDialog, setConfirmationDialog] = useState<{
+    isOpen: boolean;
+    orderId: string;
+    newStatus: string;
+    actionText: string;
+  }>({
+    isOpen: false,
+    orderId: '',
+    newStatus: '',
+    actionText: ''
+  });
   
   const [orders, setOrders] = useState([
     {
@@ -122,14 +133,42 @@ const AdminPanel = () => {
     }
   };
 
-  const handleStatusChange = (orderId: string, newStatus: string) => {
+  const handleStatusChangeRequest = (orderId: string, newStatus: string) => {
+    const actionText = newStatus === 'verified' ? 'Verify' : 
+                      newStatus === 'rejected' ? 'Reject' : 'Complete';
+    
+    setConfirmationDialog({
+      isOpen: true,
+      orderId,
+      newStatus,
+      actionText
+    });
+  };
+
+  const confirmStatusChange = () => {
     setOrders(prevOrders => 
       prevOrders.map(order => 
-        order.orderId === orderId 
-          ? { ...order, status: newStatus }
+        order.orderId === confirmationDialog.orderId 
+          ? { ...order, status: confirmationDialog.newStatus }
           : order
       )
     );
+    
+    setConfirmationDialog({
+      isOpen: false,
+      orderId: '',
+      newStatus: '',
+      actionText: ''
+    });
+  };
+
+  const cancelStatusChange = () => {
+    setConfirmationDialog({
+      isOpen: false,
+      orderId: '',
+      newStatus: '',
+      actionText: ''
+    });
   };
 
   return (
@@ -271,7 +310,7 @@ const AdminPanel = () => {
                           </span>
                         </TableCell>
                         <TableCell>
-                          <Select onValueChange={(value) => handleStatusChange(order.orderId, value)}>
+                          <Select onValueChange={(value) => handleStatusChangeRequest(order.orderId, value)}>
                             <SelectTrigger className="w-24 h-8">
                               <SelectValue placeholder="Action" />
                             </SelectTrigger>
@@ -296,6 +335,25 @@ const AdminPanel = () => {
           </Card>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={confirmationDialog.isOpen} onOpenChange={(open) => !open && cancelStatusChange()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to {confirmationDialog.actionText.toLowerCase()} order {confirmationDialog.orderId}?
+              This action will change the order status to "{confirmationDialog.newStatus}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelStatusChange}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmStatusChange}>
+              {confirmationDialog.actionText}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
