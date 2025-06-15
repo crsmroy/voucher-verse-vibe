@@ -6,37 +6,23 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const redirectUrl = `${window.location.origin}/admin`;
-
 export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [mode, setMode] = useState<"login"|"signup">("login");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      if (mode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        navigate("/admin");
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: redirectUrl }
-        });
-        if (error) throw error;
-        setMode("login");
-        setError("Signup successful! Please check your email to confirm and then login.");
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      navigate("/admin");
     } catch (err: any) {
-      setError(err?.message ?? "Authentication failed.");
+      setError(err?.message ?? "Login failed.");
     }
     setLoading(false);
   };
@@ -45,10 +31,10 @@ export default function AuthPage() {
     <div className="min-h-screen flex justify-center items-center bg-gray-50">
       <Card className="w-[370px]">
         <CardHeader>
-          <CardTitle>{mode === "login" ? "Admin Login" : "Admin Signup"}</CardTitle>
+          <CardTitle>Admin Login</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAuth} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <Input
               placeholder="Email"
               required
@@ -66,19 +52,13 @@ export default function AuthPage() {
               autoComplete="current-password"
             />
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Processing..." : mode === "login" ? "Login" : "Sign Up"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => setMode(mode === "login" ? "signup" : "login")}
-              disabled={loading}
-            >
-              {mode === "login" ? "Need an account? Sign Up" : "Already have an account? Login"}
+              {loading ? "Processing..." : "Login"}
             </Button>
             {error && <div className="text-red-600 text-sm text-center">{error}</div>}
           </form>
+          <div className="text-xs text-center text-gray-400 mt-3">
+            Only authorized users may log in. Please contact the administrator to request access.
+          </div>
         </CardContent>
       </Card>
     </div>
