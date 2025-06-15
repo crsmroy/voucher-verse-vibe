@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,9 +24,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 
 const initialAddForm = {
   orderId: '',
@@ -59,14 +59,16 @@ const AdminPanel = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  // If still loading auth state
-  if (loading) {
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth", { replace: true });
+    }
+  }, [loading, user, navigate]);
+
+  // Loading state
+  if (loading || (!loading && !user)) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
-  // If not logged in, redirect to /auth
-  if (!user) {
-    navigate("/auth");
-    return null;
   }
 
   const [searchTerm, setSearchTerm] = useState('');
