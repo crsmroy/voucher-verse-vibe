@@ -339,18 +339,10 @@ const Payment = () => {
                 </div>
 
                 <Button 
-                  onClick={handleSubmit}
-                  disabled={isSubmitting || !transactionId || !captchaChecked}
+                  onClick={() => navigate("/payment-gateway")}
                   className="w-full btn-glow gradient-primary text-white h-12 text-lg font-semibold border-0"
                 >
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Processing...
-                    </div>
-                  ) : (
-                    'Complete Order 🚀'
-                  )}
+                  Continue to Payment →
                 </Button>
               </CardContent>
             </Card>
