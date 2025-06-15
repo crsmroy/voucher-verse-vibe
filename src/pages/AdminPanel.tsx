@@ -232,8 +232,34 @@ const AdminPanel = () => {
     }
   };
 
+  // --- Enhanced Filtering Logic for Orders ---
+  // Apply status and search filters to the raw orders before mapping for display
+  const filteredRawOrders = orders.filter((order: any) => {
+    // Status filter (if not "all")
+    if (statusFilter !== "all" && order.status !== statusFilter) return false;
+    // Search filter: check multiple fields
+    if (searchTerm.trim() !== "") {
+      const term = searchTerm.toLowerCase();
+      // Check fields: order_id, product, full_name, phone_number, email_address, etc.
+      const fieldsToSearch = [
+        order.order_id,
+        order.product,
+        order.full_name,
+        order.phone_number,
+        order.email_address,
+        order.platform,
+        order.status,
+      ];
+      // If none of these fields include the term, skip this order
+      if (!fieldsToSearch.some(f => (f ?? '').toString().toLowerCase().includes(term))) {
+        return false;
+      }
+    }
+    return true;
+  });
+
   // For displaying in the table, map new DB field names to UI field names
-  const filteredOrders = orders.map((order: any) => ({
+  const filteredOrders = filteredRawOrders.map((order: any) => ({
     orderId: order.order_id,
     productLink: order.product_link,
     product: order.product,
