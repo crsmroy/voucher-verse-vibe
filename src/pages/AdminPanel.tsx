@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -181,20 +182,24 @@ const AdminPanel = () => {
     );
   }
   if (!user) {
-    return null; // Redirection handled above
+    return null;
   }
 
   return (
     <div>
-      <div className="p-4 flex justify-end">
+      {/* Brand Header */}
+      <header className="w-full flex items-center justify-between px-4 sm:px-8 pt-6 pb-0 mb-2">
+        <div className="text-2xl font-bold tracking-tight text-gray-900">
+          YourBrand Admin
+        </div>
         <Button variant="outline" onClick={handleLogout}>
           Log Out
         </Button>
-      </div>
-
-      <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      </header>
+      {/* Main Dashboard section with less top padding */}
+      <div className="pt-4 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
+          {/* Dashboard Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
             <p className="text-gray-600">Manage orders and customer inquiries</p>
@@ -583,3 +588,4 @@ const AdminPanel = () => {
 };
 
 export default AdminPanel;
+
