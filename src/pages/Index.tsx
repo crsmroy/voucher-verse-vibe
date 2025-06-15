@@ -5,6 +5,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Instagram, Facebook, Youtube, X, MessageCircle } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import ViewerCounter from '@/components/ViewerCounter';
+import FaqAccordion from "@/components/FaqAccordion";
 
 const Index = () => {
   const steps = [
@@ -501,6 +502,20 @@ const Index = () => {
               <CarouselNext className="hidden md:flex" />
             </Carousel>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-white/50 backdrop-blur-sm relative">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Frequently Asked <span className="bg-gradient-to-r from-electric-blue to-teal bg-clip-text text-transparent">Questions</span>
+            </h2>
+            <p className="text-lg text-gray-600">Quick answers to common questions</p>
+          </div>
+          {/* Inserted FAQAccordion */}
+          <FaqAccordion />
         </div>
       </section>
 
