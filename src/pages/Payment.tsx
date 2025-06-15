@@ -15,6 +15,7 @@ const Payment = () => {
   const [transactionId, setTransactionId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [finalAmount, setFinalAmount] = useState(3500); // Default fallback
+  const [captchaChecked, setCaptchaChecked] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -311,6 +312,22 @@ const Payment = () => {
                   </div>
                 </div>
 
+                {/* Captcha */}
+                <div className="flex items-center mb-2">
+                  <input
+                    id="order-captcha"
+                    type="checkbox"
+                    checked={captchaChecked}
+                    onChange={(e) => setCaptchaChecked(e.target.checked)}
+                    className="h-5 w-5 rounded border-gray-300 text-neon-pink focus:ring-2 focus:ring-neon-pink transition"
+                    aria-label="Verify that you are not a robot"
+                  />
+                  <label htmlFor="order-captcha" className="ml-2 text-base text-gray-700 select-none cursor-pointer">
+                    I'm not a robot
+                  </label>
+                </div>
+
+                {/* Instructions */}
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-blue-900 mb-2">📋 Instructions:</h4>
                   <ul className="text-sm text-blue-800 space-y-1">
@@ -323,7 +340,7 @@ const Payment = () => {
 
                 <Button 
                   onClick={handleSubmit}
-                  disabled={isSubmitting || !transactionId}
+                  disabled={isSubmitting || !transactionId || !captchaChecked}
                   className="w-full btn-glow gradient-primary text-white h-12 text-lg font-semibold border-0"
                 >
                   {isSubmitting ? (
