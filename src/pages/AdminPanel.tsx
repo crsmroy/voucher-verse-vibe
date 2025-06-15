@@ -168,6 +168,7 @@ const AdminPanel = () => {
     return isNaN(d.getTime()) ? null : d;
   };
 
+  // ----- UPDATED DATE FILTER LOGIC -----
   // Filter orders based on search term, status, and date range
   const filteredOrders = orders.filter(order => {
     const matchesSearch = searchTerm === '' || 
@@ -183,8 +184,15 @@ const AdminPanel = () => {
     if (fromDate || toDate) {
       const dateObj = getDateObj(order.dateTime);
       if (dateObj) {
+        // Make "toDate" inclusive for the entire day (set to 23:59:59.999)
+        let toDateInclusive: Date | null = null;
+        if (toDate) {
+          toDateInclusive = new Date(toDate);
+          toDateInclusive.setHours(23,59,59,999);
+        }
+
         if (fromDate && dateObj < fromDate) matchesDate = false;
-        if (toDate && dateObj > toDate) matchesDate = false;
+        if (toDateInclusive && dateObj > toDateInclusive) matchesDate = false;
       }
     }
     return matchesSearch && matchesStatus && matchesDate;
