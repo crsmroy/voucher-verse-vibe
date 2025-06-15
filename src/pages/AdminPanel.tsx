@@ -386,7 +386,7 @@ const AdminPanel = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid md:grid-cols-6 gap-6 mb-8">
+          <div className="grid md:grid-cols-7 gap-6 mb-8">
             <Card className="hover:shadow-lg transition-shadow">
               <CardContent className="p-6 flex items-center justify-between">
                 <div>
