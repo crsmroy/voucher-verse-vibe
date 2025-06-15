@@ -4,39 +4,97 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Navigation from '@/components/Navigation';
 
 const AdminPanel = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   
-  const [orders] = useState([
+  const [orders, setOrders] = useState([
     {
       id: 'ORD001',
-      customer: 'John Doe',
+      productLink: 'https://example.com/iphone15pro',
       product: 'iPhone 15 Pro',
-      amount: '₹85,000',
-      status: 'pending',
-      date: '2024-01-15',
-      email: 'john@email.com'
+      price: '₹80,000',
+      quantity: 1,
+      category: 'Electronics',
+      voucherAmount: '₹5,000',
+      platform: 'Amazon',
+      premiumPrice: '₹85,000',
+      serviceFee: '₹500',
+      gst: '₹4,500',
+      totalToPay: '₹85,000',
+      fullName: 'John Doe',
+      phoneNumber: '+91-9876543210',
+      alternatePhone: '+91-9876543211',
+      whatsappNumber: '+91-9876543210',
+      email: 'john@email.com',
+      fullAddress: '123 Main St, Apartment 4B',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      pincode: '400001',
+      landmark: 'Near City Mall',
+      paymentProofLink: 'https://example.com/payment-proof-1',
+      transactionId: 'TXN123456789',
+      dateTime: '2024-01-15 10:30:00',
+      status: 'pending'
     },
     {
       id: 'ORD002',
-      customer: 'Jane Smith',
+      productLink: 'https://example.com/macbook-air',
       product: 'MacBook Air M2',
-      amount: '₹95,000',
-      status: 'verified',
-      date: '2024-01-14',
-      email: 'jane@email.com'
+      price: '₹90,000',
+      quantity: 1,
+      category: 'Electronics',
+      voucherAmount: '₹5,000',
+      platform: 'Flipkart',
+      premiumPrice: '₹95,000',
+      serviceFee: '₹500',
+      gst: '₹4,500',
+      totalToPay: '₹95,000',
+      fullName: 'Jane Smith',
+      phoneNumber: '+91-9876543220',
+      alternatePhone: '+91-9876543221',
+      whatsappNumber: '+91-9876543220',
+      email: 'jane@email.com',
+      fullAddress: '456 Park Avenue, Floor 2',
+      city: 'Delhi',
+      state: 'Delhi',
+      pincode: '110001',
+      landmark: 'Opposite Metro Station',
+      paymentProofLink: 'https://example.com/payment-proof-2',
+      transactionId: 'TXN987654321',
+      dateTime: '2024-01-14 14:20:00',
+      status: 'verified'
     },
     {
       id: 'ORD003',
-      customer: 'Mike Johnson',
+      productLink: 'https://example.com/airpods-pro',
       product: 'AirPods Pro',
-      amount: '₹24,900',
-      status: 'completed',
-      date: '2024-01-13',
-      email: 'mike@email.com'
+      price: '₹22,000',
+      quantity: 1,
+      category: 'Electronics',
+      voucherAmount: '₹2,900',
+      platform: 'Apple Store',
+      premiumPrice: '₹24,900',
+      serviceFee: '₹300',
+      gst: '₹1,200',
+      totalToPay: '₹24,900',
+      fullName: 'Mike Johnson',
+      phoneNumber: '+91-9876543230',
+      alternatePhone: '+91-9876543231',
+      whatsappNumber: '+91-9876543230',
+      email: 'mike@email.com',
+      fullAddress: '789 Oak Street, Villa 12',
+      city: 'Bangalore',
+      state: 'Karnataka',
+      pincode: '560001',
+      landmark: 'Near Tech Park',
+      paymentProofLink: 'https://example.com/payment-proof-3',     
+      transactionId: 'TXN456789123',
+      dateTime: '2024-01-13 09:15:00',
+      status: 'completed'
     }
   ]);
 
@@ -44,9 +102,10 @@ const AdminPanel = () => {
   const filteredOrders = orders.filter(order => {
     const matchesSearch = searchTerm === '' || 
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.email.toLowerCase().includes(searchTerm.toLowerCase());
+      order.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.transactionId.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     
@@ -61,6 +120,16 @@ const AdminPanel = () => {
       case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const handleStatusChange = (orderId: string, newStatus: string) => {
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.id === orderId 
+          ? { ...order, status: newStatus }
+          : order
+      )
+    );
   };
 
   return (
@@ -78,9 +147,9 @@ const AdminPanel = () => {
           {/* Stats Cards */}
           <div className="grid md:grid-cols-4 gap-6 mb-8">
             {[
-              { title: 'Total Orders', value: '156', color: 'from-neon-pink to-warm-orange', icon: '📋' },
-              { title: 'Pending', value: '23', color: 'from-electric-blue to-teal', icon: '⏳' },
-              { title: 'Completed', value: '98', color: 'from-lime-green to-electric-blue', icon: '✅' },
+              { title: 'Total Orders', value: orders.length.toString(), color: 'from-neon-pink to-warm-orange', icon: '📋' },
+              { title: 'Pending', value: orders.filter(o => o.status === 'pending').length.toString(), color: 'from-electric-blue to-teal', icon: '⏳' },
+              { title: 'Completed', value: orders.filter(o => o.status === 'completed').length.toString(), color: 'from-lime-green to-electric-blue', icon: '✅' },
               { title: 'Revenue', value: '₹2.4L', color: 'from-warm-orange to-neon-pink', icon: '💰' }
             ].map((stat, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
@@ -103,7 +172,7 @@ const AdminPanel = () => {
           <Card>
             <CardHeader>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <CardTitle className="text-xl font-bold">Recent Orders</CardTitle>
+                <CardTitle className="text-xl font-bold">All Orders</CardTitle>
                 <div className="flex gap-2">
                   <Input 
                     placeholder="Search orders..." 
@@ -120,6 +189,7 @@ const AdminPanel = () => {
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="verified">Verified</SelectItem>
                       <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="rejected">Rejected</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -127,57 +197,99 @@ const AdminPanel = () => {
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-semibold">Order ID</th>
-                      <th className="text-left py-3 px-4 font-semibold">Customer</th>
-                      <th className="text-left py-3 px-4 font-semibold">Product</th>
-                      <th className="text-left py-3 px-4 font-semibold">Amount</th>
-                      <th className="text-left py-3 px-4 font-semibold">Status</th>
-                      <th className="text-left py-3 px-4 font-semibold">Date</th>
-                      <th className="text-left py-3 px-4 font-semibold">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Order ID</TableHead>
+                      <TableHead>Product</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Platform</TableHead>
+                      <TableHead>Total Amount</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Address</TableHead>
+                      <TableHead>City</TableHead>
+                      <TableHead>State</TableHead>
+                      <TableHead>Pincode</TableHead>
+                      <TableHead>Transaction ID</TableHead>
+                      <TableHead>Date & Time</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {filteredOrders.map((order) => (
-                      <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-4 px-4 font-medium">{order.id}</td>
-                        <td className="py-4 px-4">
-                          <div>
-                            <div className="font-medium">{order.customer}</div>
-                            <div className="text-sm text-gray-500">{order.email}</div>
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium">{order.id}</TableCell>
+                        <TableCell>
+                          <div className="max-w-40">
+                            <div className="font-medium truncate">{order.product}</div>
+                            <a href={order.productLink} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">View Product</a>
                           </div>
-                        </td>
-                        <td className="py-4 px-4">{order.product}</td>
-                        <td className="py-4 px-4 font-semibold">{order.amount}</td>
-                        <td className="py-4 px-4">
+                        </TableCell>
+                        <TableCell>{order.price}</TableCell>
+                        <TableCell>{order.quantity}</TableCell>
+                        <TableCell>{order.category}</TableCell>
+                        <TableCell>{order.platform}</TableCell>
+                        <TableCell className="font-semibold">{order.totalToPay}</TableCell>
+                        <TableCell>
+                          <div className="max-w-32">
+                            <div className="font-medium">{order.fullName}</div>
+                            <div className="text-xs text-gray-500">WhatsApp: {order.whatsappNumber}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            <div>{order.phoneNumber}</div>
+                            {order.alternatePhone && <div className="text-xs text-gray-500">Alt: {order.alternatePhone}</div>}
+                          </div>
+                        </TableCell>
+                        <TableCell className="max-w-40 truncate">{order.email}</TableCell>
+                        <TableCell>
+                          <div className="max-w-48">
+                            <div className="text-sm">{order.fullAddress}</div>
+                            {order.landmark && <div className="text-xs text-gray-500">Near: {order.landmark}</div>}
+                          </div>
+                        </TableCell>
+                        <TableCell>{order.city}</TableCell>
+                        <TableCell>{order.state}</TableCell>
+                        <TableCell>{order.pincode}</TableCell>
+                        <TableCell>
+                          <div className="max-w-28">
+                            <div className="font-mono text-sm">{order.transactionId}</div>
+                            <a href={order.paymentProofLink} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Payment Proof</a>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-sm">{order.dateTime}</TableCell>
+                        <TableCell>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
                             {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                           </span>
-                        </td>
-                        <td className="py-4 px-4 text-gray-600">{order.date}</td>
-                        <td className="py-4 px-4">
+                        </TableCell>
+                        <TableCell>
                           <div className="flex gap-2">
                             <Button size="sm" variant="outline" className="text-xs">
                               View
                             </Button>
-                            <Select>
+                            <Select onValueChange={(value) => handleStatusChange(order.id, value)}>
                               <SelectTrigger className="w-24 h-8">
-                                <SelectValue />
+                                <SelectValue placeholder="Action" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="verify">Verify</SelectItem>
-                                <SelectItem value="reject">Reject</SelectItem>
-                                <SelectItem value="complete">Complete</SelectItem>
+                                <SelectItem value="verified">Verify</SelectItem>
+                                <SelectItem value="rejected">Reject</SelectItem>
+                                <SelectItem value="completed">Complete</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
               {filteredOrders.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
