@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -597,7 +597,7 @@ const Index = () => {
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/how-it-works" className="hover:text-neon-pink transition-colors">How It Works</Link></li>
                 <li><Link to="/contact" className="hover:text-neon-pink transition-colors">Contact Us</Link></li>
-                <li><Link to="/auth" className="hover:text-neon-pink transition-colors">Admin</Link></li>
+                <li><Link to="/admin" className="hover:text-neon-pink transition-colors">Admin</Link></li>
               </ul>
             </div>
             

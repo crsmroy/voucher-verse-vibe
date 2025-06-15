@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +22,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
 
 const initialAddForm = {
   orderId: '',
@@ -56,21 +53,6 @@ const initialAddForm = {
 };
 
 const AdminPanel = () => {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
-
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth", { replace: true });
-    }
-  }, [loading, user, navigate]);
-
-  // Loading state
-  if (loading || (!loading && !user)) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
-
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [confirmationDialog, setConfirmationDialog] = useState<{
@@ -778,19 +760,6 @@ const AdminPanel = () => {
           </form>
         </DialogContent>
       </Dialog>
-
-      {/* Add logout button (top right) */}
-      <div className="fixed top-4 right-4">
-        <button
-          className="px-4 py-2 rounded bg-gray-800 text-white font-semibold hover:bg-gray-900 transition"
-          onClick={async () => {
-            await supabase.auth.signOut();
-            navigate("/auth");
-          }}
-        >
-          Logout
-        </button>
-      </div>
     </div>
   );
 };
