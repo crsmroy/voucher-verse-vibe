@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Navigation from '@/components/Navigation';
 
 const AdminPanel = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  
   const [orders] = useState([
     {
       id: 'ORD001',
@@ -36,6 +39,19 @@ const AdminPanel = () => {
       email: 'mike@email.com'
     }
   ]);
+
+  // Filter orders based on search term and status
+  const filteredOrders = orders.filter(order => {
+    const matchesSearch = searchTerm === '' || 
+      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.email.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -89,8 +105,13 @@ const AdminPanel = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <CardTitle className="text-xl font-bold">Recent Orders</CardTitle>
                 <div className="flex gap-2">
-                  <Input placeholder="Search orders..." className="w-64" />
-                  <Select>
+                  <Input 
+                    placeholder="Search orders..." 
+                    className="w-64" 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="w-32">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
@@ -119,7 +140,7 @@ const AdminPanel = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.map((order) => (
+                    {filteredOrders.map((order) => (
                       <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-4 px-4 font-medium">{order.id}</td>
                         <td className="py-4 px-4">
@@ -158,6 +179,11 @@ const AdminPanel = () => {
                   </tbody>
                 </table>
               </div>
+              {filteredOrders.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  No orders found matching your search criteria.
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
