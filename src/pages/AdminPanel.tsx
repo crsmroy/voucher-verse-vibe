@@ -192,31 +192,6 @@ const AdminPanel = () => {
     });
   };
 
-  // Helper: Natural sort comparator (handles alphanumeric fields like orderId)
-  function naturalCompare(a: string, b: string) {
-    // Split into digit and non-digit sequences
-    const re = /(\d+|\D+)/g;
-    const aParts = (a || '').match(re) || [];
-    const bParts = (b || '').match(re) || [];
-    const len = Math.max(aParts.length, bParts.length);
-
-    for (let i = 0; i < len; i++) {
-      const aPart = aParts[i] || "";
-      const bPart = bParts[i] || "";
-      // Both parts are numbers
-      if (!isNaN(Number(aPart)) && !isNaN(Number(bPart))) {
-        const diff = Number(aPart) - Number(bPart);
-        if (diff !== 0) return diff;
-      } else {
-        // Fallback to string compare
-        if (aPart < bPart) return -1;
-        if (aPart > bPart) return 1;
-      }
-    }
-    return 0;
-  }
-
-  // Status color mapping
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending": return "border-yellow-400 text-yellow-700 bg-yellow-100";
@@ -225,26 +200,6 @@ const AdminPanel = () => {
       case "rejected": return "border-red-400 text-red-700 bg-red-100";
       case "cancelled": return "border-gray-400 text-gray-700 bg-gray-100";
       default: return "border-gray-300";
-    }
-  };
-
-  // List of fields that should be sorted as numbers
-  const numericFields = [
-    "price",
-    "quantity",
-    "voucherAmount",
-    "premiumPrice",
-    "serviceFee",
-    "totalToPay"
-  ];
-
-  // Sorting logic for table headers
-  const handleSort = (field: string) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
     }
   };
 
@@ -318,29 +273,18 @@ const AdminPanel = () => {
   // Apply status and search filters to the raw orders before mapping for display
   const sortOrders = (orders: any[]) => {
     if (!sortField) return orders;
-    const isNumericField = numericFields.includes(sortField);
     return [...orders].sort((a, b) => {
       let valA = a[sortField];
       let valB = b[sortField];
-
-      // For numeric fields, sort as numbers
-      if (isNumericField) {
-        const numA = parseFloat(valA);
-        const numB = parseFloat(valB);
-        if (!isNaN(numA) && !isNaN(numB)) {
-          if (numA < numB) return sortDirection === "asc" ? -1 : 1;
-          if (numA > numB) return sortDirection === "asc" ? 1 : -1;
-          return 0;
-        }
+      // Try numeric sort if values look like numbers
+      const numA = parseFloat(valA);
+      const numB = parseFloat(valB);
+      if (!isNaN(numA) && !isNaN(numB)) {
+        if (numA < numB) return sortDirection === "asc" ? -1 : 1;
+        if (numA > numB) return sortDirection === "asc" ? 1 : -1;
+        return 0;
       }
-
-      // For orderId, use natural sort so ORD-2 < ORD-10 < ORD-11
-      if (sortField === "orderId") {
-        const cmp = naturalCompare(valA ? valA.toString() : "", valB ? valB.toString() : "");
-        return sortDirection === "asc" ? cmp : -cmp;
-      }
-
-      // All other string/alphanumeric fields: normal string sort
+      // Fallback to string sort (case insensitive)
       valA = valA ? valA.toString().toLowerCase() : "";
       valB = valB ? valB.toString().toLowerCase() : "";
       if (valA < valB) return sortDirection === "asc" ? -1 : 1;
@@ -688,14 +632,14 @@ const AdminPanel = () => {
                             {col.label}
                             {sortField === col.key ? (
                               sortDirection === "asc" ? (
-                                <span className="ml-1 text-blue-500 flex items-center">
+                                <span className="ml-1">
                                   {/* Up Arrow icon (lucide) */}
-                                  <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 15 12 9 18 15"></polyline></svg>
+                                  <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 5l7 7-1.41 1.42L13 9.83V19h-2V9.83l-4.59 4.59L5 12z" /></svg>
                                 </span>
                               ) : (
-                                <span className="ml-1 text-blue-500 flex items-center">
+                                <span className="ml-1">
                                   {/* Down Arrow icon (lucide) */}
-                                  <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                  <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 19l-7-7 1.41-1.42L11 14.17V5h2v9.17l4.59-4.59L19 12z" /></svg>
                                 </span>
                               )
                             ) : null}
