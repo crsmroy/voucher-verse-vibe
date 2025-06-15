@@ -42,7 +42,7 @@ const ViewerCounter = () => {
     <div className="flex items-center space-x-2 text-gray-400">
       <Eye size={16} />
       <span className="text-sm">
-        <span className="font-semibold text-white">{formatViewCount(viewCount)}</span> viewers
+        <span className="font-semibold text-white">{formatViewCount(viewCount)}</span> Views counter
       </span>
     </div>
   );
