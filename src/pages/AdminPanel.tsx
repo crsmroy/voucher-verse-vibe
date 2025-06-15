@@ -328,7 +328,7 @@ const AdminPanel = () => {
           </div>
 
           {/* Date Range Filters */}
-          <div className="mb-4 flex flex-col sm:flex-row gap-4">
+          <div className="mb-4 flex flex-col sm:flex-row sm:justify-end">
             <div className="flex items-center gap-4">
               {/* From date */}
               <Popover>
