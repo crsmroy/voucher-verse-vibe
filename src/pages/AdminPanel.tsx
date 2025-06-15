@@ -54,6 +54,15 @@ const initialAddForm = {
   status: 'pending',
 };
 
+const padOrderId = (id: string) => {
+  // Only pad if all chars are digits, length < 6, and not already leading zeroes
+  if (/^\d{1,6}$/.test(id)) {
+    return id.padStart(6, "0");
+  }
+  // If already 6 digits, or not pure digits, don't pad
+  return id;
+};
+
 const AdminPanel = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -117,9 +126,31 @@ const AdminPanel = () => {
   const openAddOrderDialog = () => setAddOrderDialogOpen(true);
   const closeAddOrderDialog = () => setAddOrderDialogOpen(false);
 
+  // Update input change for orderId to auto-pad as needed
   const handleAddInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddForm({ ...addForm, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "orderId") {
+      // Only allow up to 6 numbers, or let through valid full value
+      let formatted = value.replace(/\D/g, "").slice(0, 6); // only digits, max 6
+      if (value.length > 0 && value.length <= 6 && /^\d+$/.test(value)) {
+        formatted = padOrderId(formatted);
+      } else {
+        formatted = value;
+      }
+      setAddForm({ ...addForm, [name]: formatted });
+    } else {
+      setAddForm({ ...addForm, [name]: value });
+    }
   };
+
+  // Pad the orderId on blur, for manual editing cases
+  const handleOrderIdBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^\d{1,6}$/.test(value)) {
+      setAddForm({ ...addForm, orderId: padOrderId(value) });
+    }
+  };
+
   const handleAddSelectChange = (key: string, val: string) => {
     setAddForm({ ...addForm, [key]: val });
   };
@@ -224,9 +255,15 @@ const AdminPanel = () => {
   const handleAddOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Auto-pad order id just before submit (if user pasted plain number)
+    let orderId = addForm.orderId;
+    if (/^\d{1,6}$/.test(orderId)) {
+      orderId = padOrderId(orderId);
+    }
+
     // Prepare payload matching DB schema
     const payload = {
-      order_id: addForm.orderId,
+      order_id: orderId,
       product_link: addForm.productLink,
       product: addForm.product,
       price: parseFloat(addForm.price) || null,
@@ -791,8 +828,18 @@ const AdminPanel = () => {
             </DialogDescription>
           </DialogHeader>
           <form className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2" onSubmit={handleAddOrderSubmit}>
-            {/* Removed `label` prop from each Input below */}
-            <Input name="orderId" required value={addForm.orderId} onChange={handleAddInputChange} placeholder="Order Id" />
+            <Input
+              name="orderId"
+              required
+              value={addForm.orderId}
+              onChange={handleAddInputChange}
+              onBlur={handleOrderIdBlur}
+              placeholder="Order Id (e.g. 000123)"
+              maxLength={6}
+              inputMode="numeric"
+              pattern="\d{6}"
+              title="Order Id must be a 6 digit number"
+            />
             <Input name="productLink" value={addForm.productLink} onChange={handleAddInputChange} placeholder="Product Link" />
             <Input name="product" value={addForm.product} onChange={handleAddInputChange} placeholder="Product" />
             <Input name="price" value={addForm.price} onChange={handleAddInputChange} placeholder="Price" />
