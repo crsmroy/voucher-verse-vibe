@@ -11,10 +11,10 @@ const ShippingDetails = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
-    phone: '',
-    alternatePhone: '',
+    phoneNumber: '',
+    alternatePhoneNumber: '',
     whatsappNumber: '',
-    email: '',
+    emailAddress: '',
     address: '',
     city: '',
     state: '',
@@ -22,10 +22,48 @@ const ShippingDetails = () => {
     landmark: ''
   });
 
-  // Scroll to top when component mounts
+  // Load data from localStorage on component mount
   useEffect(() => {
     window.scrollTo(0, 0);
+    const orderDataStr = localStorage.getItem('currentOrder');
+    if (orderDataStr) {
+      try {
+        const parsedOrder = JSON.parse(orderDataStr);
+        if (parsedOrder.shipping) {
+          // Ensure all fields are present to avoid uncontrolled component warnings
+          setFormData({
+            fullName: parsedOrder.shipping.fullName || '',
+            phoneNumber: parsedOrder.shipping.phoneNumber || '',
+            alternatePhoneNumber: parsedOrder.shipping.alternatePhoneNumber || '',
+            whatsappNumber: parsedOrder.shipping.whatsappNumber || '',
+            emailAddress: parsedOrder.shipping.emailAddress || '',
+            address: parsedOrder.shipping.address || '',
+            city: parsedOrder.shipping.city || '',
+            state: parsedOrder.shipping.state || '',
+            pincode: parsedOrder.shipping.pincode || '',
+            landmark: parsedOrder.shipping.landmark || '',
+          });
+        }
+      } catch (e) {
+        console.error("Failed to parse order data from localStorage", e);
+      }
+    }
   }, []);
+
+  const handleContinue = () => {
+    const orderDataStr = localStorage.getItem('currentOrder');
+    const orderData = orderDataStr ? JSON.parse(orderDataStr) : {};
+
+    const shippingDetails = { ...formData };
+
+    const updatedOrderData = {
+      ...orderData,
+      shipping: shippingDetails,
+    };
+
+    localStorage.setItem('currentOrder', JSON.stringify(updatedOrderData));
+    navigate('/payment');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
@@ -124,8 +162,8 @@ const ShippingDetails = () => {
                     <Input
                       id="phone"
                       placeholder="+91 99999 99999"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      value={formData.phoneNumber}
+                      onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
                       className="h-12 text-base border-2 focus:border-neon-pink transition-colors"
                     />
                   </div>
@@ -139,8 +177,8 @@ const ShippingDetails = () => {
                     <Input
                       id="alternatePhone"
                       placeholder="+91 88888 88888"
-                      value={formData.alternatePhone}
-                      onChange={(e) => setFormData({...formData, alternatePhone: e.target.value})}
+                      value={formData.alternatePhoneNumber}
+                      onChange={(e) => setFormData({...formData, alternatePhoneNumber: e.target.value})}
                       className="h-12 text-base border-2 focus:border-electric-blue transition-colors"
                     />
                   </div>
@@ -167,8 +205,8 @@ const ShippingDetails = () => {
                     id="email"
                     type="email"
                     placeholder="your@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    value={formData.emailAddress}
+                    onChange={(e) => setFormData({...formData, emailAddress: e.target.value})}
                     className="h-12 text-base border-2 focus:border-electric-blue transition-colors"
                   />
                 </div>
@@ -259,11 +297,12 @@ const ShippingDetails = () => {
                     ← Back to Product
                   </Button>
                 </Link>
-                <Link to="/payment" className="flex-1">
-                  <Button className="w-full btn-glow gradient-primary text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
-                    Continue to Payment →
-                  </Button>
-                </Link>
+                <Button 
+                  onClick={handleContinue}
+                  className="flex-1 w-full btn-glow gradient-primary text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300"
+                >
+                  Continue to Payment →
+                </Button>
               </div>
             </CardContent>
           </Card>
