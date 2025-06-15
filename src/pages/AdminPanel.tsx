@@ -4,8 +4,47 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import Navigation from '@/components/Navigation';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from '@/components/ui/dialog';
+
+const initialAddForm = {
+  orderId: '',
+  productLink: '',
+  product: '',
+  price: '',
+  quantity: 1,
+  category: '',
+  voucherAmount: '',
+  platform: '',
+  premiumPrice: '',
+  serviceFee: '',
+  gst: '',
+  totalToPay: '',
+  fullName: '',
+  phoneNumber: '',
+  alternatePhoneNumber: '',
+  whatsappNumber: '',
+  emailAddress: '',
+  fullAddress: '',
+  city: '',
+  state: '',
+  pincode: '',
+  landmark: '',
+  paymentProofLink: '',
+  transactionId: '',
+  dateTime: '',
+  status: 'pending',
+};
 
 const AdminPanel = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,7 +60,10 @@ const AdminPanel = () => {
     newStatus: '',
     actionText: ''
   });
-  
+
+  const [addOrderDialogOpen, setAddOrderDialogOpen] = useState(false);
+  const [addForm, setAddForm] = useState(initialAddForm);
+
   const [orders, setOrders] = useState([
     {
       orderId: 'ORD001',
@@ -171,6 +213,47 @@ const AdminPanel = () => {
     });
   };
 
+  // --- Add Order form logic ---
+  const openAddOrderDialog = () => {
+    setAddForm({
+      ...initialAddForm,
+      dateTime: new Date().toISOString().slice(0, 16).replace('T', ' '), // prefill with current date/time
+      status: 'pending',
+    });
+    setAddOrderDialogOpen(true);
+  };
+  const closeAddOrderDialog = () => setAddOrderDialogOpen(false);
+
+  const handleAddInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setAddForm(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleAddSelectChange = (name: string, value: string | number) => {
+    setAddForm(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleAddOrderSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setOrders(prev => [
+      {
+        ...addForm,
+        dateTime: addForm.dateTime || new Date().toISOString().slice(0, 16).replace('T', ' '),
+        quantity: Number(addForm.quantity)
+      },
+      ...prev
+    ]);
+    setAddOrderDialogOpen(false);
+    setAddForm(initialAddForm);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
@@ -213,6 +296,13 @@ const AdminPanel = () => {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <CardTitle className="text-xl font-bold">All Orders</CardTitle>
                 <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="text-base font-medium"
+                    onClick={openAddOrderDialog}
+                  >
+                    + Add Order
+                  </Button>
                   <Input 
                     placeholder="Search orders..." 
                     className="w-64" 
@@ -354,6 +444,65 @@ const AdminPanel = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Add Order Dialog */}
+      <Dialog open={addOrderDialogOpen} onOpenChange={setAddOrderDialogOpen}>
+        <DialogContent className="max-h-[95vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add New Order</DialogTitle>
+            <DialogDescription>
+              Fill out the details below to manually add an order.
+            </DialogDescription>
+          </DialogHeader>
+          <form className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2" onSubmit={handleAddOrderSubmit}>
+            {/* Each field, split in two columns for large screens */}
+            <Input name="orderId" required value={addForm.orderId} onChange={handleAddInputChange} placeholder="Order Id" label="Order Id" />
+            <Input name="productLink" value={addForm.productLink} onChange={handleAddInputChange} placeholder="Product Link" />
+            <Input name="product" value={addForm.product} onChange={handleAddInputChange} placeholder="Product" />
+            <Input name="price" value={addForm.price} onChange={handleAddInputChange} placeholder="Price" />
+            <Input name="quantity" type="number" value={addForm.quantity} onChange={handleAddInputChange} placeholder="Quantity" />
+            <Input name="category" value={addForm.category} onChange={handleAddInputChange} placeholder="Category" />
+            <Input name="voucherAmount" value={addForm.voucherAmount} onChange={handleAddInputChange} placeholder="Voucher Amount" />
+            <Input name="platform" value={addForm.platform} onChange={handleAddInputChange} placeholder="Platform" />
+            <Input name="premiumPrice" value={addForm.premiumPrice} onChange={handleAddInputChange} placeholder="Premium Price" />
+            <Input name="serviceFee" value={addForm.serviceFee} onChange={handleAddInputChange} placeholder="Service Fee" />
+            <Input name="gst" value={addForm.gst} onChange={handleAddInputChange} placeholder="GST" />
+            <Input name="totalToPay" value={addForm.totalToPay} onChange={handleAddInputChange} placeholder="Total To Pay" />
+            <Input name="fullName" value={addForm.fullName} onChange={handleAddInputChange} placeholder="Full Name" />
+            <Input name="phoneNumber" value={addForm.phoneNumber} onChange={handleAddInputChange} placeholder="Phone Number" />
+            <Input name="alternatePhoneNumber" value={addForm.alternatePhoneNumber} onChange={handleAddInputChange} placeholder="Alternate Phone Number" />
+            <Input name="whatsappNumber" value={addForm.whatsappNumber} onChange={handleAddInputChange} placeholder="Whatsapp Number" />
+            <Input name="emailAddress" value={addForm.emailAddress} onChange={handleAddInputChange} placeholder="Email Address" />
+            <Input name="fullAddress" value={addForm.fullAddress} onChange={handleAddInputChange} placeholder="Full Address" />
+            <Input name="city" value={addForm.city} onChange={handleAddInputChange} placeholder="City" />
+            <Input name="state" value={addForm.state} onChange={handleAddInputChange} placeholder="State" />
+            <Input name="pincode" value={addForm.pincode} onChange={handleAddInputChange} placeholder="Pincode" />
+            <Input name="landmark" value={addForm.landmark} onChange={handleAddInputChange} placeholder="Landmark" />
+            <Input name="paymentProofLink" value={addForm.paymentProofLink} onChange={handleAddInputChange} placeholder="Payment Proof Link" />
+            <Input name="transactionId" value={addForm.transactionId} onChange={handleAddInputChange} placeholder="Transaction Id" />
+            <Input name="dateTime" value={addForm.dateTime} onChange={handleAddInputChange} placeholder="DateTime" />
+            <Select value={addForm.status} onValueChange={(val) => handleAddSelectChange('status', val)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="verified">Verified</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+            <DialogFooter className="col-span-2 flex-row-reverse mt-4">
+              <Button type="submit">Add Order</Button>
+              <DialogClose asChild>
+                <Button type="button" variant="outline" onClick={closeAddOrderDialog}>
+                  Cancel
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
