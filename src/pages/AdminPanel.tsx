@@ -483,8 +483,9 @@ const AdminPanel = () => {
           <Card>
             <CardHeader>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <CardTitle className="text-xl font-bold">All Orders</CardTitle>
-                <div className="flex gap-2">
+                {/* --- LEFT: All Orders title and Add Order button --- */}
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-xl font-bold">All Orders</CardTitle>
                   <Button
                     variant="outline"
                     className="text-base font-medium"
@@ -492,6 +493,9 @@ const AdminPanel = () => {
                   >
                     + Add Order
                   </Button>
+                </div>
+                {/* --- RIGHT: Search and filters --- */}
+                <div className="flex gap-2">
                   <Input 
                     placeholder="Search orders..." 
                     className="w-64" 
