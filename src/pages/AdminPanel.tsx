@@ -445,9 +445,9 @@ const AdminPanel = () => {
             </Card>
           </div>
 
-          {/* Stats Cards: Row 2 - Earnings & Service Fee, centered */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 justify-center md:justify-items-center">
-            <div className="flex justify-center">
+          {/* Stats Cards: Row 2 - Earnings & Service Fee, right aligned */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 md:justify-end flex md:flex-row md:gap-6 md:mb-8 w-full">
+            <div className="flex md:justify-end">
               <Card className="w-full max-w-xs hover:shadow-lg transition-shadow">
                 <CardContent className="p-6 flex items-center justify-between">
                   <div>
@@ -462,7 +462,7 @@ const AdminPanel = () => {
                 </CardContent>
               </Card>
             </div>
-            <div className="flex justify-center">
+            <div className="flex md:justify-end">
               <Card className="w-full max-w-xs hover:shadow-lg transition-shadow">
                 <CardContent className="p-6 flex items-center justify-between">
                   <div>
