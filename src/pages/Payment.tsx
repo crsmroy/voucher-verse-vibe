@@ -45,28 +45,42 @@ const Payment = () => {
     }
   };
 
-  // Helper: Upload screenshot to Supabase Storage and return its public URL
+  // Enhanced Helper: Upload screenshot to Supabase Storage and return its public URL
   const uploadScreenshotAndGetUrl = async (orderId: string, file: File): Promise<string | null> => {
-    const path = `order_${orderId}_${Date.now()}_${file.name.replace(/\s/g, "_")}`;
-    // Upload file
-    const { error } = await supabase.storage
-      .from('payment-proofs')
-      .upload(path, file, {
-        cacheControl: '3600',
-        upsert: false,
-      });
-    if (error) {
-      console.error("Upload error", error);
+    const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `order_${orderId}_${Date.now()}_${safeFileName}`;
+    try {
+      // Upload file
+      const { error: uploadError } = await supabase.storage
+        .from('payment-proofs')
+        .upload(path, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+      if (uploadError) {
+        console.error("Supabase Storage upload error:", uploadError);
+        return null;
+      }
+
+      // Fetch public URL
+      const { data: urlData, error: urlError } = supabase.storage.from('payment-proofs').getPublicUrl(path);
+      if (urlError) {
+        console.error("Error getting public URL:", urlError);
+        return null;
+      }
+      return urlData?.publicUrl ?? null;
+    } catch (err) {
+      console.error("File upload encountered exception:", err);
       return null;
     }
-    // Fetch public URL
-    const { data } = supabase.storage.from('payment-proofs').getPublicUrl(path);
-    return data?.publicUrl ?? null;
   };
 
-  // Helper: Insert order into Supabase database
+  // Helper: Insert order into Supabase database (with better error handling)
   const insertOrder = async (orderPayload: any) => {
-    const { error } = await supabase.from('orders').insert([orderPayload]);
+    const { error, data } = await supabase.from('orders').insert([orderPayload]);
+    if (error) {
+      console.error("Supabase insert error:", error);
+    }
     return error;
   };
 
@@ -88,16 +102,15 @@ const Payment = () => {
       if (!orderDataStr) throw new Error('Order data not found. Please restart your order.');
       const orderData = JSON.parse(orderDataStr);
 
-      // 2. Generate or fallback to an orderId
+      // 2. Generate/fallback to an orderId
       const orderId = orderData.orderId || Math.floor(Date.now() % 1e6).toString().padStart(6, "0");
 
       // 3. Upload screenshot and get URL
       const imageUrl = await uploadScreenshotAndGetUrl(orderId, screenshot);
-      if (!imageUrl) throw new Error('Failed to upload screenshot.');
+      if (!imageUrl) throw new Error('Failed to upload screenshot. Try a smaller image or different network.');
 
-      // 4. Map all data to Supabase "orders" table fields
+      // 4. Prepare and insert payload
       const { product = {}, pricing = {}, timestamp } = orderData;
-      // Ensure correct mapping of fields:
       const orderPayload = {
         order_id: orderId,
         product_link: product.productLink || '',
@@ -141,7 +154,6 @@ const Payment = () => {
         description: "We'll verify your payment and start processing your order within 2 hours.",
       });
 
-      // Optionally clear localStorage and fields here
       localStorage.removeItem('currentOrder');
       setTransactionId('');
       setScreenshot(null);
@@ -150,7 +162,7 @@ const Payment = () => {
 
     } catch (err: any) {
       setIsSubmitting(false);
-      console.error(err);
+      console.error('Order Submission Error:', err);
       toast({
         title: "Something went wrong",
         description: err?.message || "Order could not be submitted. Please try again.",
