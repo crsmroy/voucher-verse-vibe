@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -95,7 +94,6 @@ const Payment = () => {
       let imageUrl: string | null = null;
       if (screenshot) {
         imageUrl = await uploadScreenshotAndGetUrl(orderId, screenshot);
-        // If upload fails (not blocking submission if optional)
         if (!imageUrl) {
           toast({
             title: "Screenshot Upload Failed",
