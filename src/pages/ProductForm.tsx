@@ -73,6 +73,22 @@ const ProductForm = () => {
         console.error("Failed to parse order data from localStorage", e);
       }
     }
+
+    // Cleanup: Clear only product data from localStorage on unmount (page leave)
+    return () => {
+      try {
+        const orderDataStr = localStorage.getItem("currentOrder");
+        if (orderDataStr) {
+          const orderData = JSON.parse(orderDataStr);
+          if ('product' in orderData) {
+            delete orderData.product;
+            localStorage.setItem("currentOrder", JSON.stringify(orderData));
+          }
+        }
+      } catch (e) {
+        // Ignore errors
+      }
+    };
   }, []);
 
   // Save form data to localStorage whenever it changes
