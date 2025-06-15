@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +20,43 @@ const ProductForm = () => {
     voucherAmount: '',
     voucherPlatform: ''
   });
+
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const orderDataStr = localStorage.getItem('currentOrder');
+    if (orderDataStr) {
+      try {
+        const parsedOrder = JSON.parse(orderDataStr);
+        if (parsedOrder.product) {
+          // Ensure all fields are present to avoid uncontrolled component warnings
+          setFormData({
+            productLink: parsedOrder.product.productLink || '',
+            price: parsedOrder.product.price || '',
+            quantity: parsedOrder.product.quantity || 1,
+            category: parsedOrder.product.category || '',
+            voucherAmount: parsedOrder.product.voucherAmount || '',
+            voucherPlatform: parsedOrder.product.voucherPlatform || ''
+          });
+        }
+      } catch (e) {
+        console.error("Failed to parse order data from localStorage", e);
+      }
+    }
+  }, []);
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    const orderDataStr = localStorage.getItem('currentOrder');
+    const orderData = orderDataStr ? JSON.parse(orderDataStr) : {};
+
+    const updatedOrderData = {
+      ...orderData,
+      product: formData,
+    };
+
+    localStorage.setItem('currentOrder', JSON.stringify(updatedOrderData));
+  }, [formData]);
 
   const categories = [
     { value: 'electronics', label: 'Electronics', gst: 18, color: 'from-electric-blue to-teal' },
