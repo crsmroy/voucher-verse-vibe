@@ -9,7 +9,99 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          alternate_phone_number: string | null
+          category: string | null
+          city: string | null
+          created_at: string | null
+          date_time: string | null
+          email_address: string | null
+          full_address: string | null
+          full_name: string | null
+          gst: string | null
+          id: string
+          landmark: string | null
+          order_id: string
+          payment_proof_link: string | null
+          phone_number: string | null
+          pincode: string | null
+          platform: string | null
+          premium_price: number | null
+          price: number | null
+          product: string | null
+          product_link: string | null
+          quantity: number | null
+          service_fee: number | null
+          state: string | null
+          status: string | null
+          total_to_pay: number | null
+          transaction_id: string | null
+          voucher_amount: number | null
+          whatsapp_number: string | null
+        }
+        Insert: {
+          alternate_phone_number?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          date_time?: string | null
+          email_address?: string | null
+          full_address?: string | null
+          full_name?: string | null
+          gst?: string | null
+          id?: string
+          landmark?: string | null
+          order_id: string
+          payment_proof_link?: string | null
+          phone_number?: string | null
+          pincode?: string | null
+          platform?: string | null
+          premium_price?: number | null
+          price?: number | null
+          product?: string | null
+          product_link?: string | null
+          quantity?: number | null
+          service_fee?: number | null
+          state?: string | null
+          status?: string | null
+          total_to_pay?: number | null
+          transaction_id?: string | null
+          voucher_amount?: number | null
+          whatsapp_number?: string | null
+        }
+        Update: {
+          alternate_phone_number?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          date_time?: string | null
+          email_address?: string | null
+          full_address?: string | null
+          full_name?: string | null
+          gst?: string | null
+          id?: string
+          landmark?: string | null
+          order_id?: string
+          payment_proof_link?: string | null
+          phone_number?: string | null
+          pincode?: string | null
+          platform?: string | null
+          premium_price?: number | null
+          price?: number | null
+          product?: string | null
+          product_link?: string | null
+          quantity?: number | null
+          service_fee?: number | null
+          state?: string | null
+          status?: string | null
+          total_to_pay?: number | null
+          transaction_id?: string | null
+          voucher_amount?: number | null
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

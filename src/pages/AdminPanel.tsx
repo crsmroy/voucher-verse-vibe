@@ -76,8 +76,6 @@ const AdminPanel = () => {
 
   // Orders
   const [orders, setOrders] = useState<any[]>([]);
-  // For now, filteredOrders just equals orders (fake data to allow building)
-  const filteredOrders = orders;
 
   // Confirmation dialog for status changes
   const [confirmationDialog, setConfirmationDialog] = useState({
@@ -130,11 +128,6 @@ const AdminPanel = () => {
   const handleAddSelectChange = (key: string, val: string) => {
     setAddForm({ ...addForm, [key]: val });
   };
-  const handleAddOrderSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Implement actual add logic here
-    closeAddOrderDialog();
-  };
 
   const handleStatusChangeRequest = (orderId: string, newStatus: string) => {
     setConfirmationDialog({
@@ -172,6 +165,103 @@ const AdminPanel = () => {
       default: return "border-gray-300";
     }
   };
+
+  // Fetch orders from Supabase
+  useEffect(() => {
+    async function fetchOrders() {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) {
+        console.error("Error fetching orders:", error);
+        setOrders([]);
+      } else {
+        setOrders(data || []);
+      }
+    }
+    fetchOrders();
+  }, []);
+
+  // Insert a new order into Supabase
+  const handleAddOrderSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Prepare payload matching DB schema
+    const payload = {
+      order_id: addForm.orderId,
+      product_link: addForm.productLink,
+      product: addForm.product,
+      price: parseFloat(addForm.price) || null,
+      quantity: Number(addForm.quantity) || 1,
+      category: addForm.category,
+      voucher_amount: parseFloat(addForm.voucherAmount) || null,
+      platform: addForm.platform,
+      premium_price: parseFloat(addForm.premiumPrice) || null,
+      service_fee: parseFloat(addForm.serviceFee) || null,
+      gst: addForm.gst,
+      total_to_pay: parseFloat(addForm.totalToPay) || null,
+      full_name: addForm.fullName,
+      phone_number: addForm.phoneNumber,
+      alternate_phone_number: addForm.alternatePhoneNumber,
+      whatsapp_number: addForm.whatsappNumber,
+      email_address: addForm.emailAddress,
+      full_address: addForm.fullAddress,
+      city: addForm.city,
+      state: addForm.state,
+      pincode: addForm.pincode,
+      landmark: addForm.landmark,
+      payment_proof_link: addForm.paymentProofLink,
+      transaction_id: addForm.transactionId,
+      date_time: addForm.dateTime,
+      status: addForm.status,
+    };
+
+    const { data, error } = await supabase.from('orders').insert([payload]);
+
+    if (error) {
+      alert("Failed to add order: " + error.message);
+    } else {
+      // Refetch orders after adding
+      const { data: freshOrders } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+      setOrders(freshOrders || []);
+      closeAddOrderDialog();
+    }
+  };
+
+  // For displaying in the table, map new DB field names to UI field names
+  const filteredOrders = orders.map((order: any) => ({
+    orderId: order.order_id,
+    productLink: order.product_link,
+    product: order.product,
+    price: order.price !== null && order.price !== undefined ? `₹${order.price}` : "",
+    quantity: order.quantity,
+    category: order.category,
+    voucherAmount: order.voucher_amount !== null && order.voucher_amount !== undefined ? `₹${order.voucher_amount}` : "",
+    platform: order.platform,
+    premiumPrice: order.premium_price !== null && order.premium_price !== undefined ? `₹${order.premium_price}` : "",
+    serviceFee: order.service_fee !== null && order.service_fee !== undefined ? `₹${order.service_fee}` : "",
+    gst: order.gst,
+    totalToPay: order.total_to_pay !== null && order.total_to_pay !== undefined ? `₹${order.total_to_pay}` : "",
+    fullName: order.full_name,
+    phoneNumber: order.phone_number,
+    alternatePhoneNumber: order.alternate_phone_number,
+    whatsappNumber: order.whatsapp_number,
+    emailAddress: order.email_address,
+    fullAddress: order.full_address,
+    city: order.city,
+    state: order.state,
+    pincode: order.pincode,
+    landmark: order.landmark,
+    paymentProofLink: order.payment_proof_link,
+    transactionId: order.transaction_id,
+    dateTime: order.date_time,
+    status: order.status,
+    id: order.id,
+  }));
 
   if (loading) {
     return (
