@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
+import { supabase } from '@/lib/supabase';
 
 const ProductForm = () => {
   const navigate = useNavigate();
@@ -128,18 +129,42 @@ const ProductForm = () => {
     };
   };
 
-  const handleContinueToShipping = () => {
+  // Helper to get the next order ID (6-digit, incrementing)
+  const getNextOrderId = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("order_id");
+      if (error) return "000001";
+      let maxId = 0;
+      if (data && data.length > 0) {
+        const numericIds = data
+          .map((o) => o.order_id)
+          .filter((id) => typeof id === "string" && /^\d{6}$/.test(id));
+        if (numericIds.length > 0) {
+          maxId = Math.max(...numericIds.map((id) => parseInt(id, 10)));
+        }
+      }
+      return (maxId + 1).toString().padStart(6, "0");
+    } catch {
+      return "000001";
+    }
+  };
+
+  const handleContinueToShipping = async () => {
     const pricing = calculatePricing();
-    
+    const nextOrderId = await getNextOrderId();
+
     // Store all the data in localStorage for use in payment page
     const orderData = {
       product: formData,
       pricing: pricing,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      orderId: nextOrderId // Include generated order ID
     };
-    
-    localStorage.setItem('currentOrder', JSON.stringify(orderData));
-    navigate('/shipping');
+
+    localStorage.setItem("currentOrder", JSON.stringify(orderData));
+    navigate("/shipping");
   };
 
   const pricing = calculatePricing();
