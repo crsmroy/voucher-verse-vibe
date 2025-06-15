@@ -21,6 +21,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { format, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const initialAddForm = {
   orderId: '',
