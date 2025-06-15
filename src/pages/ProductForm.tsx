@@ -10,6 +10,36 @@ import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
 import { supabase } from '@/integrations/supabase/client';
 
+// Clear cached product form data on browser reload (not client-side navigation)
+if (typeof window !== "undefined" && "performance" in window) {
+  const perfNav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+  // Fallback for browsers that support .navigationType
+  const isReload =
+    // Spec-compliant browsers
+    (perfNav && perfNav.type === "reload") ||
+    // Legacy browsers with performance.navigation
+    (performance.navigation && performance.navigation.type === 1);
+
+  if (isReload) {
+    // Only remove the cached product form data from localStorage (keep any other fields if necessary)
+    try {
+      const orderDataStr = localStorage.getItem("currentOrder");
+      if (orderDataStr) {
+        const orderData = JSON.parse(orderDataStr);
+        // Remove only the product field (leave pricing, shipping, etc. untouched)
+        if ('product' in orderData) {
+          delete orderData.product;
+          localStorage.setItem("currentOrder", JSON.stringify(orderData));
+        }
+        // Optional: if you want to clear all form progress, uncomment below
+        // localStorage.removeItem("currentOrder");
+      }
+    } catch (e) {
+      // Ignore JSON errors
+    }
+  }
+}
+
 const ProductForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
