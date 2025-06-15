@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
@@ -17,11 +17,12 @@ import {
   DialogDescription,
   DialogClose,
 } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClipboardList, Hourglass, Check, DollarSign } from "lucide-react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 const initialAddForm = {
@@ -56,6 +57,40 @@ const initialAddForm = {
 const AdminPanel = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // Added missing state for page functionality
+  const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [toDate, setToDate] = useState<Date | null>(null);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  // Stats
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [verifiedCount, setVerifiedCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+  const [cancelledCount, setCancelledCount] = useState(0);
+  const [revenue, setRevenue] = useState(0);
+  const [serviceFeeTotal, setServiceFeeTotal] = useState(0);
+
+  // Orders
+  const [orders, setOrders] = useState<any[]>([]);
+  // For now, filteredOrders just equals orders (fake data to allow building)
+  const filteredOrders = orders;
+
+  // Confirmation dialog for status changes
+  const [confirmationDialog, setConfirmationDialog] = useState({
+    isOpen: false,
+    orderId: "",
+    newStatus: "",
+    actionText: ""
+  });
+
+  // Add order dialog
+  const [addOrderDialogOpen, setAddOrderDialogOpen] = useState(false);
+  const [addForm, setAddForm] = useState(initialAddForm);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,11 +113,65 @@ const AdminPanel = () => {
     }
   }, [user, loading, navigate]);
 
+  // Handlers (stubs)
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
     navigate("/auth", { replace: true });
-  }
+  };
+
+  // Status & order UI handlers (stubs)
+  const openAddOrderDialog = () => setAddOrderDialogOpen(true);
+  const closeAddOrderDialog = () => setAddOrderDialogOpen(false);
+
+  const handleAddInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAddForm({ ...addForm, [e.target.name]: e.target.value });
+  };
+  const handleAddSelectChange = (key: string, val: string) => {
+    setAddForm({ ...addForm, [key]: val });
+  };
+  const handleAddOrderSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Implement actual add logic here
+    closeAddOrderDialog();
+  };
+
+  const handleStatusChangeRequest = (orderId: string, newStatus: string) => {
+    setConfirmationDialog({
+      isOpen: true,
+      orderId,
+      newStatus,
+      actionText: (newStatus.charAt(0).toUpperCase() + newStatus.slice(1)),
+    });
+  };
+  const confirmStatusChange = () => {
+    // Implement logic
+    setConfirmationDialog({
+      isOpen: false,
+      orderId: "",
+      newStatus: "",
+      actionText: ""
+    });
+  };
+  const cancelStatusChange = () => {
+    setConfirmationDialog({
+      isOpen: false,
+      orderId: "",
+      newStatus: "",
+      actionText: ""
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending": return "border-yellow-400 text-yellow-700 bg-yellow-100";
+      case "verified": return "border-blue-400 text-blue-700 bg-blue-100";
+      case "completed": return "border-green-500 text-green-700 bg-green-100";
+      case "rejected": return "border-red-400 text-red-700 bg-red-100";
+      case "cancelled": return "border-gray-400 text-gray-700 bg-gray-100";
+      default: return "border-gray-300";
+    }
+  };
 
   if (loading) {
     return (
