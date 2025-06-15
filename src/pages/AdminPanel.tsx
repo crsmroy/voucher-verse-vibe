@@ -308,42 +308,14 @@ const AdminPanel = () => {
 
   // --- Handler for sortable columns only ---
   const handleSort = (field: string) => {
+    // Only allow sorting for 'orderId' and 'dateTime'
+    if (field !== "orderId" && field !== "dateTime") return;
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
       setSortDirection("asc");
     }
-  };
-
-  // --- Enhanced Sorting: Only Order Id and DateTime are sortable ---
-  const sortOrders = (orders: any[]) => {
-    if (!sortField) return orders;
-    return [...orders].sort((a, b) => {
-      let valA = a[sortField];
-      let valB = b[sortField];
-
-      // If sorting by 'orderId', sort alphanumerically as string
-      if (sortField === "orderId") {
-        valA = valA ? valA.toString() : "";
-        valB = valB ? valB.toString() : "";
-        if (valA < valB) return sortDirection === "asc" ? -1 : 1;
-        if (valA > valB) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-      }
-
-      // If sorting by 'dateTime', compare date values
-      if (sortField === "dateTime") {
-        const dateA = valA ? new Date(valA) : new Date(0);
-        const dateB = valB ? new Date(valB) : new Date(0);
-        if (dateA < dateB) return sortDirection === "asc" ? -1 : 1;
-        if (dateA > dateB) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-      }
-
-      // Default (shouldn't trigger)
-      return 0;
-    });
   };
 
   // --- Enhanced Filtering Logic for Orders ---
@@ -373,16 +345,8 @@ const AdminPanel = () => {
     return true;
   });
 
-  // Calculated stats (NOT useState, just constants)
-  const totalOrders = filteredRawOrders.length;
-  const pendingCount = filteredRawOrders.filter((o) => o.status === "pending").length;
-  const verifiedCount = filteredRawOrders.filter((o) => o.status === "verified").length;
-  const completedCount = filteredRawOrders.filter((o) => o.status === "completed").length;
-  const cancelledCount = filteredRawOrders.filter((o) => o.status === "cancelled").length;
-  const revenue = filteredRawOrders.reduce((acc, o) => acc + (o.total_to_pay || 0), 0);
-  const serviceFeeTotal = filteredRawOrders.reduce((acc, o) => acc + (o.service_fee || 0), 0);
-
-  const filteredOrders = sortOrders(filteredRawOrders).map((order: any) => ({
+  // Map filteredRawOrders for table display (with frontend keys)
+  const mappedOrders = filteredRawOrders.map((order: any) => ({
     orderId: order.order_id,
     productLink: order.product_link,
     product: order.product,
@@ -411,6 +375,38 @@ const AdminPanel = () => {
     status: order.status,
     id: order.id,
   }));
+
+  // --- Sorting for mapped orders (frontend keys) ---
+  const sortedOrders = React.useMemo(() => {
+    if (!sortField) return mappedOrders;
+    return [...mappedOrders].sort((a, b) => {
+      if (sortField === "orderId") {
+        const valA = (a.orderId ?? '').toString();
+        const valB = (b.orderId ?? '').toString();
+        // Sort as string so '000123' < '000124'
+        if (valA < valB) return sortDirection === "asc" ? -1 : 1;
+        if (valA > valB) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      }
+      if (sortField === "dateTime") {
+        const dateA = a.dateTime ? new Date(a.dateTime) : new Date(0);
+        const dateB = b.dateTime ? new Date(b.dateTime) : new Date(0);
+        if (dateA < dateB) return sortDirection === "asc" ? -1 : 1;
+        if (dateA > dateB) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      }
+      return 0;
+    });
+  }, [mappedOrders, sortField, sortDirection]);
+
+  // Calculated stats (NOT useState, just constants)
+  const totalOrders = filteredRawOrders.length;
+  const pendingCount = filteredRawOrders.filter((o) => o.status === "pending").length;
+  const verifiedCount = filteredRawOrders.filter((o) => o.status === "verified").length;
+  const completedCount = filteredRawOrders.filter((o) => o.status === "completed").length;
+  const cancelledCount = filteredRawOrders.filter((o) => o.status === "cancelled").length;
+  const revenue = filteredRawOrders.reduce((acc, o) => acc + (o.total_to_pay || 0), 0);
+  const serviceFeeTotal = filteredRawOrders.reduce((acc, o) => acc + (o.service_fee || 0), 0);
 
   if (loading) {
     return (
@@ -720,7 +716,7 @@ const AdminPanel = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredOrders.map((order) => (
+                    {sortedOrders.map((order) => (
                       <TableRow key={order.orderId}>
                         <TableCell className="font-medium">{order.orderId}</TableCell>
                         <TableCell>
@@ -789,7 +785,7 @@ const AdminPanel = () => {
                   </TableBody>
                 </Table>
               </div>
-              {filteredOrders.length === 0 && (
+              {sortedOrders.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
                   No orders found matching your search criteria.
                 </div>
