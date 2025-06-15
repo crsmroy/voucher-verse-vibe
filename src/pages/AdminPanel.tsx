@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -53,326 +54,54 @@ const initialAddForm = {
 };
 
 const AdminPanel = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [confirmationDialog, setConfirmationDialog] = useState<{
-    isOpen: boolean;
-    orderId: string;
-    newStatus: string;
-    actionText: string;
-  }>({
-    isOpen: false,
-    orderId: '',
-    newStatus: '',
-    actionText: ''
-  });
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const [addOrderDialogOpen, setAddOrderDialogOpen] = useState(false);
-  const [addForm, setAddForm] = useState(initialAddForm);
-
-  const [orders, setOrders] = useState([
-    {
-      orderId: 'ORD005',
-      productLink: 'https://example.com/bose-headphones',
-      product: 'Bose Headphones 700',
-      price: '₹29,000',
-      quantity: 1,
-      category: 'Electronics',
-      voucherAmount: '₹1,000',
-      platform: 'Amazon',
-      premiumPrice: '₹29,999',
-      serviceFee: '₹250',
-      gst: '₹1,200',
-      totalToPay: '₹29,999',
-      fullName: 'Anuj Kumar',
-      phoneNumber: '+91-9876543240',
-      alternatePhoneNumber: '+91-9876543241',
-      whatsappNumber: '+91-9876543240',
-      emailAddress: 'anuj@email.com',
-      fullAddress: '135 South City, Block 2C',
-      city: 'Gurgaon',
-      state: 'Haryana',
-      pincode: '122001',
-      landmark: 'Near Ambience Mall',
-      paymentProofLink: 'https://example.com/payment-proof-5',
-      transactionId: 'TXN987654333',
-      dateTime: '2024-01-17 11:20:00',
-      status: 'rejected'
-    },
-    {
-      orderId: 'ORD004',
-      productLink: 'https://example.com/samsung-galaxy',
-      product: 'Samsung Galaxy S24',
-      price: '₹77,000',
-      quantity: 1,
-      category: 'Electronics',
-      voucherAmount: '₹4,000',
-      platform: 'Flipkart',
-      premiumPrice: '₹80,000',
-      serviceFee: '₹500',
-      gst: '₹3,000',
-      totalToPay: '₹80,000',
-      fullName: 'Priya Singh',
-      phoneNumber: '+91-9876543250',
-      alternatePhoneNumber: '+91-9876543251',
-      whatsappNumber: '+91-9876543250',
-      emailAddress: 'priya@email.com',
-      fullAddress: '908 Lotus Residency, Tower B',
-      city: 'Pune',
-      state: 'Maharashtra',
-      pincode: '411001',
-      landmark: 'Next to IT Park',
-      paymentProofLink: 'https://example.com/payment-proof-4',
-      transactionId: 'TXN654987321',
-      dateTime: '2024-01-16 17:05:00',
-      status: 'cancelled'
-    },
-    {
-      orderId: 'ORD001',
-      productLink: 'https://example.com/iphone15pro',
-      product: 'iPhone 15 Pro',
-      price: '₹80,000',
-      quantity: 1,
-      category: 'Electronics',
-      voucherAmount: '₹5,000',
-      platform: 'Amazon',
-      premiumPrice: '₹85,000',
-      serviceFee: '₹500',
-      gst: '₹4,500',
-      totalToPay: '₹85,000',
-      fullName: 'John Doe',
-      phoneNumber: '+91-9876543210',
-      alternatePhoneNumber: '+91-9876543211',
-      whatsappNumber: '+91-9876543210',
-      emailAddress: 'john@email.com',
-      fullAddress: '123 Main St, Apartment 4B',
-      city: 'Mumbai',
-      state: 'Maharashtra',
-      pincode: '400001',
-      landmark: 'Near City Mall',
-      paymentProofLink: 'https://example.com/payment-proof-1',
-      transactionId: 'TXN123456789',
-      dateTime: '2024-01-15 10:30:00',
-      status: 'pending'
-    },
-    {
-      orderId: 'ORD002',
-      productLink: 'https://example.com/macbook-air',
-      product: 'MacBook Air M2',
-      price: '₹90,000',
-      quantity: 1,
-      category: 'Electronics',
-      voucherAmount: '₹5,000',
-      platform: 'Flipkart',
-      premiumPrice: '₹95,000',
-      serviceFee: '₹500',
-      gst: '₹4,500',
-      totalToPay: '₹95,000',
-      fullName: 'Jane Smith',
-      phoneNumber: '+91-9876543220',
-      alternatePhoneNumber: '+91-9876543221',
-      whatsappNumber: '+91-9876543220',
-      emailAddress: 'jane@email.com',
-      fullAddress: '456 Park Avenue, Floor 2',
-      city: 'Delhi',
-      state: 'Delhi',
-      pincode: '110001',
-      landmark: 'Opposite Metro Station',
-      paymentProofLink: 'https://example.com/payment-proof-2',
-      transactionId: 'TXN987654321',
-      dateTime: '2024-01-14 14:20:00',
-      status: 'verified'
-    },
-    {
-      orderId: 'ORD003',
-      productLink: 'https://example.com/airpods-pro',
-      product: 'AirPods Pro',
-      price: '₹22,000',
-      quantity: 1,
-      category: 'Electronics',
-      voucherAmount: '₹2,900',
-      platform: 'Apple Store',
-      premiumPrice: '₹24,900',
-      serviceFee: '₹300',
-      gst: '₹1,200',
-      totalToPay: '₹24,900',
-      fullName: 'Mike Johnson',
-      phoneNumber: '+91-9876543230',
-      alternatePhoneNumber: '+91-9876543231',
-      whatsappNumber: '+91-9876543230',
-      emailAddress: 'mike@email.com',
-      fullAddress: '789 Oak Street, Villa 12',
-      city: 'Bangalore',
-      state: 'Karnataka',
-      pincode: '560001',
-      landmark: 'Near Tech Park',
-      paymentProofLink: 'https://example.com/payment-proof-3',
-      transactionId: 'TXN456789123',
-      dateTime: '2024-01-13 09:15:00',
-      status: 'completed'
-    }
-  ]);
-
-  const [fromDate, setFromDate] = useState<Date | null>(null);
-  const [toDate, setToDate] = useState<Date | null>(null);
-
-  // Function to get JS Date from YYYY-MM-DD or ISO string
-  const getDateObj = (dateStr: string) => {
-    // Try parse as ISO (`yyyy-mm-dd hh:mm:ss`)
-    const iso = dateStr.replace(" ", "T");
-    const d = new Date(iso);
-    return isNaN(d.getTime()) ? null : d;
-  };
-
-  // Add "cancelled" to status options everywhere relevant
-  const statusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'verified', label: 'Verified' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'rejected', label: 'Rejected' },
-    { value: 'cancelled', label: 'Cancelled' }
-  ];
-
-  // ----- UPDATED DATE FILTER LOGIC -----
-  // Filter orders based on search term, status, and date range
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = searchTerm === '' || 
-      order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.emailAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.transactionId.toLowerCase().includes(searchTerm.toLowerCase());
-      
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-
-    let matchesDate = true;
-    if (fromDate || toDate) {
-      const dateObj = getDateObj(order.dateTime);
-      if (dateObj) {
-        // Make "toDate" inclusive for the entire day (set to 23:59:59.999)
-        let toDateInclusive: Date | null = null;
-        if (toDate) {
-          toDateInclusive = new Date(toDate);
-          toDateInclusive.setHours(23,59,59,999);
-        }
-
-        if (fromDate && dateObj < fromDate) matchesDate = false;
-        if (toDateInclusive && dateObj > toDateInclusive) matchesDate = false;
-      }
-    }
-    return matchesSearch && matchesStatus && matchesDate;
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'verified': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'completed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
-      case 'cancelled': return 'bg-gray-200 text-gray-900 border-gray-400';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const handleStatusChangeRequest = (orderId: string, newStatus: string) => {
-    const actionText = newStatus === 'verified' ? 'Verify' : 
-                      newStatus === 'rejected' ? 'Reject' : newStatus === 'completed' ? 'Complete' : 'Cancel';
-    
-    setConfirmationDialog({
-      isOpen: true,
-      orderId,
-      newStatus,
-      actionText
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
     });
-  };
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
+  }, []);
 
-  const confirmStatusChange = () => {
-    setOrders(prevOrders => 
-      prevOrders.map(order => 
-        order.orderId === confirmationDialog.orderId 
-          ? { ...order, status: confirmationDialog.newStatus }
-          : order
-      )
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth', { replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    navigate("/auth", { replace: true });
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-2xl">
+        Loading...
+      </div>
     );
-    
-    setConfirmationDialog({
-      isOpen: false,
-      orderId: '',
-      newStatus: '',
-      actionText: ''
-    });
-  };
-
-  const cancelStatusChange = () => {
-    setConfirmationDialog({
-      isOpen: false,
-      orderId: '',
-      newStatus: '',
-      actionText: ''
-    });
-  };
-
-  // Utility: Parse ₹ values (e.g. "₹24,900" => 24900)
-  const parseRupee = (value: string) => {
-    if (!value) return 0;
-    return Number(value.replace(/[^\d.]/g, "").replace(/,/g, "")) || 0;
-  };
-
-  // Update status filter and card calculation to include "cancelled"
-  const totalOrders = filteredOrders.length;
-  const pendingCount = filteredOrders.filter((o) => o.status === "pending").length;
-  const verifiedCount = filteredOrders.filter((o) => o.status === "verified").length;
-  const completedCount = filteredOrders.filter((o) => o.status === "completed").length;
-  const cancelledCount = filteredOrders.filter((o) => o.status === "cancelled").length;
-
-  // "Total to Pay" aggregate (Revenue)
-  const revenue = filteredOrders.reduce((acc, order) => acc + parseRupee(order.totalToPay), 0);
-  // "Service Fee" aggregate
-  const serviceFeeTotal = filteredOrders.reduce((acc, order) => acc + parseRupee(order.serviceFee), 0);
-
-  // --- Add Order form logic ---
-  const openAddOrderDialog = () => {
-    setAddForm({
-      ...initialAddForm,
-      dateTime: new Date().toISOString().slice(0, 16).replace('T', ' '), // prefill with current date/time
-      status: 'pending',
-    });
-    setAddOrderDialogOpen(true);
-  };
-  const closeAddOrderDialog = () => setAddOrderDialogOpen(false);
-
-  const handleAddInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setAddForm(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleAddSelectChange = (name: string, value: string | number) => {
-    setAddForm(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleAddOrderSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setOrders(prev => [
-      {
-        ...addForm,
-        dateTime: addForm.dateTime || new Date().toISOString().slice(0, 16).replace('T', ' '),
-        quantity: Number(addForm.quantity)
-      },
-      ...prev
-    ]);
-    setAddOrderDialogOpen(false);
-    setAddForm(initialAddForm);
-  };
+  }
+  if (!user) {
+    return null; // Redirection handled above
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation />
+    <div>
+      <div className="p-4 flex justify-end">
+        <Button variant="outline" onClick={handleLogout}>
+          Log Out
+        </Button>
+      </div>
       
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
