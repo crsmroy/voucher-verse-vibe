@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,8 +20,10 @@ import { ClipboardList, Hourglass, Check, DollarSign } from "lucide-react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const initialAddForm = {
   orderId: '',
@@ -53,6 +55,32 @@ const initialAddForm = {
 };
 
 const AdminPanel = () => {
+  const [sessionChecked, setSessionChecked] = useState(false);
+  const navigate = useNavigate();
+
+  // --- Protect page: redirect unauthenticated users ---
+  useEffect(() => {
+    let didCancel = false;
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        navigate("/auth", { replace: true });
+      } else if (!didCancel) {
+        setSessionChecked(true);
+      }
+      // Set up onAuthStateChange in case session expires
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!session) navigate("/auth", { replace: true });
+      });
+      return () => subscription.unsubscribe();
+    };
+    checkAuth();
+    return () => { didCancel = true; };
+  }, [navigate]);
+
+  // No flicker: render nothing until we've checked session
+  if (!sessionChecked) return null;
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [confirmationDialog, setConfirmationDialog] = useState<{
@@ -372,6 +400,9 @@ const AdminPanel = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <div className="w-full flex justify-end pr-4 pt-3">
+        <LogoutButton />
+      </div>
       <Navigation />
       
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
@@ -761,6 +792,29 @@ const AdminPanel = () => {
         </DialogContent>
       </Dialog>
     </div>
+  );
+};
+
+// --- Logout Button (top right above admin dashboard) ---
+const LogoutButton = () => {
+  const navigate = useNavigate();
+  const [pending, setPending] = useState(false);
+
+  const handleLogout = async () => {
+    setPending(true);
+    await supabase.auth.signOut();
+    setPending(false);
+    navigate("/auth", { replace: true });
+  };
+
+  return (
+    <button
+      className="text-red-600 bg-white border border-red-200 rounded px-3 py-1 text-sm hover:bg-red-50 ml-2"
+      onClick={handleLogout}
+      disabled={pending}
+    >
+      Logout
+    </button>
   );
 };
 
