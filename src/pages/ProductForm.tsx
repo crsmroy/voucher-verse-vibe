@@ -70,7 +70,7 @@ const ProductForm = () => {
           });
         }
       } catch (e) {
-        console.error("Failed to parse order data from localStorage", e);
+        // Removed: console.error("Failed to parse order data from localStorage", e);
       }
     }
 

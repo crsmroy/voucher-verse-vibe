@@ -24,18 +24,14 @@ const Payment = () => {
     if (orderData) {
       try {
         const parsed = JSON.parse(orderData);
-        console.log('Order data found:', parsed);
         
         if (parsed.pricing && parsed.pricing.totalPrice) {
           const amount = Math.round(parsed.pricing.totalPrice);
-          console.log('Setting final amount to:', amount);
           setFinalAmount(amount);
         }
       } catch (error) {
-        console.error('Error parsing order data:', error);
       }
     } else {
-      console.log('No order data found in localStorage');
     }
   }, []);
 
@@ -58,7 +54,6 @@ const Payment = () => {
           upsert: false,
         });
       if (uploadError) {
-        console.error("Supabase Storage upload error:", uploadError);
         return null;
       }
 
@@ -66,7 +61,6 @@ const Payment = () => {
       const { data: urlData } = supabase.storage.from('payment-proofs').getPublicUrl(path);
       return urlData?.publicUrl ?? null;
     } catch (err) {
-      console.error("File upload encountered exception:", err);
       return null;
     }
   };
@@ -75,7 +69,6 @@ const Payment = () => {
   const insertOrder = async (orderPayload: any) => {
     const { error, data } = await supabase.from('orders').insert([orderPayload]);
     if (error) {
-      console.error("Supabase insert error:", error);
     }
     return error;
   };
@@ -158,7 +151,6 @@ const Payment = () => {
 
     } catch (err: any) {
       setIsSubmitting(false);
-      console.error('Order Submission Error:', err);
       toast({
         title: "Something went wrong",
         description: err?.message || "Order could not be submitted. Please try again.",
