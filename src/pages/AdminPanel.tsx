@@ -446,37 +446,33 @@ const AdminPanel = () => {
           </div>
 
           {/* Stats Cards: Row 2 - Earnings & Service Fee, right aligned */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 md:justify-end flex md:flex-row md:gap-6 md:mb-8 w-full">
-            <div className="flex md:justify-end">
-              <Card className="w-full max-w-xs hover:shadow-lg transition-shadow">
-                <CardContent className="p-6 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Total Earnings</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      ₹{revenue.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-warm-orange to-neon-pink flex items-center justify-center text-white text-xl">
-                    <DollarSign size={28} />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="flex md:justify-end">
-              <Card className="w-full max-w-xs hover:shadow-lg transition-shadow">
-                <CardContent className="p-6 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Total Service Fee</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      ₹{serviceFeeTotal.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-fuchsia-400 flex items-center justify-center text-white text-xl">
-                    <DollarSign size={28} />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+          <div className="w-full flex flex-col md:flex-row justify-end items-end gap-6 mb-8">
+            <Card className="w-full max-w-xs hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Earnings</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ₹{revenue.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                  </p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-neon-pink to-warm-orange flex items-center justify-center text-white text-xl">
+                  <DollarSign size={28} />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="w-full max-w-xs hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Service Fee</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ₹{serviceFeeTotal.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
+                  </p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-fuchsia-400 flex items-center justify-center text-white text-xl">
+                  <DollarSign size={28} />
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Orders Table */}
