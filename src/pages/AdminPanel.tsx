@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -189,8 +188,23 @@ const AdminPanel = () => {
     <div>
       {/* Brand Header */}
       <header className="w-full flex items-center justify-between px-4 sm:px-8 pt-6 pb-0 mb-2">
-        <div className="text-2xl font-bold tracking-tight text-gray-900">
-          YourBrand Admin
+        <div className="flex items-center space-x-3">
+          {/* Logo */}
+          <div
+            className="w-10 h-10 flex items-center justify-center rounded-[10px] font-bold text-white text-2xl bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 shadow"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            F
+          </div>
+          {/* Brand Name */}
+          <span className="text-[2rem] font-bold flex items-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <span
+              className="bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent"
+            >
+              Freedom
+            </span>
+            <span className="ml-1 text-blue-400">Vouchers</span>
+          </span>
         </div>
         <Button variant="outline" onClick={handleLogout}>
           Log Out
@@ -588,4 +602,3 @@ const AdminPanel = () => {
 };
 
 export default AdminPanel;
-
