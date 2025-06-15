@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import Navigation from '@/components/Navigation';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -45,6 +45,31 @@ const Payment = () => {
     }
   };
 
+  // Helper: Upload screenshot to Supabase Storage and return its public URL
+  const uploadScreenshotAndGetUrl = async (orderId: string, file: File): Promise<string | null> => {
+    const path = `order_${orderId}_${Date.now()}_${file.name.replace(/\s/g, "_")}`;
+    // Upload file
+    const { error } = await supabase.storage
+      .from('payment-proofs')
+      .upload(path, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+    if (error) {
+      console.error("Upload error", error);
+      return null;
+    }
+    // Fetch public URL
+    const { data } = supabase.storage.from('payment-proofs').getPublicUrl(path);
+    return data?.publicUrl ?? null;
+  };
+
+  // Helper: Insert order into Supabase database
+  const insertOrder = async (orderPayload: any) => {
+    const { error } = await supabase.from('orders').insert([orderPayload]);
+    return error;
+  };
+
   const handleSubmit = async () => {
     if (!screenshot || !transactionId) {
       toast({
@@ -56,15 +81,82 @@ const Payment = () => {
     }
 
     setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      // 1. Load order details from localStorage (built at previous checkout step)
+      const orderDataStr = localStorage.getItem('currentOrder');
+      if (!orderDataStr) throw new Error('Order data not found. Please restart your order.');
+      const orderData = JSON.parse(orderDataStr);
+
+      // 2. Generate or fallback to an orderId
+      const orderId = orderData.orderId || Math.floor(Date.now() % 1e6).toString().padStart(6, "0");
+
+      // 3. Upload screenshot and get URL
+      const imageUrl = await uploadScreenshotAndGetUrl(orderId, screenshot);
+      if (!imageUrl) throw new Error('Failed to upload screenshot.');
+
+      // 4. Map all data to Supabase "orders" table fields
+      const { product = {}, pricing = {}, timestamp } = orderData;
+      // Ensure correct mapping of fields:
+      const orderPayload = {
+        order_id: orderId,
+        product_link: product.productLink || '',
+        product: product.productName || '',
+        price: Number(product.price) || 0,
+        quantity: Number(product.quantity) || 1,
+        category: product.category || '',
+        voucher_amount: Number(product.voucherAmount) || 0,
+        platform: product.voucherPlatform || '',
+        premium_price: pricing.premiumPrice || 0,
+        service_fee: pricing.serviceFee || 0,
+        gst: pricing.gstAmount ? `${pricing.gstAmount}` : '',
+        total_to_pay: pricing.totalPrice || 0,
+        // User details (if present in orderData, else blank)
+        full_name: orderData.shipping?.fullName ?? '',
+        phone_number: orderData.shipping?.phoneNumber ?? '',
+        alternate_phone_number: orderData.shipping?.alternatePhoneNumber ?? '',
+        whatsapp_number: orderData.shipping?.whatsappNumber ?? '',
+        email_address: orderData.shipping?.emailAddress ?? '',
+        full_address: orderData.shipping?.address ?? '',
+        city: orderData.shipping?.city ?? '',
+        state: orderData.shipping?.state ?? '',
+        pincode: orderData.shipping?.pincode ?? '',
+        landmark: orderData.shipping?.landmark ?? '',
+        payment_proof_link: imageUrl,
+        transaction_id: transactionId,
+        date_time: new Date().toISOString(),
+        status: 'pending',
+      };
+
+      // 5. Insert row into orders table
+      const error = await insertOrder(orderPayload);
+
+      if (error) {
+        throw error;
+      }
+
       setIsSubmitting(false);
       toast({
         title: "Order Submitted! 🎉",
         description: "We'll verify your payment and start processing your order within 2 hours.",
       });
-    }, 2000);
+
+      // Optionally clear localStorage and fields here
+      localStorage.removeItem('currentOrder');
+      setTransactionId('');
+      setScreenshot(null);
+
+      // Optionally navigate to a success page
+
+    } catch (err: any) {
+      setIsSubmitting(false);
+      console.error(err);
+      toast({
+        title: "Something went wrong",
+        description: err?.message || "Order could not be submitted. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
