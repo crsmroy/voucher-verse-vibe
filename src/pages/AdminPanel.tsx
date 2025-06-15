@@ -22,6 +22,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const initialAddForm = {
   orderId: '',
@@ -53,6 +56,19 @@ const initialAddForm = {
 };
 
 const AdminPanel = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // If still loading auth state
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+  // If not logged in, redirect to /auth
+  if (!user) {
+    navigate("/auth");
+    return null;
+  }
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [confirmationDialog, setConfirmationDialog] = useState<{
@@ -760,6 +776,19 @@ const AdminPanel = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Add logout button (top right) */}
+      <div className="fixed top-4 right-4">
+        <button
+          className="px-4 py-2 rounded bg-gray-800 text-white font-semibold hover:bg-gray-900 transition"
+          onClick={async () => {
+            await supabase.auth.signOut();
+            navigate("/auth");
+          }}
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 };
