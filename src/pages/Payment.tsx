@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -24,14 +25,12 @@ const Payment = () => {
     if (orderData) {
       try {
         const parsed = JSON.parse(orderData);
-        
         if (parsed.pricing && parsed.pricing.totalPrice) {
           const amount = Math.round(parsed.pricing.totalPrice);
           setFinalAmount(amount);
         }
       } catch (error) {
       }
-    } else {
     }
   }, []);
 
@@ -56,8 +55,7 @@ const Payment = () => {
       if (uploadError) {
         return null;
       }
-
-      // Fetch public URL — getPublicUrl does NOT return error property
+      // Fetch public URL
       const { data: urlData } = supabase.storage.from('payment-proofs').getPublicUrl(path);
       return urlData?.publicUrl ?? null;
     } catch (err) {
@@ -65,19 +63,18 @@ const Payment = () => {
     }
   };
 
-  // Helper: Insert order into Supabase database (with better error handling)
+  // Helper: Insert order into Supabase database
   const insertOrder = async (orderPayload: any) => {
-    const { error, data } = await supabase.from('orders').insert([orderPayload]);
-    if (error) {
-    }
+    const { error } = await supabase.from('orders').insert([orderPayload]);
     return error;
   };
 
+  // Make screenshot optional in submission
   const handleSubmit = async () => {
-    if (!screenshot || !transactionId) {
+    if (!transactionId) {
       toast({
         title: "Missing Information",
-        description: "Please upload screenshot and enter transaction ID",
+        description: "Please enter transaction ID",
         variant: "destructive"
       });
       return;
@@ -94,9 +91,19 @@ const Payment = () => {
       // 2. Generate/fallback to an orderId
       const orderId = orderData.orderId || Math.floor(Date.now() % 1e6).toString().padStart(6, "0");
 
-      // 3. Upload screenshot and get URL
-      const imageUrl = await uploadScreenshotAndGetUrl(orderId, screenshot);
-      if (!imageUrl) throw new Error('Failed to upload screenshot. Try a smaller image or different network.');
+      // 3. If screenshot is provided, upload and use its URL; otherwise, use null
+      let imageUrl: string | null = null;
+      if (screenshot) {
+        imageUrl = await uploadScreenshotAndGetUrl(orderId, screenshot);
+        // If upload fails (not blocking submission if optional)
+        if (!imageUrl) {
+          toast({
+            title: "Screenshot Upload Failed",
+            description: "Could not upload screenshot, but order will still be submitted.",
+            variant: "destructive"
+          });
+        }
+      }
 
       // 4. Prepare and insert payload
       const { product = {}, pricing = {}, timestamp } = orderData;
@@ -124,7 +131,7 @@ const Payment = () => {
         state: orderData.shipping?.state ?? '',
         pincode: orderData.shipping?.pincode ?? '',
         landmark: orderData.shipping?.landmark ?? '',
-        payment_proof_link: imageUrl,
+        payment_proof_link: imageUrl, // null if screenshot not uploaded
         transaction_id: transactionId,
         date_time: new Date().toISOString(),
         status: 'pending',
@@ -162,7 +169,6 @@ const Payment = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
       <Navigation />
-      
       {/* Animated Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-20 left-10 w-32 h-32 gradient-primary rounded-full opacity-10 float"></div>
@@ -258,14 +264,14 @@ const Payment = () => {
               <CardHeader className="pb-8">
                 <CardTitle className="text-3xl font-bold flex items-center gap-3 text-gray-900">
                   <span className="text-4xl">📸</span>
-                  Upload Proof
+                  Upload Proof <span className="text-sm text-gray-500 font-normal">(optional)</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6 p-8">
                 <div className="space-y-4">
                   <div>
                     <Label className="text-base font-medium flex items-center gap-2 mb-3">
-                      📷 Payment Screenshot
+                      📷 Payment Screenshot <span className="text-xs text-gray-500 font-normal">(optional)</span>
                     </Label>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-neon-pink transition-colors">
                       <input
@@ -311,7 +317,7 @@ const Payment = () => {
                   <h4 className="font-semibold text-blue-900 mb-2">📋 Instructions:</h4>
                   <ul className="text-sm text-blue-800 space-y-1">
                     <li>• Make payment using the QR code above</li>
-                    <li>• Take a clear screenshot of payment confirmation</li>
+                    <li>• Take a clear screenshot of payment confirmation (optional)</li>
                     <li>• Enter the transaction ID from your payment app</li>
                     <li>• Upload the screenshot and submit</li>
                   </ul>
@@ -319,7 +325,7 @@ const Payment = () => {
 
                 <Button 
                   onClick={handleSubmit}
-                  disabled={isSubmitting || !screenshot || !transactionId}
+                  disabled={isSubmitting || !transactionId}
                   className="w-full btn-glow gradient-primary text-white h-12 text-lg font-semibold border-0"
                 >
                   {isSubmitting ? (
