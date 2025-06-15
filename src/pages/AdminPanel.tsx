@@ -436,15 +436,27 @@ const AdminPanel = () => {
                           </a>
                         </TableCell>
                         <TableCell className="max-w-32 truncate">{order.product}</TableCell>
-                        <TableCell>{order.price}</TableCell>
+                        <TableCell>
+                          {order.price.replace(/^₹\s?/, "")}
+                        </TableCell>
                         <TableCell>{order.quantity}</TableCell>
                         <TableCell>{order.category}</TableCell>
-                        <TableCell>{order.voucherAmount}</TableCell>
+                        <TableCell>
+                          {order.voucherAmount.replace(/^₹\s?/, "")}
+                        </TableCell>
                         <TableCell>{order.platform}</TableCell>
-                        <TableCell>{order.premiumPrice}</TableCell>
-                        <TableCell>{order.serviceFee}</TableCell>
-                        <TableCell>{order.gst}</TableCell>
-                        <TableCell className="font-semibold">{order.totalToPay}</TableCell>
+                        <TableCell>
+                          {order.premiumPrice.replace(/^₹\s?/, "")}
+                        </TableCell>
+                        <TableCell>
+                          {order.serviceFee.replace(/^₹\s?/, "")}
+                        </TableCell>
+                        <TableCell>
+                          {order.gst.replace(/^₹\s?/, "")}
+                        </TableCell>
+                        <TableCell className="font-semibold">
+                          {order.totalToPay.replace(/^₹\s?/, "")}
+                        </TableCell>
                         <TableCell>{order.fullName}</TableCell>
                         <TableCell>{order.phoneNumber}</TableCell>
                         <TableCell>{order.alternatePhoneNumber}</TableCell>
