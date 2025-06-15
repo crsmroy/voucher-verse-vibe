@@ -455,8 +455,8 @@ const AdminPanel = () => {
             </DialogDescription>
           </DialogHeader>
           <form className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2" onSubmit={handleAddOrderSubmit}>
-            {/* Each field, split in two columns for large screens */}
-            <Input name="orderId" required value={addForm.orderId} onChange={handleAddInputChange} placeholder="Order Id" label="Order Id" />
+            {/* Removed `label` prop from each Input below */}
+            <Input name="orderId" required value={addForm.orderId} onChange={handleAddInputChange} placeholder="Order Id" />
             <Input name="productLink" value={addForm.productLink} onChange={handleAddInputChange} placeholder="Product Link" />
             <Input name="product" value={addForm.product} onChange={handleAddInputChange} placeholder="Product" />
             <Input name="price" value={addForm.price} onChange={handleAddInputChange} placeholder="Price" />
