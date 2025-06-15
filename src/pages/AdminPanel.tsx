@@ -17,6 +17,10 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { ClipboardList, Hourglass, Check, DollarSign } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format, parseISO } from "date-fns";
 
 const initialAddForm = {
   orderId: '',
@@ -152,7 +156,18 @@ const AdminPanel = () => {
     }
   ]);
 
-  // Filter orders based on search term and status
+  const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [toDate, setToDate] = useState<Date | null>(null);
+
+  // Function to get JS Date from YYYY-MM-DD or ISO string
+  const getDateObj = (dateStr: string) => {
+    // Try parse as ISO (`yyyy-mm-dd hh:mm:ss`)
+    const iso = dateStr.replace(" ", "T");
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  // Filter orders based on search term, status, and date range
   const filteredOrders = orders.filter(order => {
     const matchesSearch = searchTerm === '' || 
       order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -160,10 +175,18 @@ const AdminPanel = () => {
       order.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.emailAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.transactionId.toLowerCase().includes(searchTerm.toLowerCase());
-    
+      
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
+
+    let matchesDate = true;
+    if (fromDate || toDate) {
+      const dateObj = getDateObj(order.dateTime);
+      if (dateObj) {
+        if (fromDate && dateObj < fromDate) matchesDate = false;
+        if (toDate && dateObj > toDate) matchesDate = false;
+      }
+    }
+    return matchesSearch && matchesStatus && matchesDate;
   });
 
   const getStatusColor = (status: string) => {
@@ -221,15 +244,15 @@ const AdminPanel = () => {
   };
 
   // Calculate totals/counts for cards
-  const totalOrders = orders.length;
-  const pendingCount = orders.filter((o) => o.status === "pending").length;
-  const verifiedCount = orders.filter((o) => o.status === "verified").length;
-  const completedCount = orders.filter((o) => o.status === "completed").length;
+  const totalOrders = filteredOrders.length;
+  const pendingCount = filteredOrders.filter((o) => o.status === "pending").length;
+  const verifiedCount = filteredOrders.filter((o) => o.status === "verified").length;
+  const completedCount = filteredOrders.filter((o) => o.status === "completed").length;
 
   // "Total to Pay" aggregate (Revenue)
-  const revenue = orders.reduce((acc, order) => acc + parseRupee(order.totalToPay), 0);
+  const revenue = filteredOrders.reduce((acc, order) => acc + parseRupee(order.totalToPay), 0);
   // "Service Fee" aggregate
-  const serviceFeeTotal = orders.reduce((acc, order) => acc + parseRupee(order.serviceFee), 0);
+  const serviceFeeTotal = filteredOrders.reduce((acc, order) => acc + parseRupee(order.serviceFee), 0);
 
   // --- Add Order form logic ---
   const openAddOrderDialog = () => {
@@ -282,6 +305,64 @@ const AdminPanel = () => {
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
             <p className="text-gray-600">Manage orders and customer inquiries</p>
+          </div>
+
+          {/* Date Range Filters */}
+          <div className="mb-4 flex flex-col sm:flex-row gap-4">
+            <div className="flex items-center gap-4">
+              {/* From date */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-[160px] justify-start text-left font-normal",
+                      !fromDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
+                    {fromDate ? format(fromDate, "PPP") : <span>From date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={fromDate || undefined}
+                    onSelect={date => setFromDate(date ?? null)}
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+              {/* To date */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-[160px] justify-start text-left font-normal",
+                      !toDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
+                    {toDate ? format(toDate, "PPP") : <span>To date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={toDate || undefined}
+                    onSelect={date => setToDate(date ?? null)}
+                    className={cn("p-3 pointer-events-auto")}
+                  />
+                </PopoverContent>
+              </Popover>
+              {/* Reset button for date range */}
+              {(fromDate || toDate) && (
+                <Button variant="ghost" size="sm" onClick={() => { setFromDate(null); setToDate(null); }}>
+                  Clear Dates
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Stats Cards */}
