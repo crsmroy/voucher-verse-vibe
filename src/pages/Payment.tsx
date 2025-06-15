@@ -363,16 +363,28 @@ const Payment = () => {
               <h3 className="text-xl font-bold text-gray-900 mb-2">What happens next?</h3>
               <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
                 <div>
-                  <div className="font-semibold">⚡ Instant Verification</div>
-                  <div>We verify your payment within 2 hours</div>
+                  <div className="font-semibold flex items-center justify-center gap-1">
+                    <span role="img" aria-label="Confirmation">⚡</span> Order Confirmation
+                  </div>
+                  <div>
+                    Post Transaction Verification, you will receive order confirmation within couple of minutes from your respective marketplace.
+                  </div>
                 </div>
                 <div>
-                  <div className="font-semibold">🛒 Order Processing</div>
-                  <div>We purchase your item with premium vouchers</div>
+                  <div className="font-semibold flex items-center justify-center gap-1">
+                    <span role="img" aria-label="Delivery">🛒</span> Order Delivery
+                  </div>
+                  <div>
+                    Order will be delivered directly by the marketplace like Flipkart/Amazon. All policies are applied as per respective marketplace policies.
+                  </div>
                 </div>
                 <div>
-                  <div className="font-semibold">📦 Fast Delivery</div>
-                  <div>Product ships directly to your address</div>
+                  <div className="font-semibold flex items-center justify-center gap-1">
+                    <span role="img" aria-label="Voucher">📦</span> Get your voucher
+                  </div>
+                  <div>
+                    Voucher will be provided post end of return policy(Negotiation available).
+                  </div>
                 </div>
               </div>
             </CardContent>
