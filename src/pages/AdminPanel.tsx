@@ -168,6 +168,15 @@ const AdminPanel = () => {
     return isNaN(d.getTime()) ? null : d;
   };
 
+  // Add "cancelled" to status options everywhere relevant
+  const statusOptions = [
+    { value: 'pending', label: 'Pending' },
+    { value: 'verified', label: 'Verified' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'rejected', label: 'Rejected' },
+    { value: 'cancelled', label: 'Cancelled' }
+  ];
+
   // ----- UPDATED DATE FILTER LOGIC -----
   // Filter orders based on search term, status, and date range
   const filteredOrders = orders.filter(order => {
@@ -204,13 +213,14 @@ const AdminPanel = () => {
       case 'verified': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'completed': return 'bg-green-100 text-green-800 border-green-200';
       case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
+      case 'cancelled': return 'bg-gray-200 text-gray-900 border-gray-400';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const handleStatusChangeRequest = (orderId: string, newStatus: string) => {
     const actionText = newStatus === 'verified' ? 'Verify' : 
-                      newStatus === 'rejected' ? 'Reject' : 'Complete';
+                      newStatus === 'rejected' ? 'Reject' : newStatus === 'completed' ? 'Complete' : 'Cancel';
     
     setConfirmationDialog({
       isOpen: true,
@@ -252,11 +262,12 @@ const AdminPanel = () => {
     return Number(value.replace(/[^\d.]/g, "").replace(/,/g, "")) || 0;
   };
 
-  // Calculate totals/counts for cards
+  // Update status filter and card calculation to include "cancelled"
   const totalOrders = filteredOrders.length;
   const pendingCount = filteredOrders.filter((o) => o.status === "pending").length;
   const verifiedCount = filteredOrders.filter((o) => o.status === "verified").length;
   const completedCount = filteredOrders.filter((o) => o.status === "completed").length;
+  const cancelledCount = filteredOrders.filter((o) => o.status === "cancelled").length;
 
   // "Total to Pay" aggregate (Revenue)
   const revenue = filteredOrders.reduce((acc, order) => acc + parseRupee(order.totalToPay), 0);
@@ -446,6 +457,18 @@ const AdminPanel = () => {
                 </div>
               </CardContent>
             </Card>
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Cancelled</p>
+                  <p className="text-2xl font-bold text-gray-900">{cancelledCount}</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-gray-400 to-gray-600 flex items-center justify-center text-white text-xl">
+                  {/* Use Hourglass (or another icon if you prefer) */}
+                  <Hourglass size={28} />
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Orders Table */}
@@ -477,6 +500,7 @@ const AdminPanel = () => {
                       <SelectItem value="verified">Verified</SelectItem>
                       <SelectItem value="completed">Completed</SelectItem>
                       <SelectItem value="rejected">Rejected</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -578,6 +602,7 @@ const AdminPanel = () => {
                               <SelectItem value="verified">Verify</SelectItem>
                               <SelectItem value="rejected">Reject</SelectItem>
                               <SelectItem value="completed">Complete</SelectItem>
+                              <SelectItem value="cancelled">Cancel</SelectItem>
                             </SelectContent>
                           </Select>
                         </TableCell>
@@ -660,6 +685,7 @@ const AdminPanel = () => {
                 <SelectItem value="verified">Verified</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
                 <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
             <DialogFooter className="col-span-2 flex-row-reverse mt-4">
