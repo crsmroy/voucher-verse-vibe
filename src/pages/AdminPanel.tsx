@@ -237,21 +237,12 @@ const AdminPanel = () => {
   const filteredRawOrders = orders.filter((order: any) => {
     // Status filter (if not "all")
     if (statusFilter !== "all" && order.status !== statusFilter) return false;
-    // Search filter: check multiple fields
+    // Search filter: ONLY check order_id
     if (searchTerm.trim() !== "") {
       const term = searchTerm.toLowerCase();
-      // Check fields: order_id, product, full_name, phone_number, email_address, etc.
-      const fieldsToSearch = [
-        order.order_id,
-        order.product,
-        order.full_name,
-        order.phone_number,
-        order.email_address,
-        order.platform,
-        order.status,
-      ];
-      // If none of these fields include the term, skip this order
-      if (!fieldsToSearch.some(f => (f ?? '').toString().toLowerCase().includes(term))) {
+      // ONLY search order_id field
+      const orderId = (order.order_id ?? '').toString().toLowerCase();
+      if (!orderId.includes(term)) {
         return false;
       }
     }
