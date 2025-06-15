@@ -13,7 +13,7 @@ const AdminPanel = () => {
   
   const [orders, setOrders] = useState([
     {
-      id: 'ORD001',
+      orderId: 'ORD001',
       productLink: 'https://example.com/iphone15pro',
       product: 'iPhone 15 Pro',
       price: '₹80,000',
@@ -27,9 +27,9 @@ const AdminPanel = () => {
       totalToPay: '₹85,000',
       fullName: 'John Doe',
       phoneNumber: '+91-9876543210',
-      alternatePhone: '+91-9876543211',
+      alternatePhoneNumber: '+91-9876543211',
       whatsappNumber: '+91-9876543210',
-      email: 'john@email.com',
+      emailAddress: 'john@email.com',
       fullAddress: '123 Main St, Apartment 4B',
       city: 'Mumbai',
       state: 'Maharashtra',
@@ -41,7 +41,7 @@ const AdminPanel = () => {
       status: 'pending'
     },
     {
-      id: 'ORD002',
+      orderId: 'ORD002',
       productLink: 'https://example.com/macbook-air',
       product: 'MacBook Air M2',
       price: '₹90,000',
@@ -55,9 +55,9 @@ const AdminPanel = () => {
       totalToPay: '₹95,000',
       fullName: 'Jane Smith',
       phoneNumber: '+91-9876543220',
-      alternatePhone: '+91-9876543221',
+      alternatePhoneNumber: '+91-9876543221',
       whatsappNumber: '+91-9876543220',
-      email: 'jane@email.com',
+      emailAddress: 'jane@email.com',
       fullAddress: '456 Park Avenue, Floor 2',
       city: 'Delhi',
       state: 'Delhi',
@@ -69,7 +69,7 @@ const AdminPanel = () => {
       status: 'verified'
     },
     {
-      id: 'ORD003',
+      orderId: 'ORD003',
       productLink: 'https://example.com/airpods-pro',
       product: 'AirPods Pro',
       price: '₹22,000',
@@ -83,15 +83,15 @@ const AdminPanel = () => {
       totalToPay: '₹24,900',
       fullName: 'Mike Johnson',
       phoneNumber: '+91-9876543230',
-      alternatePhone: '+91-9876543231',
+      alternatePhoneNumber: '+91-9876543231',
       whatsappNumber: '+91-9876543230',
-      email: 'mike@email.com',
+      emailAddress: 'mike@email.com',
       fullAddress: '789 Oak Street, Villa 12',
       city: 'Bangalore',
       state: 'Karnataka',
       pincode: '560001',
       landmark: 'Near Tech Park',
-      paymentProofLink: 'https://example.com/payment-proof-3',     
+      paymentProofLink: 'https://example.com/payment-proof-3',
       transactionId: 'TXN456789123',
       dateTime: '2024-01-13 09:15:00',
       status: 'completed'
@@ -101,10 +101,10 @@ const AdminPanel = () => {
   // Filter orders based on search term and status
   const filteredOrders = orders.filter(order => {
     const matchesSearch = searchTerm === '' || 
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.emailAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.transactionId.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
@@ -125,7 +125,7 @@ const AdminPanel = () => {
   const handleStatusChange = (orderId: string, newStatus: string) => {
     setOrders(prevOrders => 
       prevOrders.map(order => 
-        order.id === orderId 
+        order.orderId === orderId 
           ? { ...order, status: newStatus }
           : order
       )
@@ -200,69 +200,70 @@ const AdminPanel = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Order ID</TableHead>
+                      <TableHead>Order Id</TableHead>
+                      <TableHead>Product Link</TableHead>
                       <TableHead>Product</TableHead>
                       <TableHead>Price</TableHead>
                       <TableHead>Quantity</TableHead>
                       <TableHead>Category</TableHead>
+                      <TableHead>Voucher Amount</TableHead>
                       <TableHead>Platform</TableHead>
-                      <TableHead>Total Amount</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Address</TableHead>
+                      <TableHead>Premium Price</TableHead>
+                      <TableHead>Service Fee</TableHead>
+                      <TableHead>GST</TableHead>
+                      <TableHead>Total To Pay</TableHead>
+                      <TableHead>Full Name</TableHead>
+                      <TableHead>Phone Number</TableHead>
+                      <TableHead>Alternate Phone Number</TableHead>
+                      <TableHead>Whatsapp Number</TableHead>
+                      <TableHead>Email Address</TableHead>
+                      <TableHead>Full Address</TableHead>
                       <TableHead>City</TableHead>
                       <TableHead>State</TableHead>
                       <TableHead>Pincode</TableHead>
-                      <TableHead>Transaction ID</TableHead>
-                      <TableHead>Date & Time</TableHead>
+                      <TableHead>Landmark</TableHead>
+                      <TableHead>Payment Proof Link</TableHead>
+                      <TableHead>Transaction Id</TableHead>
+                      <TableHead>DateTime</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead>Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">{order.id}</TableCell>
+                      <TableRow key={order.orderId}>
+                        <TableCell className="font-medium">{order.orderId}</TableCell>
                         <TableCell>
-                          <div className="max-w-40">
-                            <div className="font-medium truncate">{order.product}</div>
-                            <a href={order.productLink} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">View Product</a>
-                          </div>
+                          <a href={order.productLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                            View Link
+                          </a>
                         </TableCell>
+                        <TableCell className="max-w-32 truncate">{order.product}</TableCell>
                         <TableCell>{order.price}</TableCell>
                         <TableCell>{order.quantity}</TableCell>
                         <TableCell>{order.category}</TableCell>
+                        <TableCell>{order.voucherAmount}</TableCell>
                         <TableCell>{order.platform}</TableCell>
+                        <TableCell>{order.premiumPrice}</TableCell>
+                        <TableCell>{order.serviceFee}</TableCell>
+                        <TableCell>{order.gst}</TableCell>
                         <TableCell className="font-semibold">{order.totalToPay}</TableCell>
-                        <TableCell>
-                          <div className="max-w-32">
-                            <div className="font-medium">{order.fullName}</div>
-                            <div className="text-xs text-gray-500">WhatsApp: {order.whatsappNumber}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm">
-                            <div>{order.phoneNumber}</div>
-                            {order.alternatePhone && <div className="text-xs text-gray-500">Alt: {order.alternatePhone}</div>}
-                          </div>
-                        </TableCell>
-                        <TableCell className="max-w-40 truncate">{order.email}</TableCell>
-                        <TableCell>
-                          <div className="max-w-48">
-                            <div className="text-sm">{order.fullAddress}</div>
-                            {order.landmark && <div className="text-xs text-gray-500">Near: {order.landmark}</div>}
-                          </div>
-                        </TableCell>
+                        <TableCell>{order.fullName}</TableCell>
+                        <TableCell>{order.phoneNumber}</TableCell>
+                        <TableCell>{order.alternatePhoneNumber}</TableCell>
+                        <TableCell>{order.whatsappNumber}</TableCell>
+                        <TableCell className="max-w-40 truncate">{order.emailAddress}</TableCell>
+                        <TableCell className="max-w-48 truncate">{order.fullAddress}</TableCell>
                         <TableCell>{order.city}</TableCell>
                         <TableCell>{order.state}</TableCell>
                         <TableCell>{order.pincode}</TableCell>
+                        <TableCell className="max-w-32 truncate">{order.landmark}</TableCell>
                         <TableCell>
-                          <div className="max-w-28">
-                            <div className="font-mono text-sm">{order.transactionId}</div>
-                            <a href={order.paymentProofLink} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Payment Proof</a>
-                          </div>
+                          <a href={order.paymentProofLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                            View Proof
+                          </a>
                         </TableCell>
+                        <TableCell className="font-mono text-sm">{order.transactionId}</TableCell>
                         <TableCell className="text-sm">{order.dateTime}</TableCell>
                         <TableCell>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
@@ -270,21 +271,16 @@ const AdminPanel = () => {
                           </span>
                         </TableCell>
                         <TableCell>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="text-xs">
-                              View
-                            </Button>
-                            <Select onValueChange={(value) => handleStatusChange(order.id, value)}>
-                              <SelectTrigger className="w-24 h-8">
-                                <SelectValue placeholder="Action" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="verified">Verify</SelectItem>
-                                <SelectItem value="rejected">Reject</SelectItem>
-                                <SelectItem value="completed">Complete</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
+                          <Select onValueChange={(value) => handleStatusChange(order.orderId, value)}>
+                            <SelectTrigger className="w-24 h-8">
+                              <SelectValue placeholder="Action" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="verified">Verify</SelectItem>
+                              <SelectItem value="rejected">Reject</SelectItem>
+                              <SelectItem value="completed">Complete</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                       </TableRow>
                     ))}
