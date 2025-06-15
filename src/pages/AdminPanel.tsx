@@ -297,6 +297,16 @@ const AdminPanel = () => {
   const filteredRawOrders = orders.filter((order: any) => {
     // Status filter (if not "all")
     if (statusFilter !== "all" && order.status !== statusFilter) return false;
+
+    // Date filter logic (NEW): Only include if within fromDate/toDate (inclusive)
+    if ((fromDate || toDate) && order.date_time) {
+      // Try parsing order.date_time to Date
+      const orderDate = new Date(order.date_time);
+      if (isNaN(orderDate.getTime())) return false; // Can't parse date, exclude
+      if (fromDate && orderDate < new Date(fromDate.setHours(0,0,0,0))) return false;
+      if (toDate && orderDate > new Date(toDate.setHours(23,59,59,999))) return false;
+    }
+
     // Search filter: ONLY check order_id
     if (searchTerm.trim() !== "") {
       const term = searchTerm.toLowerCase();
