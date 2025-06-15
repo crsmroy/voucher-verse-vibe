@@ -62,12 +62,8 @@ const Payment = () => {
         return null;
       }
 
-      // Fetch public URL
-      const { data: urlData, error: urlError } = supabase.storage.from('payment-proofs').getPublicUrl(path);
-      if (urlError) {
-        console.error("Error getting public URL:", urlError);
-        return null;
-      }
+      // Fetch public URL — getPublicUrl does NOT return error property
+      const { data: urlData } = supabase.storage.from('payment-proofs').getPublicUrl(path);
       return urlData?.publicUrl ?? null;
     } catch (err) {
       console.error("File upload encountered exception:", err);
