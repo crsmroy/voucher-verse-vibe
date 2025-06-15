@@ -137,8 +137,49 @@ const AdminPanel = () => {
       actionText: (newStatus.charAt(0).toUpperCase() + newStatus.slice(1)),
     });
   };
-  const confirmStatusChange = () => {
-    // Implement logic
+
+  const confirmStatusChange = async () => {
+    if (!confirmationDialog.orderId || !confirmationDialog.newStatus) {
+      setConfirmationDialog({
+        isOpen: false,
+        orderId: "",
+        newStatus: "",
+        actionText: ""
+      });
+      return;
+    }
+    // Update order status in Supabase
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: confirmationDialog.newStatus })
+      .eq("order_id", confirmationDialog.orderId);
+
+    if (error) {
+      // Optionally show error toast (using shadcn toasts)
+      import("@/components/ui/use-toast").then(({ toast }) => {
+        toast({
+          title: "Failed to update status",
+          description: error.message,
+          variant: "destructive",
+        });
+      });
+    } else {
+      // Refetch orders after successful update
+      const { data: freshOrders } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+      setOrders(freshOrders || []);
+
+      // Show success toast
+      import("@/components/ui/use-toast").then(({ toast }) => {
+        toast({
+          title: "Order status updated",
+          description: `Status changed to '${confirmationDialog.newStatus}' for order ${confirmationDialog.orderId}.`,
+        });
+      });
+    }
+
     setConfirmationDialog({
       isOpen: false,
       orderId: "",
@@ -146,6 +187,7 @@ const AdminPanel = () => {
       actionText: ""
     });
   };
+
   const cancelStatusChange = () => {
     setConfirmationDialog({
       isOpen: false,
