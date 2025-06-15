@@ -123,7 +123,35 @@ const AdminPanel = () => {
   };
 
   // Status & order UI handlers (stubs)
-  const openAddOrderDialog = () => setAddOrderDialogOpen(true);
+  const openAddOrderDialog = async () => {
+    // Fetch all order_ids and find max, then set new ID in addForm
+    try {
+      const { data: ordersData, error } = await supabase
+        .from("orders")
+        .select("order_id");
+      if (error) {
+        setAddOrderDialogOpen(true);
+        return;
+      }
+      let maxId = 0;
+      if (ordersData && ordersData.length > 0) {
+        // Filter only 6 digit numeric IDs (should be)
+        const numericIds = ordersData
+          .map(o => o.order_id)
+          .filter(id => typeof id === "string" && /^\d{6}$/.test(id));
+        if (numericIds.length > 0) {
+          // Parse and find the max ID
+          maxId = Math.max(...numericIds.map(id => parseInt(id, 10)));
+        }
+      }
+      const nextId = (maxId + 1).toString().padStart(6, "0");
+      setAddForm({ ...initialAddForm, orderId: nextId });
+    } catch {
+      setAddForm({ ...initialAddForm, orderId: "000001" });
+    }
+    setAddOrderDialogOpen(true);
+  };
+
   const closeAddOrderDialog = () => setAddOrderDialogOpen(false);
 
   // Update input change for orderId to auto-pad as needed
