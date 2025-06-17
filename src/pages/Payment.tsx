@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -198,23 +197,26 @@ const Payment = () => {
       }
 
       setIsSubmitting(false);
+      
+      // Show success notification instead of redirecting
       toast({
-        title: "Order Submitted! 🎉",
-        description: "We'll verify your payment and start processing your order within 2 hours.",
+        title: "Order Received Successfully! 🎉",
+        description: "Your order will be placed in a couple of minutes after payment verification. You will receive order details on your email and WhatsApp.",
       });
 
       localStorage.removeItem('currentOrder');
       setTransactionId('');
       setScreenshot(null);
-
-      // Navigate to success page
-      navigate('/payment-success');
+      setCaptchaChecked(false);
+      generateCaptcha();
 
     } catch (err: any) {
       setIsSubmitting(false);
+      
+      // Show failure notification with WhatsApp contact info
       toast({
-        title: "Something went wrong",
-        description: err?.message || "Order could not be submitted. Please try again.",
+        title: "Submission Failed",
+        description: "Please send your payment screenshot and product details to our WhatsApp: +91 98765 43210",
         variant: "destructive"
       });
     }
