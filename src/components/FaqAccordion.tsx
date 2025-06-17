@@ -1,4 +1,3 @@
-
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
 import React from "react";
@@ -12,7 +11,7 @@ const FAQ_SECTIONS = [
         question: "What exactly does your service do?",
         answer: (
           <>
-            We help you convert your corporate well-being amount into a <b>freedom voucher</b> that lets you buy <b>anything from anywhere</b> — Amazon, Flipkart, Nykaa, and more. You’re no longer stuck with a fixed list of products.
+            We help you convert your corporate well-being amount into a <b>freedom voucher</b> that lets you buy <b>anything from anywhere</b> — Amazon, Flipkart, Nykaa, and more. You're no longer stuck with a fixed list of products.
           </>
         ),
       },
@@ -20,12 +19,12 @@ const FAQ_SECTIONS = [
         question: "What is a freedom voucher?",
         answer: (
           <>
-            It’s a digital voucher you get from us equal to your well-being allowance, which you can use to <b>purchase any product or service you want</b> — from any platform.
+            It's a digital voucher you get from us equal to your well-being allowance, which you can use to <b>purchase any product or service you want</b> — from any platform.
           </>
         ),
       },
       {
-        question: "How is this better than my company’s well-being portal?",
+        question: "How is this better than my company's well-being portal?",
         answer: (
           <>
             Your company's portal usually restricts your options to a few products or vendors. With our voucher, <b>you get full freedom of choice</b> — no limitations, no forced purchases.
@@ -44,7 +43,15 @@ const FAQ_SECTIONS = [
         question: "Do I need to tell my company about this?",
         answer: (
           <>
-            No. You’re using your <b>own well-being amount</b> to buy a service from us. You’ll get an invoice which you can submit to your employer for reimbursement.
+            No. You're using your <b>own well-being amount</b> to buy a service from us. You'll get an invoice which you can submit to your employer for reimbursement.
+          </>
+        ),
+      },
+      {
+        question: "Are you overcharging us? Is this even legal?",
+        answer: (
+          <>
+            Not at all. We never charge above MRP. Prices may vary like on any platform — just like buying something for ₹10,000 today and seeing it drop to ₹9,000 tomorrow. It's completely legal and based on service value, not overpricing.
           </>
         ),
       },

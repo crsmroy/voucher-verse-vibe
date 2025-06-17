@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Navigation from '@/components/Navigation';
+import FaqAccordion from '@/components/FaqAccordion';
 import { useToast } from '@/hooks/use-toast';
 import { Facebook, Instagram, Youtube } from 'lucide-react';
 
@@ -219,42 +220,7 @@ const Contact = () => {
             <p className="text-lg text-gray-600">Quick answers to common questions</p>
           </div>
 
-          <div className="space-y-4">
-            {[
-              {
-                question: "How does FreedomVouchers work?",
-                answer: "We use premium vouchers and discounts to buy products at lower prices and pass the savings to you!",
-                icon: "🤔"
-              },
-              {
-                question: "Is it safe to use your service?",
-                answer: "Absolutely! We're a legitimate reseller service with 500+ happy customers and secure payment methods.",
-                icon: "🔒"
-              },
-              {
-                question: "How long does delivery take?",
-                answer: "Delivery usually takes 3-7 business days depending on the product and your location.",
-                icon: "📦"
-              },
-              {
-                question: "What if I'm not satisfied?",
-                answer: "We offer a 100% satisfaction guarantee. If you're not happy, we'll make it right!",
-                icon: "😊"
-              }
-            ].map((faq, index) => (
-              <Card key={index} className="hover:shadow-lg transition-all duration-300 bg-white/80">
-                <CardContent className="p-6">
-                  <div className="flex gap-4">
-                    <span className="text-2xl">{faq.icon}</span>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
-                      <p className="text-gray-600">{faq.answer}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <FaqAccordion />
         </div>
       </section>
     </div>
