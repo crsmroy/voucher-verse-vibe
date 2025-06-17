@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,8 @@ const Payment = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [finalAmount, setFinalAmount] = useState(3500); // Default fallback
   const [captchaChecked, setCaptchaChecked] = useState(false);
+  const [captchaQuestion, setCaptchaQuestion] = useState({ question: '', answer: 0 });
+  const [captchaInput, setCaptchaInput] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -32,7 +35,48 @@ const Payment = () => {
       } catch (error) {
       }
     }
+
+    // Generate simple math captcha
+    generateCaptcha();
   }, []);
+
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    const operators = ['+', '-'];
+    const operator = operators[Math.floor(Math.random() * operators.length)];
+    
+    let answer;
+    if (operator === '+') {
+      answer = num1 + num2;
+    } else {
+      answer = num1 - num2;
+    }
+
+    setCaptchaQuestion({
+      question: `${num1} ${operator} ${num2} = ?`,
+      answer: answer
+    });
+    setCaptchaInput('');
+    setCaptchaChecked(false);
+  };
+
+  const verifyCaptcha = () => {
+    if (parseInt(captchaInput) === captchaQuestion.answer) {
+      setCaptchaChecked(true);
+      toast({
+        title: "Captcha Verified ✅",
+        description: "You can now submit your order."
+      });
+    } else {
+      toast({
+        title: "Incorrect Captcha",
+        description: "Please try again.",
+        variant: "destructive"
+      });
+      generateCaptcha();
+    }
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -69,12 +113,22 @@ const Payment = () => {
     return error;
   };
 
-  // Make screenshot optional in submission
+  // Updated validation for screenshot OR transaction ID requirement
   const handleSubmit = async () => {
-    if (!transactionId) {
+    // Check if either screenshot or transaction ID is provided
+    if (!screenshot && !transactionId.trim()) {
       toast({
         title: "Missing Information",
-        description: "Please enter transaction ID",
+        description: "Please either upload a payment screenshot OR enter your transaction ID",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!captchaChecked) {
+      toast({
+        title: "Captcha Required",
+        description: "Please verify the captcha first",
         variant: "destructive"
       });
       return;
@@ -153,7 +207,8 @@ const Payment = () => {
       setTransactionId('');
       setScreenshot(null);
 
-      // Optionally navigate to a success page
+      // Navigate to success page
+      navigate('/payment-success');
 
     } catch (err: any) {
       setIsSubmitting(false);
@@ -210,7 +265,6 @@ const Payment = () => {
             </div>
           </div>
 
-          {/* Header */}
           <div className="text-center mb-12 slide-in">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Complete <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Payment</span>
@@ -263,14 +317,14 @@ const Payment = () => {
               <CardHeader className="pb-8">
                 <CardTitle className="text-3xl font-bold flex items-center gap-3 text-gray-900">
                   <span className="text-4xl">📸</span>
-                  Upload Proof <span className="text-sm text-gray-500 font-normal">(optional)</span>
+                  Submit Payment Details
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6 p-8">
                 <div className="space-y-4">
                   <div>
                     <Label className="text-base font-medium flex items-center gap-2 mb-3">
-                      📷 Payment Screenshot <span className="text-xs text-gray-500 font-normal">(optional)</span>
+                      📷 Payment Screenshot <span className="text-xs text-gray-500 font-normal">(optional if you provide transaction ID)</span>
                     </Label>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-neon-pink transition-colors">
                       <input
@@ -298,9 +352,11 @@ const Payment = () => {
                     </div>
                   </div>
 
+                  <div className="text-center text-gray-500 font-medium">OR</div>
+
                   <div className="space-y-2">
                     <Label htmlFor="transactionId" className="text-base font-medium flex items-center gap-2">
-                      🔢 Transaction ID
+                      🔢 Transaction ID <span className="text-xs text-gray-500 font-normal">(required if no screenshot)</span>
                     </Label>
                     <Input
                       id="transactionId"
@@ -312,37 +368,58 @@ const Payment = () => {
                   </div>
                 </div>
 
-                {/* Captcha */}
-                <div className="flex items-center mb-2">
-                  <input
-                    id="order-captcha"
-                    type="checkbox"
-                    checked={captchaChecked}
-                    onChange={(e) => setCaptchaChecked(e.target.checked)}
-                    className="h-5 w-5 rounded border-gray-300 text-neon-pink focus:ring-2 focus:ring-neon-pink transition"
-                    aria-label="Verify that you are not a robot"
-                  />
-                  <label htmlFor="order-captcha" className="ml-2 text-base text-gray-700 select-none cursor-pointer">
-                    I'm not a robot
-                  </label>
+                {/* Simple Math Captcha */}
+                <div className="bg-blue-50 p-4 rounded-lg space-y-3">
+                  <h4 className="font-semibold text-blue-900">🔐 Security Check</h4>
+                  <div className="flex items-center gap-3">
+                    <Label className="text-blue-800 font-medium">{captchaQuestion.question}</Label>
+                    <Input
+                      type="number"
+                      value={captchaInput}
+                      onChange={(e) => setCaptchaInput(e.target.value)}
+                      className="w-20 h-10"
+                      placeholder="?"
+                    />
+                    <Button
+                      type="button"
+                      onClick={verifyCaptcha}
+                      size="sm"
+                      variant="outline"
+                      disabled={captchaChecked}
+                    >
+                      {captchaChecked ? "✅ Verified" : "Verify"}
+                    </Button>
+                  </div>
+                  {!captchaChecked && (
+                    <Button
+                      type="button"
+                      onClick={generateCaptcha}
+                      size="sm"
+                      variant="ghost"
+                      className="text-blue-600 text-xs"
+                    >
+                      🔄 New Question
+                    </Button>
+                  )}
                 </div>
 
                 {/* Instructions */}
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 mb-2">📋 Instructions:</h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
+                <div className="bg-amber-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-amber-900 mb-2">📋 Instructions:</h4>
+                  <ul className="text-sm text-amber-800 space-y-1">
                     <li>• Make payment using the QR code above</li>
-                    <li>• Take a clear screenshot of payment confirmation (optional)</li>
-                    <li>• Enter the transaction ID from your payment app</li>
-                    <li>• Upload the screenshot and submit</li>
+                    <li>• Upload payment screenshot OR enter transaction ID</li>
+                    <li>• Complete the security verification</li>
+                    <li>• Submit your order</li>
                   </ul>
                 </div>
 
                 <Button 
-                  onClick={() => navigate("/payment-gateway")}
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || (!screenshot && !transactionId.trim()) || !captchaChecked}
                   className="w-full btn-glow gradient-primary text-white h-12 text-lg font-semibold border-0"
                 >
-                  Continue to Payment →
+                  {isSubmitting ? "Submitting..." : "Submit Order 🎉"}
                 </Button>
               </CardContent>
             </Card>
