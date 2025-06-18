@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import Navigation from '@/components/Navigation';
+import ContactMessagesDialog from '@/components/ContactMessagesDialog';
 import {
   Dialog,
   DialogTrigger,
@@ -469,9 +470,12 @@ const AdminPanel = () => {
             <span className="ml-1 text-blue-400">Vouchers</span>
           </span>
         </div>
-        <Button variant="outline" onClick={handleLogout}>
-          Log Out
-        </Button>
+        <div className="flex items-center gap-2">
+          <ContactMessagesDialog />
+          <Button variant="outline" onClick={handleLogout}>
+            Log Out
+          </Button>
+        </div>
       </header>
       {/* Main Dashboard section with less top padding */}
       <div className="pt-4 pb-16 px-4 sm:px-6 lg:px-8">
