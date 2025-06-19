@@ -18,7 +18,6 @@ const ReplacementReturn = () => {
     orderDate: '',
     requestType: '',
     returnReason: '',
-    productImage: '',
     fullName: '',
     phoneNumber: '',
     amountPaid: '',
@@ -45,7 +44,7 @@ const ReplacementReturn = () => {
           order_date: formData.orderDate,
           request_type: formData.requestType,
           return_reason: formData.returnReason,
-          product_image: formData.productImage || null,
+          product_image: null,
           full_name: formData.fullName,
           phone_number: formData.phoneNumber,
           amount_paid: parseFloat(formData.amountPaid),
@@ -66,7 +65,6 @@ const ReplacementReturn = () => {
         orderDate: '',
         requestType: '',
         returnReason: '',
-        productImage: '',
         fullName: '',
         phoneNumber: '',
         amountPaid: '',
@@ -242,11 +240,11 @@ const ReplacementReturn = () => {
                         <Label htmlFor="amountPaid">Amount Paid *</Label>
                         <Input
                           id="amountPaid"
-                          type="number"
-                          step="0.01"
+                          type="text"
                           value={formData.amountPaid}
                           onChange={(e) => handleInputChange('amountPaid', e.target.value)}
                           placeholder="0.00"
+                          className="[&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           required
                         />
                       </div>
@@ -271,17 +269,6 @@ const ReplacementReturn = () => {
                         placeholder="Please describe the reason for return/replacement"
                         className="min-h-20"
                         required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="productImage">Product Image URL (Optional)</Label>
-                      <Input
-                        id="productImage"
-                        type="url"
-                        value={formData.productImage}
-                        onChange={(e) => handleInputChange('productImage', e.target.value)}
-                        placeholder="https://example.com/image.jpg"
                       />
                     </div>
 
