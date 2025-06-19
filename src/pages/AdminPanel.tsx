@@ -19,12 +19,13 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ClipboardList, Hourglass, Check, DollarSign } from "lucide-react";
+import { ClipboardList, Hourglass, Check, DollarSign, Package } from "lucide-react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const initialAddForm = {
   orderId: '',
@@ -81,6 +82,16 @@ const AdminPanel = () => {
 
   // Orders
   const [orders, setOrders] = useState<any[]>([]);
+  
+  // Replacement/Return requests
+  const [replacementRequests, setReplacementRequests] = useState<any[]>([]);
+  const [replacementSearchTerm, setReplacementSearchTerm] = useState("");
+  const [replacementStatusFilter, setReplacementStatusFilter] = useState("all");
+
+  // Notification states
+  const [lastViewedOrders, setLastViewedOrders] = useState<string | null>(null);
+  const [lastViewedReplacements, setLastViewedReplacements] = useState<string | null>(null);
+  const [lastViewedMessages, setLastViewedMessages] = useState<string | null>(null);
 
   // Confirmation dialog for status changes
   const [confirmationDialog, setConfirmationDialog] = useState({
@@ -90,9 +101,20 @@ const AdminPanel = () => {
     actionText: ""
   });
 
+  // Replacement status change dialog
+  const [replacementConfirmationDialog, setReplacementConfirmationDialog] = useState({
+    isOpen: false,
+    requestId: "",
+    newStatus: "",
+    actionText: ""
+  });
+
   // Add order dialog
   const [addOrderDialogOpen, setAddOrderDialogOpen] = useState(false);
   const [addForm, setAddForm] = useState(initialAddForm);
+
+  // Active tab state
+  const [activeTab, setActiveTab] = useState("orders");
 
   const navigate = useNavigate();
 
@@ -115,6 +137,39 @@ const AdminPanel = () => {
       navigate('/auth', { replace: true });
     }
   }, [user, loading, navigate]);
+
+  // Load last viewed timestamps from localStorage
+  useEffect(() => {
+    setLastViewedOrders(localStorage.getItem('lastViewedOrders'));
+    setLastViewedReplacements(localStorage.getItem('lastViewedReplacements'));
+    setLastViewedMessages(localStorage.getItem('lastViewedMessages'));
+  }, []);
+
+  // Update last viewed timestamp when tab changes
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    const timestamp = new Date().toISOString();
+    
+    if (value === "orders") {
+      localStorage.setItem('lastViewedOrders', timestamp);
+      setLastViewedOrders(timestamp);
+    } else if (value === "replacements") {
+      localStorage.setItem('lastViewedReplacements', timestamp);
+      setLastViewedReplacements(timestamp);
+    }
+  };
+
+  // Check for new orders
+  const hasNewOrders = () => {
+    if (!lastViewedOrders || orders.length === 0) return false;
+    return orders.some(order => new Date(order.created_at) > new Date(lastViewedOrders));
+  };
+
+  // Check for new replacement requests
+  const hasNewReplacements = () => {
+    if (!lastViewedReplacements || replacementRequests.length === 0) return false;
+    return replacementRequests.some(request => new Date(request.created_at) > new Date(lastViewedReplacements));
+  };
 
   // Handlers (stubs)
   const handleLogout = async () => {
@@ -263,6 +318,73 @@ const AdminPanel = () => {
     }
   };
 
+  // Replacement request status change handlers
+  const handleReplacementStatusChangeRequest = (requestId: string, newStatus: string) => {
+    setReplacementConfirmationDialog({
+      isOpen: true,
+      requestId,
+      newStatus,
+      actionText: (newStatus.charAt(0).toUpperCase() + newStatus.slice(1)),
+    });
+  };
+
+  const confirmReplacementStatusChange = async () => {
+    if (!replacementConfirmationDialog.requestId || !replacementConfirmationDialog.newStatus) {
+      setReplacementConfirmationDialog({
+        isOpen: false,
+        requestId: "",
+        newStatus: "",
+        actionText: ""
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from("replacement_return_requests")
+      .update({ status: replacementConfirmationDialog.newStatus })
+      .eq("id", replacementConfirmationDialog.requestId);
+
+    if (error) {
+      import("@/components/ui/use-toast").then(({ toast }) => {
+        toast({
+          title: "Failed to update status",
+          description: error.message,
+          variant: "destructive",
+        });
+      });
+    } else {
+      // Refetch replacement requests after successful update
+      const { data: freshRequests } = await supabase
+        .from("replacement_return_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
+      setReplacementRequests(freshRequests || []);
+
+      import("@/components/ui/use-toast").then(({ toast }) => {
+        toast({
+          title: "Request status updated",
+          description: `Status changed to '${replacementConfirmationDialog.newStatus}' for request.`,
+        });
+      });
+    }
+
+    setReplacementConfirmationDialog({
+      isOpen: false,
+      requestId: "",
+      newStatus: "",
+      actionText: ""
+    });
+  };
+
+  const cancelReplacementStatusChange = () => {
+    setReplacementConfirmationDialog({
+      isOpen: false,
+      requestId: "",
+      newStatus: "",
+      actionText: ""
+    });
+  };
+
   // Fetch orders from Supabase
   useEffect(() => {
     async function fetchOrders() {
@@ -278,6 +400,23 @@ const AdminPanel = () => {
       }
     }
     fetchOrders();
+  }, []);
+
+  // Fetch replacement requests from Supabase
+  useEffect(() => {
+    async function fetchReplacementRequests() {
+      const { data, error } = await supabase
+        .from("replacement_return_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) {
+        console.error("Error fetching replacement requests:", error);
+        setReplacementRequests([]);
+      } else {
+        setReplacementRequests(data || []);
+      }
+    }
+    fetchReplacementRequests();
   }, []);
 
   // Insert a new order into Supabase
@@ -428,6 +567,25 @@ const AdminPanel = () => {
     });
   }, [mappedOrders, sortField, sortDirection]);
 
+  // Filter replacement requests
+  const filteredReplacementRequests = replacementRequests.filter((request: any) => {
+    // Status filter
+    if (replacementStatusFilter !== "all" && request.status !== replacementStatusFilter) return false;
+
+    // Search filter
+    if (replacementSearchTerm.trim() !== "") {
+      const term = replacementSearchTerm.toLowerCase();
+      const fullName = (request.full_name ?? '').toString().toLowerCase();
+      const phoneNumber = (request.phone_number ?? '').toString().toLowerCase();
+      const requestType = (request.request_type ?? '').toString().toLowerCase();
+      
+      if (!fullName.includes(term) && !phoneNumber.includes(term) && !requestType.includes(term)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
   // Calculated stats (NOT useState, just constants)
   const totalOrders = filteredRawOrders.length;
   const pendingCount = filteredRawOrders.filter((o) => o.status === "pending").length;
@@ -483,7 +641,7 @@ const AdminPanel = () => {
           {/* Dashboard Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-            <p className="text-gray-600">Manage orders and customer inquiries</p>
+            <p className="text-gray-600">Manage orders, replacement requests, and customer inquiries</p>
           </div>
 
           {/* Date Range Filters */}
@@ -634,196 +792,323 @@ const AdminPanel = () => {
             </Card>
           </div>
 
-          {/* Orders Table */}
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                {/* --- LEFT: All Orders title and Add Order button --- */}
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-xl font-bold">All Orders</CardTitle>
-                  <Button
-                    variant="outline"
-                    className="text-base font-medium"
-                    onClick={openAddOrderDialog}
-                  >
-                    + Add Order
-                  </Button>
-                </div>
-                {/* --- RIGHT: Search and filters --- */}
-                <div className="flex gap-2">
-                  <Input 
-                    placeholder="Search orders..." 
-                    className="w-64" 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="verified">Verified</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      {/* Only these columns are sortable */}
-                      <TableHead
-                        className="cursor-pointer select-none"
-                        onClick={() => handleSort("orderId")}
+          {/* Main Content Tabs */}
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="orders" className="relative">
+                Orders
+                {hasNewOrders() && (
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="replacements" className="relative">
+                Replacement/Return Requests
+                {hasNewReplacements() && (
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                )}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="orders" className="mt-6">
+              {/* Orders Table */}
+              <Card>
+                <CardHeader>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    {/* --- LEFT: All Orders title and Add Order button --- */}
+                    <div className="flex items-center gap-2">
+                      <CardTitle className="text-xl font-bold">All Orders</CardTitle>
+                      <Button
+                        variant="outline"
+                        className="text-base font-medium"
+                        onClick={openAddOrderDialog}
                       >
-                        <span className="inline-flex items-center">
-                          Order Id
-                          {sortField === "orderId" ? (
-                            sortDirection === "asc" ? (
-                              <span className="ml-1 text-blue-500">
-                                {/* Up Arrow */}
-                                <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5l7 7-1.41 1.42L13 9.83V19h-2V9.83l-4.59 4.59L5 12z" /></svg>
+                        + Add Order
+                      </Button>
+                    </div>
+                    {/* --- RIGHT: Search and filters --- */}
+                    <div className="flex gap-2">
+                      <Input 
+                        placeholder="Search orders..." 
+                        className="w-64" 
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All</SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="verified">Verified</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="rejected">Rejected</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          {/* Only these columns are sortable */}
+                          <TableHead
+                            className="cursor-pointer select-none"
+                            onClick={() => handleSort("orderId")}
+                          >
+                            <span className="inline-flex items-center">
+                              Order Id
+                              {sortField === "orderId" ? (
+                                sortDirection === "asc" ? (
+                                  <span className="ml-1 text-blue-500">
+                                    {/* Up Arrow */}
+                                    <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5l7 7-1.41 1.42L13 9.83V19h-2V9.83l-4.59 4.59L5 12z" /></svg>
+                                  </span>
+                                ) : (
+                                  <span className="ml-1 text-blue-500">
+                                    {/* Down Arrow */}
+                                    <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M12 19l-7-7 1.41-1.42L11 14.17V5h2v9.17l4.59-4.59L19 12z" /></svg>
+                                  </span>
+                                )
+                              ) : null}
+                            </span>
+                          </TableHead>
+                          <TableHead>Product Link</TableHead>
+                          <TableHead>Price</TableHead>
+                          <TableHead>Quantity</TableHead>
+                          <TableHead>Category</TableHead>
+                          <TableHead>Voucher Amount</TableHead>
+                          <TableHead>Platform</TableHead>
+                          <TableHead>Premium Price</TableHead>
+                          <TableHead>Service Fee</TableHead>
+                          <TableHead>GST</TableHead>
+                          <TableHead>Total To Pay</TableHead>
+                          <TableHead>Full Name</TableHead>
+                          <TableHead>Phone Number</TableHead>
+                          <TableHead>Alternate Phone Number</TableHead>
+                          <TableHead>Whatsapp Number</TableHead>
+                          <TableHead>Email Address</TableHead>
+                          <TableHead>Full Address</TableHead>
+                          <TableHead>City</TableHead>
+                          <TableHead>State</TableHead>
+                          <TableHead>Pincode</TableHead>
+                          <TableHead>Landmark</TableHead>
+                          <TableHead>Payment Proof Link</TableHead>
+                          <TableHead>Transaction Id</TableHead>
+                          <TableHead
+                            className="cursor-pointer select-none"
+                            onClick={() => handleSort("dateTime")}
+                          >
+                            <span className="inline-flex items-center">
+                              DateTime
+                              {sortField === "dateTime" ? (
+                                sortDirection === "asc" ? (
+                                  <span className="ml-1 text-blue-500">
+                                    {/* Up Arrow */}
+                                    <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5l7 7-1.41 1.42L13 9.83V19h-2V9.83l-4.59 4.59L5 12z" /></svg>
+                                  </span>
+                                ) : (
+                                  <span className="ml-1 text-blue-500">
+                                    {/* Down Arrow */}
+                                    <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M12 19l-7-7 1.41-1.42L11 14.17V5h2v9.17l4.59-4.59L19 12z" /></svg>
+                                  </span>
+                                )
+                              ) : null}
+                            </span>
+                          </TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {sortedOrders.map((order) => (
+                          <TableRow key={order.orderId}>
+                            <TableCell className="font-medium">{order.orderId}</TableCell>
+                            <TableCell>
+                              <a href={order.productLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                                View Link
+                              </a>
+                            </TableCell>
+                            <TableCell>
+                              {order.price.replace(/^₹\s?/, "")}
+                            </TableCell>
+                            <TableCell>{order.quantity}</TableCell>
+                            <TableCell>{order.category}</TableCell>
+                            <TableCell>
+                              {order.voucherAmount.replace(/^₹\s?/, "")}
+                            </TableCell>
+                            <TableCell>{order.platform}</TableCell>
+                            <TableCell>
+                              {order.premiumPrice.replace(/^₹\s?/, "")}
+                            </TableCell>
+                            <TableCell>
+                              {order.serviceFee.replace(/^₹\s?/, "")}
+                            </TableCell>
+                            <TableCell>
+                              {order.gst.replace(/^₹\s?/, "")}
+                            </TableCell>
+                            <TableCell className="font-semibold">
+                              {order.totalToPay.replace(/^₹\s?/, "")}
+                            </TableCell>
+                            <TableCell>{order.fullName}</TableCell>
+                            <TableCell>{order.phoneNumber}</TableCell>
+                            <TableCell>{order.alternatePhoneNumber}</TableCell>
+                            <TableCell>{order.whatsappNumber}</TableCell>
+                            <TableCell className="max-w-40 truncate">{order.emailAddress}</TableCell>
+                            <TableCell className="max-w-48 truncate">{order.fullAddress}</TableCell>
+                            <TableCell>{order.city}</TableCell>
+                            <TableCell>{order.state}</TableCell>
+                            <TableCell>{order.pincode}</TableCell>
+                            <TableCell className="max-w-32 truncate">{order.landmark}</TableCell>
+                            <TableCell>
+                              <a href={order.paymentProofLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                                View Proof
+                              </a>
+                            </TableCell>
+                            <TableCell className="font-mono text-sm">{order.transactionId}</TableCell>
+                            <TableCell className="text-sm">{order.dateTime}</TableCell>
+                            <TableCell>
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
+                                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                               </span>
-                            ) : (
-                              <span className="ml-1 text-blue-500">
-                                {/* Down Arrow */}
-                                <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M12 19l-7-7 1.41-1.42L11 14.17V5h2v9.17l4.59-4.59L19 12z" /></svg>
+                            </TableCell>
+                            <TableCell>
+                              <Select onValueChange={(value) => handleStatusChangeRequest(order.orderId, value)}>
+                                <SelectTrigger className="w-24 h-8">
+                                  <SelectValue placeholder="Action" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="verified">Verify</SelectItem>
+                                  <SelectItem value="rejected">Reject</SelectItem>
+                                  <SelectItem value="completed">Complete</SelectItem>
+                                  <SelectItem value="cancelled">Cancel</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  {sortedOrders.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No orders found matching your search criteria.
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="replacements" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <CardTitle className="text-xl font-bold flex items-center gap-2">
+                      <Package className="w-5 h-5" />
+                      Replacement/Return Requests
+                    </CardTitle>
+                    <div className="flex gap-2">
+                      <Input 
+                        placeholder="Search requests..." 
+                        className="w-64" 
+                        value={replacementSearchTerm}
+                        onChange={(e) => setReplacementSearchTerm(e.target.value)}
+                      />
+                      <Select value={replacementStatusFilter} onValueChange={setReplacementStatusFilter}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All</SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="approved">Approved</SelectItem>
+                          <SelectItem value="rejected">Rejected</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Request ID</TableHead>
+                          <TableHead>Full Name</TableHead>
+                          <TableHead>Phone Number</TableHead>
+                          <TableHead>Product Link</TableHead>
+                          <TableHead>Quantity</TableHead>
+                          <TableHead>Order Date</TableHead>
+                          <TableHead>Request Type</TableHead>
+                          <TableHead>Return Reason</TableHead>
+                          <TableHead>Amount Paid</TableHead>
+                          <TableHead>Transaction ID</TableHead>
+                          <TableHead>Created At</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredReplacementRequests.map((request) => (
+                          <TableRow key={request.id}>
+                            <TableCell className="font-mono text-sm">{request.id.slice(0, 8)}...</TableCell>
+                            <TableCell>{request.full_name}</TableCell>
+                            <TableCell>{request.phone_number}</TableCell>
+                            <TableCell>
+                              <a href={request.product_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
+                                View Link
+                              </a>
+                            </TableCell>
+                            <TableCell>{request.quantity}</TableCell>
+                            <TableCell>{new Date(request.order_date).toLocaleDateString()}</TableCell>
+                            <TableCell>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                request.request_type === 'Replacement' 
+                                  ? 'bg-blue-100 text-blue-700' 
+                                  : 'bg-orange-100 text-orange-700'
+                              }`}>
+                                {request.request_type}
                               </span>
-                            )
-                          ) : null}
-                        </span>
-                      </TableHead>
-                      <TableHead>Product Link</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Quantity</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Voucher Amount</TableHead>
-                      <TableHead>Platform</TableHead>
-                      <TableHead>Premium Price</TableHead>
-                      <TableHead>Service Fee</TableHead>
-                      <TableHead>GST</TableHead>
-                      <TableHead>Total To Pay</TableHead>
-                      <TableHead>Full Name</TableHead>
-                      <TableHead>Phone Number</TableHead>
-                      <TableHead>Alternate Phone Number</TableHead>
-                      <TableHead>Whatsapp Number</TableHead>
-                      <TableHead>Email Address</TableHead>
-                      <TableHead>Full Address</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>State</TableHead>
-                      <TableHead>Pincode</TableHead>
-                      <TableHead>Landmark</TableHead>
-                      <TableHead>Payment Proof Link</TableHead>
-                      <TableHead>Transaction Id</TableHead>
-                      <TableHead
-                        className="cursor-pointer select-none"
-                        onClick={() => handleSort("dateTime")}
-                      >
-                        <span className="inline-flex items-center">
-                          DateTime
-                          {sortField === "dateTime" ? (
-                            sortDirection === "asc" ? (
-                              <span className="ml-1 text-blue-500">
-                                {/* Up Arrow */}
-                                <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5l7 7-1.41 1.42L13 9.83V19h-2V9.83l-4.59 4.59L5 12z" /></svg>
+                            </TableCell>
+                            <TableCell className="max-w-48 truncate">{request.return_reason}</TableCell>
+                            <TableCell className="font-semibold">₹{request.amount_paid}</TableCell>
+                            <TableCell className="font-mono text-sm">{request.transaction_id || 'N/A'}</TableCell>
+                            <TableCell className="text-sm">{new Date(request.created_at).toLocaleString()}</TableCell>
+                            <TableCell>
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(request.status)}`}>
+                                {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                               </span>
-                            ) : (
-                              <span className="ml-1 text-blue-500">
-                                {/* Down Arrow */}
-                                <svg width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M12 19l-7-7 1.41-1.42L11 14.17V5h2v9.17l4.59-4.59L19 12z" /></svg>
-                              </span>
-                            )
-                          ) : null}
-                        </span>
-                      </TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedOrders.map((order) => (
-                      <TableRow key={order.orderId}>
-                        <TableCell className="font-medium">{order.orderId}</TableCell>
-                        <TableCell>
-                          <a href={order.productLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
-                            View Link
-                          </a>
-                        </TableCell>
-                        <TableCell>
-                          {order.price.replace(/^₹\s?/, "")}
-                        </TableCell>
-                        <TableCell>{order.quantity}</TableCell>
-                        <TableCell>{order.category}</TableCell>
-                        <TableCell>
-                          {order.voucherAmount.replace(/^₹\s?/, "")}
-                        </TableCell>
-                        <TableCell>{order.platform}</TableCell>
-                        <TableCell>
-                          {order.premiumPrice.replace(/^₹\s?/, "")}
-                        </TableCell>
-                        <TableCell>
-                          {order.serviceFee.replace(/^₹\s?/, "")}
-                        </TableCell>
-                        <TableCell>
-                          {order.gst.replace(/^₹\s?/, "")}
-                        </TableCell>
-                        <TableCell className="font-semibold">
-                          {order.totalToPay.replace(/^₹\s?/, "")}
-                        </TableCell>
-                        <TableCell>{order.fullName}</TableCell>
-                        <TableCell>{order.phoneNumber}</TableCell>
-                        <TableCell>{order.alternatePhoneNumber}</TableCell>
-                        <TableCell>{order.whatsappNumber}</TableCell>
-                        <TableCell className="max-w-40 truncate">{order.emailAddress}</TableCell>
-                        <TableCell className="max-w-48 truncate">{order.fullAddress}</TableCell>
-                        <TableCell>{order.city}</TableCell>
-                        <TableCell>{order.state}</TableCell>
-                        <TableCell>{order.pincode}</TableCell>
-                        <TableCell className="max-w-32 truncate">{order.landmark}</TableCell>
-                        <TableCell>
-                          <a href={order.paymentProofLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
-                            View Proof
-                          </a>
-                        </TableCell>
-                        <TableCell className="font-mono text-sm">{order.transactionId}</TableCell>
-                        <TableCell className="text-sm">{order.dateTime}</TableCell>
-                        <TableCell>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <Select onValueChange={(value) => handleStatusChangeRequest(order.orderId, value)}>
-                            <SelectTrigger className="w-24 h-8">
-                              <SelectValue placeholder="Action" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="verified">Verify</SelectItem>
-                              <SelectItem value="rejected">Reject</SelectItem>
-                              <SelectItem value="completed">Complete</SelectItem>
-                              <SelectItem value="cancelled">Cancel</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              {sortedOrders.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  No orders found matching your search criteria.
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                            </TableCell>
+                            <TableCell>
+                              <Select onValueChange={(value) => handleReplacementStatusChangeRequest(request.id, value)}>
+                                <SelectTrigger className="w-24 h-8">
+                                  <SelectValue placeholder="Action" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="approved">Approve</SelectItem>
+                                  <SelectItem value="rejected">Reject</SelectItem>
+                                  <SelectItem value="completed">Complete</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  {filteredReplacementRequests.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No replacement/return requests found matching your search criteria.
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 
@@ -841,6 +1126,25 @@ const AdminPanel = () => {
             <AlertDialogCancel onClick={cancelStatusChange}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmStatusChange}>
               {confirmationDialog.actionText}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Replacement Status Change Confirmation Dialog */}
+      <AlertDialog open={replacementConfirmationDialog.isOpen} onOpenChange={(open) => !open && cancelReplacementStatusChange()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to {replacementConfirmationDialog.actionText.toLowerCase()} this replacement/return request?
+              This action will change the request status to "{replacementConfirmationDialog.newStatus}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelReplacementStatusChange}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmReplacementStatusChange}>
+              {replacementConfirmationDialog.actionText}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
