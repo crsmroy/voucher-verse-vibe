@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navigation from '@/components/Navigation';
 import { ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 const ShippingDetails = () => {
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ const ShippingDetails = () => {
     pincode: '',
     landmark: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Load data from localStorage on component mount
   useEffect(() => {
@@ -63,6 +66,65 @@ const ShippingDetails = () => {
 
     localStorage.setItem('currentOrder', JSON.stringify(updatedOrderData));
     navigate('/payment');
+  };
+
+  const handleCashOnDelivery = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      // Get order data from localStorage
+      const orderDataStr = localStorage.getItem('currentOrder');
+      const orderData = orderDataStr ? JSON.parse(orderDataStr) : {};
+
+      // Prepare complete order data with shipping details
+      const completeOrderData = {
+        ...orderData,
+        full_name: formData.fullName,
+        phone_number: formData.phoneNumber,
+        alternate_phone_number: formData.alternatePhoneNumber || null,
+        whatsapp_number: formData.whatsappNumber || null,
+        email_address: formData.emailAddress || null,
+        full_address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        pincode: formData.pincode,
+        landmark: formData.landmark || null,
+        status: 'confirmed',
+        payment_method: 'cash_on_delivery',
+        order_id: `COD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      };
+
+      // Insert order into database
+      const { error } = await supabase
+        .from('orders')
+        .insert([completeOrderData]);
+
+      if (error) throw error;
+
+      // Show success toast
+      toast({
+        title: "🚪 Order confirmed! We're building Doraemon's Anywhere Door to deliver your product as soon as possible.",
+        duration: 4000,
+      });
+
+      // Clear localStorage
+      localStorage.removeItem('currentOrder');
+
+      // Redirect to homepage after a delay
+      setTimeout(() => {
+        navigate('/');
+      }, 4000);
+
+    } catch (error) {
+      console.error('Error submitting cash on delivery order:', error);
+      toast({
+        title: "🚫 Mojo Jojo hacked the system! Powerpuff Girls are on it. Try again in a second!",
+        variant: "destructive",
+        duration: 4000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -297,6 +359,15 @@ const ShippingDetails = () => {
                     ← Back to Product
                   </Button>
                 </Link>
+                
+                <Button 
+                  onClick={handleCashOnDelivery}
+                  disabled={isSubmitting || !formData.fullName || !formData.phoneNumber || !formData.address || !formData.city || !formData.state || !formData.pincode}
+                  className="flex-1 w-full btn-glow bg-gradient-to-r from-warm-orange to-lime-green text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300"
+                >
+                  {isSubmitting ? 'Processing...' : 'Cash on Delivery 💵'}
+                </Button>
+                
                 <Button 
                   onClick={handleContinue}
                   className="flex-1 w-full btn-glow gradient-primary text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300"
