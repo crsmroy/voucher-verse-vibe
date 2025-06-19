@@ -132,6 +132,54 @@ export type Database = {
         }
         Relationships: []
       }
+      replacement_return_requests: {
+        Row: {
+          amount_paid: number
+          created_at: string
+          full_name: string
+          id: string
+          order_date: string
+          phone_number: string
+          product_image: string | null
+          product_link: string
+          quantity: number
+          request_type: string
+          return_reason: string
+          status: string | null
+          transaction_id: string | null
+        }
+        Insert: {
+          amount_paid: number
+          created_at?: string
+          full_name: string
+          id?: string
+          order_date: string
+          phone_number: string
+          product_image?: string | null
+          product_link: string
+          quantity?: number
+          request_type: string
+          return_reason: string
+          status?: string | null
+          transaction_id?: string | null
+        }
+        Update: {
+          amount_paid?: number
+          created_at?: string
+          full_name?: string
+          id?: string
+          order_date?: string
+          phone_number?: string
+          product_image?: string | null
+          product_link?: string
+          quantity?: number
+          request_type?: string
+          return_reason?: string
+          status?: string | null
+          transaction_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

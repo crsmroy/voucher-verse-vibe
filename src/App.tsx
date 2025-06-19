@@ -11,6 +11,7 @@ import Payment from "./pages/Payment";
 import PaymentGateway from "./pages/PaymentGateway";
 import HowItWorks from "./pages/HowItWorks";
 import Contact from "./pages/Contact";
+import ReplacementReturn from "./pages/ReplacementReturn";
 import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/payment-gateway" element={<PaymentGateway />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/replacement-return" element={<ReplacementReturn />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
