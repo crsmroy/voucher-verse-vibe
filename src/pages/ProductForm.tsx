@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRef, useEffect, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,7 @@ import Navigation from '@/components/Navigation';
 import { supabase } from '@/integrations/supabase/client';
 
 // Clear cached product form data on browser reload (not client-side navigation)
-if (typeof window !== "undefined" && "performance" in window) {
+/*if (typeof window !== "undefined" && "performance" in window) {
   const perfNav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
   // Fallback for browsers that support .navigationType
   const isReload =
@@ -38,7 +38,7 @@ if (typeof window !== "undefined" && "performance" in window) {
       // Ignore JSON errors
     }
   }
-}
+}*/
 
 const ProductForm = () => {
   const navigate = useNavigate();
@@ -80,7 +80,7 @@ const ProductForm = () => {
         const orderDataStr = localStorage.getItem("currentOrder");
         if (orderDataStr) {
           const orderData = JSON.parse(orderDataStr);
-          if ('product' in orderData) {
+          if ('product' in orderData && !continuedToShippingRef.current) {
             delete orderData.product;
             localStorage.setItem("currentOrder", JSON.stringify(orderData));
           }
@@ -233,8 +233,11 @@ const ProductForm = () => {
       return "000001";
     }
   };
+  
+  const continuedToShippingRef = useRef(false);
 
   const handleContinueToShipping = async () => {
+	continuedToShippingRef.current = true; // ✅ Track that user clicked the button
     const pricing = calculatePricing();
     const nextOrderId = await getNextOrderId();
 
