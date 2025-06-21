@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -101,34 +102,11 @@ const ShippingDetails = () => {
     try {
       // Get order data from localStorage
       const orderDataStr = localStorage.getItem('currentOrder');
-      if (!orderDataStr) {
-        throw new Error('Order data not found');
-      }
-      
-      const orderData = JSON.parse(orderDataStr);
-      
-      // Check if we have product and pricing data
-      if (!orderData.product || !orderData.pricing) {
-        throw new Error('Product or pricing data missing');
-      }
+      const orderData = orderDataStr ? JSON.parse(orderDataStr) : {};
 
-      // Generate order ID
-      const orderId = `COD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-      // Prepare complete order data with all details
+      // Prepare complete order data with shipping details
       const completeOrderData = {
-        order_id: orderId,
-        product_link: orderData.product.productLink || '',
-        product: orderData.product.productName || '', // This might be undefined, we'll use product link for now
-        price: Number(orderData.product.price) || 0,
-        quantity: Number(orderData.product.quantity) || 1,
-        category: orderData.product.category || '',
-        voucher_amount: Number(orderData.product.voucherAmount) || 0,
-        platform: orderData.product.voucherPlatform || '',
-        premium_price: orderData.pricing.premiumPrice || 0,
-        service_fee: orderData.pricing.serviceFee || 0,
-        gst: orderData.pricing.gstAmount ? `${orderData.pricing.gstAmount}` : '',
-        total_to_pay: orderData.pricing.totalPrice || 0,
+        ...orderData,
         full_name: formData.fullName,
         phone_number: formData.phoneNumber,
         alternate_phone_number: formData.alternatePhoneNumber || null,
@@ -141,22 +119,15 @@ const ShippingDetails = () => {
         landmark: formData.landmark || null,
         status: 'confirmed',
         payment_method: 'cash_on_delivery',
-        date_time: new Date().toISOString(),
-        payment_proof_link: null,
-        transaction_id: null
+        order_id: `COD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       };
-
-      console.log('Submitting COD order data:', completeOrderData);
 
       // Insert order into database
       const { error } = await supabase
         .from('orders')
         .insert([completeOrderData]);
 
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       // Show success toast
       toast({
