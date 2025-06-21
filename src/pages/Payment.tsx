@@ -157,8 +157,8 @@ const Payment = () => {
         }
       }
 
-      // 4. Prepare and insert payload
-      const { product = {}, pricing = {}, timestamp } = orderData;
+      // 4. Prepare and insert payload with proper product mapping
+      const { product = {}, pricing = {}, shipping = {} } = orderData;
       const orderPayload = {
         order_id: orderId,
         product_link: product.productLink || '',
@@ -172,21 +172,22 @@ const Payment = () => {
         service_fee: pricing.serviceFee || 0,
         gst: pricing.gstAmount ? `${pricing.gstAmount}` : '',
         total_to_pay: pricing.totalPrice || 0,
-        // User details (if present in orderData, else blank)
-        full_name: orderData.shipping?.fullName ?? '',
-        phone_number: orderData.shipping?.phoneNumber ?? '',
-        alternate_phone_number: orderData.shipping?.alternatePhoneNumber ?? '',
-        whatsapp_number: orderData.shipping?.whatsappNumber ?? '',
-        email_address: orderData.shipping?.emailAddress ?? '',
-        full_address: orderData.shipping?.address ?? '',
-        city: orderData.shipping?.city ?? '',
-        state: orderData.shipping?.state ?? '',
-        pincode: orderData.shipping?.pincode ?? '',
-        landmark: orderData.shipping?.landmark ?? '',
+        // User details from shipping
+        full_name: shipping.fullName || '',
+        phone_number: shipping.phoneNumber || '',
+        alternate_phone_number: shipping.alternatePhoneNumber || '',
+        whatsapp_number: shipping.whatsappNumber || '',
+        email_address: shipping.emailAddress || '',
+        full_address: shipping.address || '',
+        city: shipping.city || '',
+        state: shipping.state || '',
+        pincode: shipping.pincode || '',
+        landmark: shipping.landmark || '',
         payment_proof_link: imageUrl, // null if screenshot not uploaded
         transaction_id: transactionId,
         date_time: new Date().toISOString(),
         status: 'pending',
+        payment_method: 'online'
       };
 
       // 5. Insert row into orders table
