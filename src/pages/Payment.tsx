@@ -159,19 +159,26 @@ const Payment = () => {
 
       // 4. Prepare and insert payload with proper product mapping
       const { product = {}, pricing = {}, shipping = {} } = orderData;
+      
+      // Debug log to check data structure
+      console.log('Order Data from localStorage:', orderData);
+      console.log('Product data:', product);
+      console.log('Pricing data:', pricing);
+      console.log('Shipping data:', shipping);
+      
       const orderPayload = {
         order_id: orderId,
         product_link: product.productLink || '',
-        product: product.productName || '',
+        product: product.productName || product.product || 'N/A',
         price: Number(product.price) || 0,
         quantity: Number(product.quantity) || 1,
         category: product.category || '',
         voucher_amount: Number(product.voucherAmount) || 0,
-        platform: product.voucherPlatform || '',
-        premium_price: pricing.premiumPrice || 0,
-        service_fee: pricing.serviceFee || 0,
+        platform: product.voucherPlatform || product.platform || '',
+        premium_price: Number(pricing.premiumPrice) || 0,
+        service_fee: Number(pricing.serviceFee) || 0,
         gst: pricing.gstAmount ? `${pricing.gstAmount}` : '',
-        total_to_pay: pricing.totalPrice || 0,
+        total_to_pay: Number(pricing.totalPrice) || 0,
         // User details from shipping
         full_name: shipping.fullName || '',
         phone_number: shipping.phoneNumber || '',
@@ -190,10 +197,14 @@ const Payment = () => {
         payment_method: 'online'
       };
 
+      // Debug log to check final payload
+      console.log('Final Order Payload:', orderPayload);
+
       // 5. Insert row into orders table
       const error = await insertOrder(orderPayload);
 
       if (error) {
+        console.error('Database insertion error:', error);
         throw error;
       }
 
@@ -213,6 +224,7 @@ const Payment = () => {
 
     } catch (err: any) {
       setIsSubmitting(false);
+      console.error('Order submission error:', err);
       
       // Show failure notification with WhatsApp contact info
       toast({
