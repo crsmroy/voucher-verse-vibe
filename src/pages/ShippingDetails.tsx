@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,10 +8,11 @@ import { Label } from '@/components/ui/label';
 import Navigation from '@/components/Navigation';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 const ShippingDetails = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     fullName: '',
     phoneNumber: '',
@@ -24,10 +26,23 @@ const ShippingDetails = () => {
     landmark: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState('');
+  const [captchaCode, setCaptchaCode] = useState('');
+
+  // Generate random captcha
+  const generateCaptcha = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 5; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setCaptchaCode(result);
+  };
 
   // Load data from localStorage on component mount
   useEffect(() => {
     window.scrollTo(0, 0);
+    generateCaptcha();
     const orderDataStr = localStorage.getItem('currentOrder');
     if (orderDataStr) {
       try {
@@ -69,6 +84,19 @@ const ShippingDetails = () => {
   };
 
   const handleCashOnDelivery = async () => {
+    // Validate captcha
+    if (captchaValue !== captchaCode) {
+      toast({
+        title: "🤖 Captcha verification failed!",
+        description: "Please enter the correct captcha code.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      generateCaptcha();
+      setCaptchaValue('');
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -349,6 +377,47 @@ const ShippingDetails = () => {
                 </div>
               </div>
 
+              {/* Captcha Section */}
+              <div className="space-y-6 pt-6 border-t border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                  <span className="text-2xl">🤖</span>
+                  Security Verification
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-gray-100 border-2 border-gray-300 rounded-lg px-4 py-2 font-mono text-lg font-bold text-gray-800 select-none">
+                      {captchaCode}
+                    </div>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        generateCaptcha();
+                        setCaptchaValue('');
+                      }}
+                      variant="outline"
+                      size="sm"
+                      className="text-sm"
+                    >
+                      🔄 Refresh
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="captcha" className="text-base font-medium text-gray-700">
+                      Enter the code above *
+                    </Label>
+                    <Input
+                      id="captcha"
+                      placeholder="Enter captcha code"
+                      value={captchaValue}
+                      onChange={(e) => setCaptchaValue(e.target.value)}
+                      className="h-12 text-base border-2 focus:border-neon-pink transition-colors max-w-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 pt-8">
                 <Link to="/product" className="flex-1">
@@ -362,7 +431,7 @@ const ShippingDetails = () => {
                 
                 <Button 
                   onClick={handleCashOnDelivery}
-                  disabled={isSubmitting || !formData.fullName || !formData.phoneNumber || !formData.address || !formData.city || !formData.state || !formData.pincode}
+                  disabled={isSubmitting || !formData.fullName || !formData.phoneNumber || !formData.address || !formData.city || !formData.state || !formData.pincode || !captchaValue}
                   className="flex-1 w-full btn-glow bg-gradient-to-r from-warm-orange to-lime-green text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300"
                 >
                   {isSubmitting ? 'Processing...' : 'Cash on Delivery 💵'}
