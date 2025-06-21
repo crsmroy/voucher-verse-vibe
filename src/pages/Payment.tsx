@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,7 @@ const Payment = () => {
           setFinalAmount(amount);
         }
       } catch (error) {
+        console.error('Error parsing order data:', error);
       }
     }
 
@@ -96,12 +98,14 @@ const Payment = () => {
           upsert: false,
         });
       if (uploadError) {
+        console.error('Upload error:', uploadError);
         return null;
       }
       // Fetch public URL
       const { data: urlData } = supabase.storage.from('payment-proofs').getPublicUrl(path);
       return urlData?.publicUrl ?? null;
     } catch (err) {
+      console.error('Screenshot upload error:', err);
       return null;
     }
   };
@@ -141,6 +145,13 @@ const Payment = () => {
       if (!orderDataStr) throw new Error('Order data not found. Please restart your order.');
       const orderData = JSON.parse(orderDataStr);
 
+      console.log('Order data from localStorage:', orderData);
+
+      // Check if we have product and pricing data
+      if (!orderData.product || !orderData.pricing) {
+        throw new Error('Product or pricing data missing');
+      }
+
       // 2. Generate/fallback to an orderId
       const orderId = orderData.orderId || Math.floor(Date.now() % 1e6).toString().padStart(6, "0");
 
@@ -157,12 +168,12 @@ const Payment = () => {
         }
       }
 
-      // 4. Prepare and insert payload
-      const { product = {}, pricing = {}, timestamp } = orderData;
+      // 4. Prepare and insert payload with all product details
+      const { product = {}, pricing = {}, shipping = {} } = orderData;
       const orderPayload = {
         order_id: orderId,
         product_link: product.productLink || '',
-        product: product.productName || '',
+        product: product.productName || '', // Still might be undefined, but we're including it
         price: Number(product.price) || 0,
         quantity: Number(product.quantity) || 1,
         category: product.category || '',
@@ -172,27 +183,31 @@ const Payment = () => {
         service_fee: pricing.serviceFee || 0,
         gst: pricing.gstAmount ? `${pricing.gstAmount}` : '',
         total_to_pay: pricing.totalPrice || 0,
-        // User details (if present in orderData, else blank)
-        full_name: orderData.shipping?.fullName ?? '',
-        phone_number: orderData.shipping?.phoneNumber ?? '',
-        alternate_phone_number: orderData.shipping?.alternatePhoneNumber ?? '',
-        whatsapp_number: orderData.shipping?.whatsappNumber ?? '',
-        email_address: orderData.shipping?.emailAddress ?? '',
-        full_address: orderData.shipping?.address ?? '',
-        city: orderData.shipping?.city ?? '',
-        state: orderData.shipping?.state ?? '',
-        pincode: orderData.shipping?.pincode ?? '',
-        landmark: orderData.shipping?.landmark ?? '',
+        // User details from shipping
+        full_name: shipping.fullName || '',
+        phone_number: shipping.phoneNumber || '',
+        alternate_phone_number: shipping.alternatePhoneNumber || null,
+        whatsapp_number: shipping.whatsappNumber || null,
+        email_address: shipping.emailAddress || null,
+        full_address: shipping.address || '',
+        city: shipping.city || '',
+        state: shipping.state || '',
+        pincode: shipping.pincode || '',
+        landmark: shipping.landmark || null,
         payment_proof_link: imageUrl, // null if screenshot not uploaded
         transaction_id: transactionId,
         date_time: new Date().toISOString(),
         status: 'pending',
+        payment_method: 'online_payment'
       };
+
+      console.log('Submitting payment order data:', orderPayload);
 
       // 5. Insert row into orders table
       const error = await insertOrder(orderPayload);
 
       if (error) {
+        console.error('Database insertion error:', error);
         throw error;
       }
 
@@ -210,7 +225,13 @@ const Payment = () => {
       setCaptchaChecked(false);
       generateCaptcha();
 
+      // Redirect to homepage after toast
+      setTimeout(() => {
+        navigate('/');
+      }, 4000);
+
     } catch (err: any) {
+      console.error('Payment submission error:', err);
       setIsSubmitting(false);
       
       // Show failure notification with WhatsApp contact info
