@@ -157,54 +157,42 @@ const Payment = () => {
         }
       }
 
-      // 4. Prepare and insert payload with proper product mapping
-      const { product = {}, pricing = {}, shipping = {} } = orderData;
-      
-      // Debug log to check data structure
-      console.log('Order Data from localStorage:', orderData);
-      console.log('Product data:', product);
-      console.log('Pricing data:', pricing);
-      console.log('Shipping data:', shipping);
-      
+      // 4. Prepare and insert payload
+      const { product = {}, pricing = {}, timestamp } = orderData;
       const orderPayload = {
         order_id: orderId,
         product_link: product.productLink || '',
-        product: product.productName || product.product || 'N/A',
+        product: product.productName || '',
         price: Number(product.price) || 0,
         quantity: Number(product.quantity) || 1,
         category: product.category || '',
         voucher_amount: Number(product.voucherAmount) || 0,
-        platform: product.voucherPlatform || product.platform || '',
-        premium_price: Number(pricing.premiumPrice) || 0,
-        service_fee: Number(pricing.serviceFee) || 0,
+        platform: product.voucherPlatform || '',
+        premium_price: pricing.premiumPrice || 0,
+        service_fee: pricing.serviceFee || 0,
         gst: pricing.gstAmount ? `${pricing.gstAmount}` : '',
-        total_to_pay: Number(pricing.totalPrice) || 0,
-        // User details from shipping
-        full_name: shipping.fullName || '',
-        phone_number: shipping.phoneNumber || '',
-        alternate_phone_number: shipping.alternatePhoneNumber || '',
-        whatsapp_number: shipping.whatsappNumber || '',
-        email_address: shipping.emailAddress || '',
-        full_address: shipping.address || '',
-        city: shipping.city || '',
-        state: shipping.state || '',
-        pincode: shipping.pincode || '',
-        landmark: shipping.landmark || '',
+        total_to_pay: pricing.totalPrice || 0,
+        // User details (if present in orderData, else blank)
+        full_name: orderData.shipping?.fullName ?? '',
+        phone_number: orderData.shipping?.phoneNumber ?? '',
+        alternate_phone_number: orderData.shipping?.alternatePhoneNumber ?? '',
+        whatsapp_number: orderData.shipping?.whatsappNumber ?? '',
+        email_address: orderData.shipping?.emailAddress ?? '',
+        full_address: orderData.shipping?.address ?? '',
+        city: orderData.shipping?.city ?? '',
+        state: orderData.shipping?.state ?? '',
+        pincode: orderData.shipping?.pincode ?? '',
+        landmark: orderData.shipping?.landmark ?? '',
         payment_proof_link: imageUrl, // null if screenshot not uploaded
         transaction_id: transactionId,
         date_time: new Date().toISOString(),
         status: 'pending',
-        payment_method: 'online'
       };
-
-      // Debug log to check final payload
-      console.log('Final Order Payload:', orderPayload);
 
       // 5. Insert row into orders table
       const error = await insertOrder(orderPayload);
 
       if (error) {
-        console.error('Database insertion error:', error);
         throw error;
       }
 
@@ -224,7 +212,6 @@ const Payment = () => {
 
     } catch (err: any) {
       setIsSubmitting(false);
-      console.error('Order submission error:', err);
       
       // Show failure notification with WhatsApp contact info
       toast({

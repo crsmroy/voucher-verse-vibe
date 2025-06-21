@@ -140,6 +140,7 @@ export type Database = {
           id: string
           order_date: string
           phone_number: string
+          product_image: string | null
           product_link: string
           quantity: number
           request_type: string
@@ -154,6 +155,7 @@ export type Database = {
           id?: string
           order_date: string
           phone_number: string
+          product_image?: string | null
           product_link: string
           quantity?: number
           request_type: string
@@ -168,6 +170,7 @@ export type Database = {
           id?: string
           order_date?: string
           phone_number?: string
+          product_image?: string | null
           product_link?: string
           quantity?: number
           request_type?: string
