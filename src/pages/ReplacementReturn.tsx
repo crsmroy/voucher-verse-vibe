@@ -10,7 +10,7 @@ import { AlertCircle, Package, RotateCcw } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 const ReplacementReturn = () => {
   const [formData, setFormData] = useState({
@@ -92,9 +92,9 @@ const ReplacementReturn = () => {
       
       {/* Animated Background Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-20 left-10 w-32 h-32 gradient-primary rounded-full opacity-10 float"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 gradient-secondary rounded-lg rotate-45 opacity-15 float" style={{animationDelay: '1s'}}></div>
-        <div className="absolute bottom-20 left-1/4 w-40 h-40 gradient-tertiary rounded-full opacity-8 float" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-10 animate-bounce"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-lg rotate-45 opacity-15 animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-gradient-to-r from-green-400 to-yellow-400 rounded-full opacity-8 animate-bounce" style={{animationDelay: '2s'}}></div>
       </div>
 
       <div className="pt-20 pb-10">
