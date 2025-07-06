@@ -12,6 +12,11 @@ import PaymentGateway from "./pages/PaymentGateway";
 import HowItWorks from "./pages/HowItWorks";
 import Contact from "./pages/Contact";
 import ReplacementReturn from "./pages/ReplacementReturn";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Refund from "./pages/Refund";
+import TermsOfService from "./pages/TermsOfService";
+import ShippingPolicy from "./pages/ShippingPolicy";
 import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
@@ -33,6 +38,11 @@ const App = () => (
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/replacement-return" element={<ReplacementReturn />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/refund" element={<Refund />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />

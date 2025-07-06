@@ -2,10 +2,9 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { Instagram, Facebook, Youtube, X, MessageCircle } from 'lucide-react';
 import Navigation from '@/components/Navigation';
-import ViewerCounter from '@/components/ViewerCounter';
 import FaqAccordion from "@/components/FaqAccordion";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   const steps = [
@@ -161,6 +160,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       <Navigation />
+      <div className="fixed top-16 w-full text-center text-white bg-red-600 bg-opacity-90 px-4 py-1 rounded shadow-lg z-50">
+        We’re currently processing a high volume of orders! To ensure quality, we’re temporarily pausing new orders. Feel free to leave your details in contact us form—we’ll notify you once we’re back!
+      </div>
       
       {/* Simplified Background Shapes - Fewer Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -183,11 +185,11 @@ const Index = () => {
         <div className="hidden lg:block absolute top-32 left-2/3 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full opacity-25 float" style={{animationDelay: '0.4s'}}></div>
         
         {/* Interactive elements - only on larger screens */}
-        <div className="hidden lg:block absolute top-24 right-1/3 w-28 h-28 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-12 float flex items-center justify-center" style={{animationDelay: '0.3s'}}>
+        <div className="hidden lg:block absolute top-24 right-1/3 w-28 h-28 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-12 float items-center justify-center" style={{animationDelay: '0.3s'}}>
           <div className="w-3 h-3 bg-white rounded-full opacity-60"></div>
         </div>
-        <div className="hidden lg:block absolute top-1/4 left-1/2 w-14 h-14 bg-gradient-to-r from-sky-400 to-blue-500 rounded-lg opacity-18 float flex items-center justify-center text-white text-xs font-bold" style={{animationDelay: '0.9s'}}>
-          {'</>'}
+        <div className="hidden lg:block absolute top-1/4 left-1/2 w-14 h-14 bg-gradient-to-r from-sky-400 to-blue-500 rounded-lg opacity-18 float items-center justify-center text-white text-xs font-bold" style={{animationDelay: '0.9s'}}>
+          {}
         </div>
       </div>
 
@@ -559,78 +561,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="col-span-2">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">F</span>
-                </div>
-                <span className="text-xl font-bold">FreedomVouchers</span>
-              </div>
-              <p className="text-gray-400 mb-4">
-                Your trusted partner for smart shopping and amazing savings.
-              </p>
-              <div className="flex space-x-4 mb-4">
-                <a 
-                  href="#" 
-                  className="w-10 h-10 bg-neon-pink rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
-                >
-                  <Instagram size={20} className="text-white" />
-                </a>
-                <a 
-                  href="#" 
-                  className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
-                >
-                  <Facebook size={20} className="text-white" />
-                </a>
-                <a 
-                  href="#" 
-                  className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
-                >
-                  <Youtube size={20} className="text-white" />
-                </a>
-                <a 
-                  href="#" 
-                  className="w-10 h-10 bg-black rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
-                >
-                  <X size={20} className="text-white" />
-                </a>
-                <a 
-                  href="#" 
-                  className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300"
-                >
-                  <MessageCircle size={20} className="text-white" />
-                </a>
-              </div>
-              <ViewerCounter />
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link to="/how-it-works" className="hover:text-neon-pink transition-colors">How It Works</Link></li>
-                <li><Link to="/contact" className="hover:text-neon-pink transition-colors">Contact Us</Link></li>
-                <li><Link to="/admin" className="hover:text-neon-pink transition-colors">Admin</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>📧 support@freedomvouchers.com</li>
-                <li>📞 +91 99999 99999</li>
-                <li>🕒 24/7 Available</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 FreedomVouchers. Made with ❤️ for smart shoppers.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
