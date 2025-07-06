@@ -6,9 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navigation from '@/components/Navigation';
 import { ArrowLeft } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const ShippingDetails = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     fullName: '',
     phoneNumber: '',
@@ -63,6 +66,83 @@ const ShippingDetails = () => {
 
     localStorage.setItem('currentOrder', JSON.stringify(updatedOrderData));
     navigate('/payment');
+  };
+
+  // Helper: Insert order into Supabase database
+  const insertOrder = async (orderPayload: any) => {
+    const { error } = await supabase.from('orders').insert([orderPayload]);
+    console.log(orderPayload)
+    return error;
+  };
+
+  const handleSubmit = async () => {
+
+    try {
+      // 1. Load order details from localStorage (built at previous checkout step)
+      const orderDataStr = localStorage.getItem('currentOrder');
+      if (!orderDataStr) throw new Error('Order data not found. Please restart your order.');
+      const orderData = JSON.parse(orderDataStr);
+
+      // 2. Generate/fallback to an orderId
+      const orderId = orderData.orderId || Math.floor(Date.now() % 1e6).toString().padStart(6, "0");
+
+      // 4. Prepare and insert payload
+      const { product = {}, pricing = {}, timestamp } = orderData;
+      const orderPayload = {
+        order_id: orderId,
+        product_link: product.productLink || '',
+        product: product.productName || '',
+        price: Number(product.price) || 0,
+        quantity: Number(product.quantity) || 1,
+        category: product.category || '',
+        voucher_amount: Number(product.voucherAmount) || 0,
+        platform: product.voucherPlatform || '',
+        premium_price: pricing.premiumPrice || 0,
+        service_fee: pricing.serviceFee || 0,
+        gst: pricing.gstAmount ? `${pricing.gstAmount}` : '',
+        total_to_pay: pricing.totalPrice || 0,
+        // User details (if present in orderData, else blank)
+        full_name: formData?.fullName ?? '',
+        phone_number: formData?.phoneNumber ?? '',
+        alternate_phone_number: formData?.alternatePhoneNumber ?? '',
+        whatsapp_number: formData?.whatsappNumber ?? '',
+        email_address: formData?.emailAddress ?? '',
+        full_address: formData?.address ?? '',
+        city: formData?.city ?? '',
+        state: formData?.state ?? '',
+        pincode: formData?.pincode ?? '',
+        landmark: formData?.landmark ?? '',
+        // payment_proof_link: imageUrl, // null if screenshot not uploaded
+        // transaction_id: transactionId,
+        date_time: new Date().toISOString(),
+        status: 'pending',
+      };
+
+      // 5. Insert row into orders table
+      const error = await insertOrder(orderPayload);
+
+      if (error) {
+        throw error;
+      }
+      
+      // Show success notification instead of redirecting
+      toast({
+        title: "Order Received Successfully! 🎉",
+        description: "Your order will be placed in a couple of minutes after payment verification. You will receive order details on your email and WhatsApp.",
+      });
+
+      localStorage.removeItem('currentOrder');
+      navigate('/');
+
+    } catch (err: any) {
+      
+      // Show failure notification with WhatsApp contact info
+      toast({
+        title: "Submission Failed",
+        description: "Please send your payment screenshot and product details to our WhatsApp: +91 98765 43210",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -289,12 +369,13 @@ const ShippingDetails = () => {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 pt-8">
-                <Link to="/product" className="flex-1">
+                <Link to="" className="flex-1">
                   <Button 
+                    onClick={handleSubmit}
                     variant="outline" 
                     className="w-full h-14 text-lg font-semibold border-2 border-gray-300 hover:border-neon-pink hover:text-neon-pink transition-all duration-300"
                   >
-                    ← Back to Product
+                    Cash on Delivery
                   </Button>
                 </Link>
                 <Button 
