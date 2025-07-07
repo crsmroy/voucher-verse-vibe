@@ -1,3 +1,4 @@
+
 import { useRef, useEffect, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,49 +7,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
 import { supabase } from '@/integrations/supabase/client';
 
-// Clear cached product form data on browser reload (not client-side navigation)
-/*if (typeof window !== "undefined" && "performance" in window) {
-  const perfNav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
-  // Fallback for browsers that support .navigationType
-  const isReload =
-    // Spec-compliant browsers
-    (perfNav && perfNav.type === "reload") ||
-    // Legacy browsers with performance.navigation
-    (performance.navigation && performance.navigation.type === 1);
-
-  if (isReload) {
-    // Only remove the cached product form data from localStorage (keep any other fields if necessary)
-    try {
-      const orderDataStr = localStorage.getItem("currentOrder");
-      if (orderDataStr) {
-        const orderData = JSON.parse(orderDataStr);
-        // Remove only the product field (leave pricing, shipping, etc. untouched)
-        if ('product' in orderData) {
-          delete orderData.product;
-          localStorage.setItem("currentOrder", JSON.stringify(orderData));
-        }
-        // Optional: if you want to clear all form progress, uncomment below
-        // localStorage.removeItem("currentOrder");
-      }
-    } catch (e) {
-      // Ignore JSON errors
-    }
-  }
-}*/
-
 const ProductForm = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('voucher');
   const [formData, setFormData] = useState({
     productLink: '',
     price: '',
     quantity: 1,
     category: '',
     voucherAmount: '',
-    voucherPlatform: ''
+    voucherPlatform: '',
+    // Free product fields
+    freeProductLink: '',
+    freeProductPrice: '',
+    freeProductQuantity: 1,
+    freeProductCategory: ''
   });
 
   // Load data from localStorage on component mount
@@ -59,18 +37,25 @@ const ProductForm = () => {
       try {
         const parsedOrder = JSON.parse(orderDataStr);
         if (parsedOrder.product) {
-          // Ensure all fields are present to avoid uncontrolled component warnings
           setFormData({
             productLink: parsedOrder.product.productLink || '',
             price: parsedOrder.product.price || '',
             quantity: parsedOrder.product.quantity || 1,
             category: parsedOrder.product.category || '',
             voucherAmount: parsedOrder.product.voucherAmount || '',
-            voucherPlatform: parsedOrder.product.voucherPlatform || ''
+            voucherPlatform: parsedOrder.product.voucherPlatform || '',
+            freeProductLink: parsedOrder.product.freeProductLink || '',
+            freeProductPrice: parsedOrder.product.freeProductPrice || '',
+            freeProductQuantity: parsedOrder.product.freeProductQuantity || 1,
+            freeProductCategory: parsedOrder.product.freeProductCategory || ''
           });
+          // Set active tab based on saved data
+          if (parsedOrder.product.freeProductLink || parsedOrder.product.freeProductPrice) {
+            setActiveTab('freeProduct');
+          }
         }
       } catch (e) {
-        // Removed: console.error("Failed to parse order data from localStorage", e);
+        // Ignore JSON errors
       }
     }
 
@@ -98,11 +83,11 @@ const ProductForm = () => {
 
     const updatedOrderData = {
       ...orderData,
-      product: formData,
+      product: { ...formData, selectedTab: activeTab },
     };
 
     localStorage.setItem('currentOrder', JSON.stringify(updatedOrderData));
-  }, [formData]);
+  }, [formData, activeTab]);
 
   const categories = [
     { value: 'electronics', label: 'Electronics', gst: 18, color: 'from-electric-blue to-teal' },
@@ -157,10 +142,8 @@ const ProductForm = () => {
     
     if (maxAmount < 250) return [];
     
-    // Calculate the maximum number of ₹250 steps possible
     const maxSteps = Math.floor(maxAmount / 250);
     
-    // If we have 5 or fewer steps, include all of them
     if (maxSteps <= 5) {
       const amounts = [];
       for (let i = 1; i <= maxSteps; i++) {
@@ -169,36 +152,49 @@ const ProductForm = () => {
       return amounts;
     }
     
-    // Otherwise, pick up to 5 evenly spaced values
     const amounts = [];
     const step = Math.floor(maxSteps / 5);
     
-    // Start from a reasonable multiple of 250
-    let currentStep = Math.max(3, step); // Start from at least ₹750 or higher
+    let currentStep = Math.max(3, step);
     
     for (let i = 0; i < 4; i++) {
       amounts.push(currentStep * 250);
       currentStep += step;
     }
     
-    // Add the last value as close as possible to maxAmount
     const lastValue = Math.floor(maxAmount / 250) * 250;
     if (lastValue > amounts[amounts.length - 1]) {
       amounts.push(lastValue);
     }
     
-    return amounts.slice(0, 5); // Ensure we don't exceed 5 options
+    return amounts.slice(0, 5);
   };
 
   const calculatePricing = () => {
-    const basePrice = parseFloat(formData.price) || 0;
-    const quantity = formData.quantity;
-    const voucherAmount = parseFloat(formData.voucherAmount) || 0;
-    const selectedCategory = categories.find(cat => cat.value === formData.category);
+    const P1 = (parseFloat(formData.price) || 0) * formData.quantity;
     
-    const gstRate = selectedCategory ? selectedCategory.gst : 18;
+    let premiumPrice = P1;
+    let gstRate = 18;
     
-    const premiumPrice = (basePrice * quantity) + voucherAmount; // ADD voucher amount
+    if (activeTab === 'voucher') {
+      const V = parseFloat(formData.voucherAmount) || 0;
+      premiumPrice = P1 + V;
+      
+      const selectedCategory = categories.find(cat => cat.value === formData.category);
+      gstRate = selectedCategory ? selectedCategory.gst : 18;
+    } else if (activeTab === 'freeProduct') {
+      const P2 = (parseFloat(formData.freeProductPrice) || 0) * formData.freeProductQuantity;
+      premiumPrice = P1 + P2;
+      
+      // Use the higher GST rate between main product and free product categories
+      const mainCategory = categories.find(cat => cat.value === formData.category);
+      const freeCategory = categories.find(cat => cat.value === formData.freeProductCategory);
+      
+      const mainGst = mainCategory ? mainCategory.gst : 18;
+      const freeGst = freeCategory ? freeCategory.gst : 18;
+      gstRate = Math.max(mainGst, freeGst);
+    }
+    
     const serviceFee = premiumPrice * 0.20; // 20% service fee
     const gstAmount = premiumPrice * (gstRate / 100);
     const totalPrice = premiumPrice + serviceFee + gstAmount;
@@ -208,7 +204,7 @@ const ProductForm = () => {
       serviceFee,
       gstAmount,
       totalPrice,
-      savings: (basePrice * quantity) - totalPrice // This shows how much they save vs buying directly
+      savings: P1 - totalPrice // This shows how much they save vs buying directly
     };
   };
 
@@ -237,16 +233,15 @@ const ProductForm = () => {
   const continuedToShippingRef = useRef(false);
 
   const handleContinueToShipping = async () => {
-	continuedToShippingRef.current = true; // ✅ Track that user clicked the button
+    continuedToShippingRef.current = true;
     const pricing = calculatePricing();
     const nextOrderId = await getNextOrderId();
 
-    // Store all the data in localStorage for use in payment page
     const orderData = {
-      product: formData,
+      product: { ...formData, selectedTab: activeTab },
       pricing: pricing,
       timestamp: new Date().toISOString(),
-      orderId: nextOrderId // Include generated order ID
+      orderId: nextOrderId
     };
 
     localStorage.setItem("currentOrder", JSON.stringify(orderData));
@@ -254,6 +249,21 @@ const ProductForm = () => {
   };
 
   const pricing = calculatePricing();
+
+  // Validation logic
+  const isFormValid = () => {
+    if (!formData.productLink || !formData.price || !formData.category) {
+      return false;
+    }
+    
+    if (activeTab === 'voucher') {
+      return !!(formData.voucherAmount && formData.voucherPlatform);
+    } else if (activeTab === 'freeProduct') {
+      return !!(formData.freeProductLink && formData.freeProductPrice && formData.freeProductCategory);
+    }
+    
+    return false;
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -266,8 +276,6 @@ const ProductForm = () => {
         <div className="absolute top-40 right-20 w-24 h-24 gradient-secondary rounded-lg rotate-45 opacity-15 float" style={{animationDelay: '1s'}}></div>
         <div className="absolute bottom-20 left-1/4 w-40 h-40 gradient-tertiary rounded-full opacity-8 float" style={{animationDelay: '2s'}}></div>
         <div className="absolute top-1/2 right-10 w-20 h-20 bg-warm-orange rounded-full opacity-25 float" style={{animationDelay: '0.5s'}}></div>
-        
-        {/* New geometrical elements */}
         <div className="absolute top-32 left-1/3 w-16 h-16 bg-neon-pink rounded-lg rotate-12 opacity-20 float" style={{animationDelay: '0.8s'}}></div>
         <div className="absolute top-60 right-1/3 w-28 h-28 bg-electric-blue rounded-full opacity-15 float" style={{animationDelay: '1.5s'}}></div>
         <div className="absolute bottom-40 right-20 w-24 h-24 bg-lime-green rounded-lg rotate-45 opacity-18 float" style={{animationDelay: '2.5s'}}></div>
@@ -403,55 +411,155 @@ const ProductForm = () => {
                 </CardContent>
               </Card>
 
-              {/* Voucher Selection */}
+              {/* Enhanced Voucher/Free Product Selection with Tabs */}
               <Card className="hover:shadow-lg transition-shadow duration-300">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <span className="text-2xl">🎫</span>
-                    Choose Your Voucher
+                    Choose Your Option
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label className="text-base font-medium">Voucher Amount (₹)</Label>
-                    <Select value={formData.voucherAmount} onValueChange={(value) => setFormData({...formData, voucherAmount: value})}>
-                      <SelectTrigger className="mt-2 h-12">
-                        <SelectValue placeholder="Select voucher amount" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {getVoucherAmounts().map((amount) => (
-                          <SelectItem key={amount} value={amount.toString()}>₹{amount}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <CardContent>
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                      <TabsTrigger 
+                        value="voucher" 
+                        className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-neon-pink data-[state=active]:to-electric-blue data-[state=active]:text-white"
+                      >
+                        🎫 Choose Your Voucher
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="freeProduct" 
+                        className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-electric-blue data-[state=active]:to-teal data-[state=active]:text-white"
+                      >
+                        🎁 Add Free Product
+                      </TabsTrigger>
+                    </TabsList>
 
-                  <div>
-                    <Label className="text-base font-medium">Platform</Label>
-                    <div className="grid sm:grid-cols-2 gap-3 mt-2">
-                      {platforms.map((platform) => (
-                        <div
-                          key={platform.value}
-                          className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-                            formData.voucherPlatform === platform.value
-                              ? 'border-electric-blue bg-electric-blue/10 transform scale-105'
-                              : 'border-gray-200 hover:border-electric-blue/50 hover:bg-gray-50'
-                          }`}
-                          onClick={() => setFormData({...formData, voucherPlatform: platform.value})}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <span className="text-2xl">{platform.icon}</span>
-                              <div className="font-medium">{platform.label}</div>
+                    <TabsContent value="voucher" className="space-y-4 animate-fade-in">
+                      <div>
+                        <Label className="text-base font-medium">Voucher Amount (₹)</Label>
+                        <Select value={formData.voucherAmount} onValueChange={(value) => setFormData({...formData, voucherAmount: value})}>
+                          <SelectTrigger className="mt-2 h-12">
+                            <SelectValue placeholder="Select voucher amount" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {getVoucherAmounts().map((amount) => (
+                              <SelectItem key={amount} value={amount.toString()}>₹{amount}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label className="text-base font-medium">Platform</Label>
+                        <div className="grid sm:grid-cols-2 gap-3 mt-2">
+                          {platforms.map((platform) => (
+                            <div
+                              key={platform.value}
+                              className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                                formData.voucherPlatform === platform.value
+                                  ? 'border-electric-blue bg-electric-blue/10 transform scale-105'
+                                  : 'border-gray-200 hover:border-electric-blue/50 hover:bg-gray-50'
+                              }`}
+                              onClick={() => setFormData({...formData, voucherPlatform: platform.value})}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-2xl">{platform.icon}</span>
+                                  <div className="font-medium">{platform.label}</div>
+                                </div>
+                                <div className={`w-8 h-8 ${platform.color} rounded-full flex items-center justify-center text-white font-bold`}>
+                                  ✓
+                                </div>
+                              </div>
                             </div>
-                            <div className={`w-8 h-8 ${platform.color} rounded-full flex items-center justify-center text-white font-bold`}>
-                              ✓
-                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="freeProduct" className="space-y-4 animate-fade-in">
+                      <div>
+                        <Label htmlFor="freeProductLink" className="text-base font-medium">Second Product Link</Label>
+                        <Input
+                          id="freeProductLink"
+                          placeholder="Paste the free product URL..."
+                          value={formData.freeProductLink}
+                          onChange={(e) => setFormData({...formData, freeProductLink: e.target.value})}
+                          className="mt-2 h-12 text-base"
+                        />
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="freeProductPrice" className="text-base font-medium">Second Product Price (₹)</Label>
+                          <Input
+                            id="freeProductPrice"
+                            type="number"
+                            placeholder="Enter price"
+                            value={formData.freeProductPrice}
+                            onChange={(e) => setFormData({...formData, freeProductPrice: e.target.value})}
+                            className="mt-2 h-12 text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label className="text-base font-medium">Quantities</Label>
+                          <div className="flex items-center gap-3 mt-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="w-10 h-10 rounded-full hover:bg-teal/10 hover:border-teal"
+                              onClick={() => setFormData({...formData, freeProductQuantity: Math.max(1, formData.freeProductQuantity - 1)})}
+                            >
+                              −
+                            </Button>
+                            <span className="text-2xl font-bold min-w-[3rem] text-center">{formData.freeProductQuantity}</span>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="w-10 h-10 rounded-full hover:bg-teal/10 hover:border-teal"
+                              onClick={() => setFormData({...formData, freeProductQuantity: formData.freeProductQuantity + 1})}
+                            >
+                              +
+                            </Button>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                      </div>
+
+                      <div>
+                        <Label className="text-base font-medium">Second Product Category</Label>
+                        <div className="grid gap-3 mt-2">
+                          {categories.map((category) => (
+                            <div
+                              key={category.value}
+                              className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                                formData.freeProductCategory === category.value
+                                  ? 'border-teal bg-gradient-to-r from-teal/10 to-electric-blue/10'
+                                  : 'border-gray-200 hover:border-teal/50 hover:bg-gray-50'
+                              }`}
+                              onClick={() => setFormData({...formData, freeProductCategory: category.value})}
+                            >
+                              <div className="flex justify-between items-center">
+                                <span className="font-medium">{category.label}</span>
+                                <div className="flex items-center gap-2">
+                                  <span className={`px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r ${category.color} text-white`}>
+                                    GST {category.gst}%
+                                  </span>
+                                  {formData.freeProductCategory === category.value && (
+                                    <span className="text-teal text-xl">✓</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </TabsContent>
+                  </Tabs>
                 </CardContent>
               </Card>
             </div>
@@ -480,7 +588,7 @@ const ProductForm = () => {
                         </div>
                         
                         <div className="flex justify-between text-sm text-gray-600">
-                          <span>GST ({categories.find(c => c.value === formData.category)?.gst || 18}%)</span>
+                          <span>GST</span>
                           <span>₹{pricing.gstAmount.toFixed(2)}</span>
                         </div>
                         
@@ -496,10 +604,18 @@ const ProductForm = () => {
                           Thanks for your support! 🙏
                         </div>
                         
-                        {pricing.savings > 0 && (
+                        {activeTab === 'voucher' && (
                           <div className="bg-gradient-to-r from-lime-green/20 to-teal/20 p-3 rounded-lg text-center">
                             <div className="text-lg font-bold text-green-600">
-                              You Save ₹{pricing.savings.toFixed(2)} 🎉
+                              Get ₹{formData.voucherAmount} Voucher! 🎉
+                            </div>
+                          </div>
+                        )}
+
+                        {activeTab === 'freeProduct' && (
+                          <div className="bg-gradient-to-r from-electric-blue/20 to-teal/20 p-3 rounded-lg text-center">
+                            <div className="text-lg font-bold text-blue-600">
+                              Get Free Product Worth ₹{((parseFloat(formData.freeProductPrice) || 0) * formData.freeProductQuantity).toFixed(2)}! 🎁
                             </div>
                           </div>
                         )}
@@ -508,7 +624,7 @@ const ProductForm = () => {
                       <Button 
                         onClick={handleContinueToShipping}
                         className="w-full btn-glow gradient-primary text-white h-12 text-lg font-semibold"
-                        disabled={!formData.productLink || !formData.price || !formData.category || !formData.voucherAmount || !formData.voucherPlatform}
+                        disabled={!isFormValid()}
                       >
                         Continue to Shipping →
                       </Button>
