@@ -67,6 +67,11 @@ export type Database = {
           product: string | null
           product_link: string | null
           quantity: number | null
+          second_product_category: string | null
+          second_product_gst_percentage: number | null
+          second_product_link: string | null
+          second_product_price: number | null
+          second_product_quantity: number | null
           service_fee: number | null
           state: string | null
           status: string | null
@@ -97,6 +102,11 @@ export type Database = {
           product?: string | null
           product_link?: string | null
           quantity?: number | null
+          second_product_category?: string | null
+          second_product_gst_percentage?: number | null
+          second_product_link?: string | null
+          second_product_price?: number | null
+          second_product_quantity?: number | null
           service_fee?: number | null
           state?: string | null
           status?: string | null
@@ -127,6 +137,11 @@ export type Database = {
           product?: string | null
           product_link?: string | null
           quantity?: number | null
+          second_product_category?: string | null
+          second_product_gst_percentage?: number | null
+          second_product_link?: string | null
+          second_product_price?: number | null
+          second_product_quantity?: number | null
           service_fee?: number | null
           state?: string | null
           status?: string | null

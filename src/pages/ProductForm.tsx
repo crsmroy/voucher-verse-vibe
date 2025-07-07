@@ -1,4 +1,3 @@
-
 import { useRef, useEffect, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -259,10 +258,33 @@ const ProductForm = () => {
     if (activeTab === 'voucher') {
       return !!(formData.voucherAmount && formData.voucherPlatform);
     } else if (activeTab === 'freeProduct') {
-      return !!(formData.freeProductLink && formData.freeProductPrice && formData.freeProductCategory);
+      // Check if all free product fields are filled
+      if (!formData.freeProductLink || !formData.freeProductPrice || !formData.freeProductCategory) {
+        return false;
+      }
+      
+      // Validate that second product price is not greater than first product price
+      const firstProductPrice = parseFloat(formData.price) || 0;
+      const secondProductPrice = parseFloat(formData.freeProductPrice) || 0;
+      
+      if (secondProductPrice > firstProductPrice) {
+        return false;
+      }
+      
+      return true;
     }
     
     return false;
+  };
+
+  // Helper function to check if second product price exceeds first product price
+  const isSecondProductPriceValid = () => {
+    if (!formData.price || !formData.freeProductPrice) return true;
+    
+    const firstProductPrice = parseFloat(formData.price) || 0;
+    const secondProductPrice = parseFloat(formData.freeProductPrice) || 0;
+    
+    return secondProductPrice <= firstProductPrice;
   };
 
   return (
@@ -500,8 +522,15 @@ const ProductForm = () => {
                             placeholder="Enter price"
                             value={formData.freeProductPrice}
                             onChange={(e) => setFormData({...formData, freeProductPrice: e.target.value})}
-                            className="mt-2 h-12 text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className={`mt-2 h-12 text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                              !isSecondProductPriceValid() ? 'border-red-500 focus:border-red-500' : ''
+                            }`}
                           />
+                          {!isSecondProductPriceValid() && (
+                            <p className="text-red-500 text-sm mt-1">
+                              Second product price cannot exceed first product price (₹{formData.price})
+                            </p>
+                          )}
                         </div>
                         
                         <div>
