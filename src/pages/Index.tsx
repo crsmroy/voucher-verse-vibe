@@ -5,6 +5,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Navigation from '@/components/Navigation';
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
+import Noti from "@/components/ui/Noti"
 
 const Index = () => {
   const steps = [
@@ -160,9 +161,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       <Navigation />
-      <div className="fixed top-16 w-full text-center text-white bg-red-600 bg-opacity-90 px-4 py-1 rounded shadow-lg z-50">
-        We’re currently processing a high volume of orders! To ensure quality, we’re temporarily pausing new orders. Feel free to leave your details in contact us form—we’ll notify you once we’re back!
-      </div>
+      <Noti message="We're currently processing a high volume of orders! To ensure quality, we're temporarily pausing new orders. Feel free to leave your details in contact us form we'll notify you once we're back!" />
       
       {/* Simplified Background Shapes - Fewer Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">

@@ -116,6 +116,10 @@ const ShippingDetails = () => {
         // transaction_id: transactionId,
         date_time: new Date().toISOString(),
         status: 'pending',
+        freeProductLink: product.freeProductLink || '',
+        freeProductPrice: product.freeProductPrice || '',
+        freeProductQuantity: product.freeProductQuantity || 1,
+        freeProductCategory: product.freeProductCategory || ''
       };
 
       // 5. Insert row into orders table
