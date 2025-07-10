@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,10 +9,12 @@ import Navigation from '@/components/Navigation';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const ShippingDetails = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fullName: '',
     phoneNumber: '',
@@ -22,7 +25,8 @@ const ShippingDetails = () => {
     city: '',
     state: '',
     pincode: '',
-    landmark: ''
+    landmark: '',
+    referralCode: ''
   });
 
   // Load data from localStorage on component mount
@@ -45,6 +49,7 @@ const ShippingDetails = () => {
             state: parsedOrder.shipping.state || '',
             pincode: parsedOrder.shipping.pincode || '',
             landmark: parsedOrder.shipping.landmark || '',
+            referralCode: parsedOrder.shipping.referralCode || '',
           });
         }
       } catch (e) {
@@ -54,6 +59,15 @@ const ShippingDetails = () => {
   }, []);
 
   const handleContinue = () => {
+    if (!captchaToken) {
+      toast({
+        title: "CAPTCHA Required",
+        description: "Please complete the CAPTCHA verification before proceeding.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const orderDataStr = localStorage.getItem('currentOrder');
     const orderData = orderDataStr ? JSON.parse(orderDataStr) : {};
 
@@ -76,6 +90,14 @@ const ShippingDetails = () => {
   };
 
   const handleSubmit = async () => {
+    if (!captchaToken) {
+      toast({
+        title: "CAPTCHA Required",
+        description: "Please complete the CAPTCHA verification before submitting.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     try {
       // 1. Load order details from localStorage (built at previous checkout step)
@@ -112,14 +134,16 @@ const ShippingDetails = () => {
         state: formData?.state ?? '',
         pincode: formData?.pincode ?? '',
         landmark: formData?.landmark ?? '',
+        referral_code: formData?.referralCode ?? '',
         // payment_proof_link: imageUrl, // null if screenshot not uploaded
         // transaction_id: transactionId,
         date_time: new Date().toISOString(),
         status: 'pending',
-        freeProductLink: product.freeProductLink || '',
-        freeProductPrice: product.freeProductPrice || '',
-        freeProductQuantity: product.freeProductQuantity || 1,
-        freeProductCategory: product.freeProductCategory || ''
+        second_product_link: product.secondProductLink || '',
+        second_product_price: product.secondProductPrice || 0,
+        second_product_quantity: product.secondProductQuantity || 0,
+        second_product_category: product.secondProductCategory || '',
+        second_product_gst_percentage: product.secondProductGstPercentage || 0
       };
 
       // 5. Insert row into orders table
@@ -147,6 +171,10 @@ const ShippingDetails = () => {
         variant: "destructive"
       });
     }
+  };
+
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
   };
 
   return (
@@ -369,6 +397,45 @@ const ShippingDetails = () => {
                     className="h-12 text-base border-2 focus:border-electric-blue transition-colors"
                   />
                 </div>
+
+                {/* Referral Code Section */}
+                <div className="space-y-3 pt-4 border-t border-gray-200">
+                  <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg border border-green-200">
+                    <p className="text-green-700 font-medium text-sm mb-3 flex items-center gap-2">
+                      <span className="text-lg">🎁</span>
+                      Have a referral code? Enter it below to help your friend earn ₹200!
+                    </p>
+                    <Label htmlFor="referralCode" className="text-base font-medium text-gray-700">
+                      Referral Code <span className="text-sm text-gray-500">(Optional)</span>
+                    </Label>
+                    <Input
+                      id="referralCode"
+                      placeholder="Enter referral code if you have one"
+                      value={formData.referralCode}
+                      onChange={(e) => setFormData({...formData, referralCode: e.target.value})}
+                      className="h-12 text-base border-2 focus:border-green-400 transition-colors mt-2"
+                    />
+                  </div>
+                </div>
+
+                {/* CAPTCHA Section */}
+                <div className="space-y-3 pt-4">
+                  <Label className="text-base font-medium text-gray-700">
+                    Security Verification *
+                  </Label>
+                  <div className="flex justify-center">
+                    <ReCAPTCHA
+                      sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Test key - replace with your actual site key
+                      onChange={handleCaptchaChange}
+                      theme="light"
+                    />
+                  </div>
+                  {!captchaToken && (
+                    <p className="text-sm text-red-600 text-center">
+                      Please complete the CAPTCHA verification to proceed
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -376,15 +443,17 @@ const ShippingDetails = () => {
                 <Link to="" className="flex-1">
                   <Button 
                     onClick={handleSubmit}
+                    disabled={!captchaToken}
                     variant="outline" 
-                    className="w-full h-14 text-lg font-semibold border-2 border-gray-300 hover:border-neon-pink hover:text-neon-pink transition-all duration-300"
+                    className="w-full h-14 text-lg font-semibold border-2 border-gray-300 hover:border-neon-pink hover:text-neon-pink transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cash on Delivery
                   </Button>
                 </Link>
                 <Button 
                   onClick={handleContinue}
-                  className="flex-1 w-full btn-glow gradient-primary text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300"
+                  disabled={!captchaToken}
+                  className="flex-1 w-full btn-glow gradient-primary text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Continue to Payment →
                 </Button>

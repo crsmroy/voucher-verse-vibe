@@ -2,12 +2,15 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import Noti from "@/components/ui/Noti"
 
 const Index = () => {
+  const [showNotification, setShowNotification] = useState(true);
+
   const steps = [
     {
       number: '01',
@@ -85,6 +88,10 @@ const Index = () => {
     }
   ];
 
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
   // Create autoplay plugin with proper structure
   const autoplayPlugin = () => ({
     name: 'autoplay',
@@ -161,7 +168,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       <Navigation />
-      <Noti message="We're currently processing a high volume of orders! To ensure quality, we're temporarily pausing new orders. Feel free to leave your details in contact us form we'll notify you once we're back!" />
+      
+      {showNotification && (
+        <Noti 
+          message="We're currently processing a high volume of orders! To ensure quality, we're temporarily pausing new orders. Feel free to leave your details in contact us form—we'll notify you once we're back!"
+          onClose={handleCloseNotification}
+        />
+      )}
       
       {/* Simplified Background Shapes - Fewer Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">

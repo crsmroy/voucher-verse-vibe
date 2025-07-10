@@ -67,6 +67,7 @@ export type Database = {
           product: string | null
           product_link: string | null
           quantity: number | null
+          referral_code: string | null
           second_product_category: string | null
           second_product_gst_percentage: number | null
           second_product_link: string | null
@@ -102,6 +103,7 @@ export type Database = {
           product?: string | null
           product_link?: string | null
           quantity?: number | null
+          referral_code?: string | null
           second_product_category?: string | null
           second_product_gst_percentage?: number | null
           second_product_link?: string | null
@@ -137,6 +139,7 @@ export type Database = {
           product?: string | null
           product_link?: string | null
           quantity?: number | null
+          referral_code?: string | null
           second_product_category?: string | null
           second_product_gst_percentage?: number | null
           second_product_link?: string | null
