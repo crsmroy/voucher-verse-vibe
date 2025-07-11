@@ -1,0 +1,42 @@
+const calculatePricing = () => {
+    const P1 = (parseFloat(formData.price) || 0) * formData.quantity;
+    
+    let premiumPrice = P1;
+    let gstRate1:any;
+    let gstRate2:any;
+    let gstAmount:any
+    
+    if (activeTab === 'voucher') {
+      const V = parseFloat(formData.voucherAmount) || 0;
+      premiumPrice = P1 + V;
+      
+      const selectedCategory = categories.find(cat => cat.value === formData.category);
+      gstRate1 = selectedCategory ? selectedCategory.gst : 18;
+    } else if (activeTab === 'freeProduct') {
+      const P2 = (parseFloat(formData.freeProductPrice) || 0) * formData.freeProductQuantity;
+      premiumPrice = P1 + P2;
+      
+      // Use the higher GST rate between main product and free product categories
+      const mainCategory = categories.find(cat => cat.value === formData.category);
+      const freeCategory = categories.find(cat => cat.value === formData.freeProductCategory);
+      
+      gstRate1 = mainCategory ? mainCategory.gst : 18;
+      gstRate2 = freeCategory ? freeCategory.gst : 0;
+    }
+    
+    const serviceFee = premiumPrice * 0.20; // 20% service fee
+    if (gstRate2){
+      gstAmount = premiumPrice * (gstRate1 / 100);
+    } else {
+      gstAmount = premiumPrice * (gstRate1 / 100);
+    }
+    const totalPrice = premiumPrice + serviceFee + gstAmount;
+    
+    return {
+      premiumPrice,
+      serviceFee,
+      gstAmount,
+      totalPrice,
+      savings: P1 - totalPrice // This shows how much they save vs buying directly
+    };
+  };

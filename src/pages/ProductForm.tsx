@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
 import { supabase } from '@/integrations/supabase/client';
+import { ArrowLeft } from 'lucide-react';
+import Footer from "@/components/Footer";
 
 const ProductForm = () => {
   const navigate = useNavigate();
@@ -25,7 +25,6 @@ const ProductForm = () => {
     freeProductLink: '',
     freeProductPrice: '',
     freeProductQuantity: 1,
-    freeProductCategory: ''
   });
 
   // Load data from localStorage on component mount
@@ -45,8 +44,7 @@ const ProductForm = () => {
             voucherPlatform: parsedOrder.product.voucherPlatform || '',
             freeProductLink: parsedOrder.product.freeProductLink || '',
             freeProductPrice: parsedOrder.product.freeProductPrice || '',
-            freeProductQuantity: parsedOrder.product.freeProductQuantity || 1,
-            freeProductCategory: parsedOrder.product.freeProductCategory || ''
+            freeProductQuantity: parsedOrder.product.freeProductQuantity || 1
           });
           // Set active tab based on saved data
           if (parsedOrder.product.freeProductLink || parsedOrder.product.freeProductPrice) {
@@ -187,11 +185,10 @@ const ProductForm = () => {
       
       // Use the higher GST rate between main product and free product categories
       const mainCategory = categories.find(cat => cat.value === formData.category);
-      const freeCategory = categories.find(cat => cat.value === formData.freeProductCategory);
       
-      const mainGst = mainCategory ? mainCategory.gst : 18;
-      const freeGst = freeCategory ? freeCategory.gst : 18;
-      gstRate = Math.max(mainGst, freeGst);
+      gstRate = mainCategory ? mainCategory.gst : 18;
+      // const freeGst = freeCategory ? freeCategory.gst : 18;
+      // gstRate = Math.max(mainGst, freeGst);
     }
     
     const serviceFee = premiumPrice * 0.20; // 20% service fee
@@ -242,7 +239,6 @@ const ProductForm = () => {
       timestamp: new Date().toISOString(),
       orderId: nextOrderId
     };
-
     localStorage.setItem("currentOrder", JSON.stringify(orderData));
     navigate("/shipping");
   };
@@ -259,7 +255,7 @@ const ProductForm = () => {
       return !!(formData.voucherAmount && formData.voucherPlatform);
     } else if (activeTab === 'freeProduct') {
       // Check if all free product fields are filled
-      if (!formData.freeProductLink || !formData.freeProductPrice || !formData.freeProductCategory) {
+      if (!formData.freeProductLink || !formData.freeProductPrice) {
         return false;
       }
       
@@ -292,7 +288,7 @@ const ProductForm = () => {
       <Navigation />
       
       {/* Enhanced Animated Background */}
-      <div className="fixed inset-0 pointer-events-none z-0">
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-55">
         {/* Original elements */}
         <div className="absolute top-20 left-10 w-32 h-32 gradient-primary rounded-full opacity-10 float"></div>
         <div className="absolute top-40 right-20 w-24 h-24 gradient-secondary rounded-lg rotate-45 opacity-15 float" style={{animationDelay: '1s'}}></div>
@@ -311,10 +307,11 @@ const ProductForm = () => {
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto">
           {/* Back Button */}
-          <div className="mb-6">
+          <div className="sm:block hidden">
             <Link to="/">
-              <Button variant="outline" className="flex items-center gap-2">
-                ← Back to Home
+              <Button variant="outline" className="flex items-center fixed">
+                <ArrowLeft className="w-4 h-4" />
+                Back
               </Button>
             </Link>
           </div>
@@ -558,35 +555,6 @@ const ProductForm = () => {
                           </div>
                         </div>
                       </div>
-
-                      <div>
-                        <Label className="text-base font-medium">Second Product Category</Label>
-                        <div className="grid gap-3 mt-2">
-                          {categories.map((category) => (
-                            <div
-                              key={category.value}
-                              className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-                                formData.freeProductCategory === category.value
-                                  ? 'border-teal bg-gradient-to-r from-teal/10 to-electric-blue/10'
-                                  : 'border-gray-200 hover:border-teal/50 hover:bg-gray-50'
-                              }`}
-                              onClick={() => setFormData({...formData, freeProductCategory: category.value})}
-                            >
-                              <div className="flex justify-between items-center">
-                                <span className="font-medium">{category.label}</span>
-                                <div className="flex items-center gap-2">
-                                  <span className={`px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r ${category.color} text-white`}>
-                                    GST {category.gst}%
-                                  </span>
-                                  {formData.freeProductCategory === category.value && (
-                                    <span className="text-teal text-xl">✓</span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
                     </TabsContent>
                   </Tabs>
                 </CardContent>
@@ -672,6 +640,7 @@ const ProductForm = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -57,6 +56,13 @@ const ShippingDetails = () => {
       }
     }
   }, []);
+
+  const isFormValid = () => {
+    if (!formData.fullName || !formData.phoneNumber || !formData.address || !formData.city || !formData.state || !formData.pincode || !captchaToken) {
+      return false;
+    }
+    return true;
+  };
 
   const handleContinue = () => {
     if (!captchaToken) {
@@ -139,11 +145,9 @@ const ShippingDetails = () => {
         // transaction_id: transactionId,
         date_time: new Date().toISOString(),
         status: 'pending',
-        second_product_link: product.secondProductLink || '',
-        second_product_price: product.secondProductPrice || 0,
-        second_product_quantity: product.secondProductQuantity || 0,
-        second_product_category: product.secondProductCategory || '',
-        second_product_gst_percentage: product.secondProductGstPercentage || 0
+        second_product_link: product.freeProductLink || '',
+        second_product_price: product.freeProductPrice || 0,
+        second_product_quantity: product.freeProductQuantity || 0
       };
 
       // 5. Insert row into orders table
@@ -189,7 +193,7 @@ const ShippingDetails = () => {
       </div>
 
       {/* Back Button */}
-      <div className="fixed top-20 left-4 z-50">
+      <div className="fixed top-20 left-4 z-50 sm:block hidden">
         <Button
           variant="outline"
           size="sm"
@@ -205,20 +209,20 @@ const ShippingDetails = () => {
         <div className="max-w-4xl mx-auto">
           {/* Progress Indicator */}
           <div className="flex items-center justify-center mb-16">
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6 scale-90 sm:scale-95 md:scale-100">
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">✓</div>
-                <span className="ml-3 text-base font-semibold text-green-600">Product</span>
+                <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm md:text-base">✓</div>
+                <span className="ml-2 sm:ml-3 text-sm sm:text-base font-semibold text-green-600">Product</span>
               </div>
-              <div className="w-16 h-1 gradient-primary rounded-full"></div>
+              <div className="w-10 h-1 sm:w-12 md:w-16 gradient-primary rounded-full"></div>
               <div className="flex items-center">
-                <div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-lg">2</div>
-                <span className="ml-3 text-base font-semibold text-transparent bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text">Shipping</span>
+                <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm md:text-base">2</div>
+                <span className="ml-2 sm:ml-3 text-sm sm:text-base font-semibold text-transparent bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text">Shipping</span>
               </div>
-              <div className="w-16 h-1 bg-gray-300 rounded-full"></div>
+              <div className="w-10 h-1 sm:w-12 md:w-16 bg-gray-300 rounded-full"></div>
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 font-bold">3</div>
-                <span className="ml-3 text-base font-semibold text-gray-500">Payment</span>
+                <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 font-bold text-sm md:text-base">3</div>
+                <span className="ml-2 sm:ml-3 text-sm sm:text-base font-semibold text-gray-500">Payment</span>
               </div>
             </div>
           </div>
@@ -425,7 +429,7 @@ const ShippingDetails = () => {
                   </Label>
                   <div className="flex justify-center">
                     <ReCAPTCHA
-                      sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Test key - replace with your actual site key
+                      sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
                       onChange={handleCaptchaChange}
                       theme="light"
                     />
@@ -443,7 +447,7 @@ const ShippingDetails = () => {
                 <Link to="" className="flex-1">
                   <Button 
                     onClick={handleSubmit}
-                    disabled={!captchaToken}
+                    disabled={!isFormValid()}
                     variant="outline" 
                     className="w-full h-14 text-lg font-semibold border-2 border-gray-300 hover:border-neon-pink hover:text-neon-pink transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -452,7 +456,7 @@ const ShippingDetails = () => {
                 </Link>
                 <Button 
                   onClick={handleContinue}
-                  disabled={!captchaToken}
+                  disabled={!isFormValid()}
                   className="flex-1 w-full btn-glow gradient-primary text-white h-14 text-lg font-semibold border-0 shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Continue to Payment →

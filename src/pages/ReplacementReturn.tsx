@@ -1,4 +1,4 @@
-
+import Footer from "@/components/Footer";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -86,8 +86,27 @@ const ReplacementReturn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-purple-50 to-blue-50">
+    <div className="min-h-screen ">
       <Navigation />
+      <div className="fixed inset-0 pointer-events-none -z-10">
+        {/* Primary large background elements - visible on all screens */}
+        <div className="absolute top-20 left-10 w-32 h-32 gradient-primary rounded-full opacity-10 float"></div>
+        <div className="absolute bottom-20 right-20 w-40 h-40 gradient-tertiary rounded-full opacity-8 float blur-sm" style={{animationDelay: '2s'}}></div>
+        
+        {/* Modern gradient blobs - reduced count */}
+        <div className="absolute top-16 right-1/3 w-48 h-48 bg-gradient-to-br from-purple-400 via-pink-300 to-blue-400 rounded-full opacity-8 float blur-sm" style={{animationDelay: '0.8s'}}></div>
+        <div className="absolute bottom-32 left-1/4 w-56 h-56 bg-gradient-to-tr from-green-300 via-blue-400 to-purple-500 rounded-full opacity-6 float blur-sm" style={{animationDelay: '2.2s'}}></div>
+        
+        {/* Medium elements - hidden on mobile */}
+        <div className="hidden md:block absolute top-40 right-20 w-24 h-24 gradient-secondary rounded-lg rotate-45 opacity-15 float" style={{animationDelay: '1s'}}></div>
+        <div className="hidden md:block absolute top-1/2 right-10 w-20 h-20 bg-warm-orange rounded-full opacity-20 float" style={{animationDelay: '0.5s'}}></div>
+        <div className="hidden md:block absolute top-48 left-20 w-24 h-12 bg-gradient-to-r from-indigo-400 to-cyan-400 rounded-full opacity-15 float" style={{animationDelay: '1.2s'}}></div>
+        
+        {/* Small accent elements - hidden on mobile */}
+        <div className="hidden lg:block absolute top-60 right-20 w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg rotate-12 opacity-18 float" style={{animationDelay: '0.6s'}}></div>
+        <div className="hidden lg:block absolute bottom-60 left-24 w-16 h-16 bg-gradient-to-tr from-violet-400 to-purple-500 rounded-lg rotate-45 opacity-15 float" style={{animationDelay: '2.1s'}}></div>
+        <div className="hidden lg:block absolute top-32 left-2/3 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full opacity-25 float" style={{animationDelay: '0.4s'}}></div>
+      </div>
       
       <div className="pt-20 pb-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -286,6 +305,7 @@ const ReplacementReturn = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

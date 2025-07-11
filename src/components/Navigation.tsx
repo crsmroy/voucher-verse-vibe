@@ -20,7 +20,7 @@ const Navigation = () => {
   const navLinks = [
     { to: '/', label: 'Home' },
     { to: '/product', label: 'Shop' },
-    { to: '/replacement-return', label: 'Raise Replacement/Return' },
+    { to: '/replacement-return', label: 'Replacement/Return' },
     { to: '/how-it-works', label: 'How It Works' },
     { to: '/contact', label: 'Contact' },
   ];
@@ -62,9 +62,13 @@ const Navigation = () => {
                 )}
               </Link>
             ))}
-            <Button className="btn-glow gradient-primary text-white border-0 hover:shadow-xl">
-              Get Started
-            </Button>
+            <Link 
+            to="/product" 
+            >
+              <Button className="btn-glow gradient-primary text-white border-0 hover:shadow-xl">
+                Get Started
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}

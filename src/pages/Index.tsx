@@ -2,13 +2,18 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import Noti from "@/components/ui/Noti"
+import logo from "@/asset/images/img.png"
 
 const Index = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [])
+
   const [showNotification, setShowNotification] = useState(true);
 
   const steps = [
@@ -21,7 +26,7 @@ const Index = () => {
     },
     {
       number: '02', 
-      title: 'Delivered from Flipkart/Amazon/Marketplace',
+      title: 'Delivered from Flipkart/Amazon',
       description: 'Your order is shipped directly from the actual website — fast and reliable delivery!',
       icon: '🚚',
       color: 'from-electric-blue to-teal'
@@ -171,7 +176,7 @@ const Index = () => {
       
       {showNotification && (
         <Noti 
-          message="We're currently processing a high volume of orders! To ensure quality, we're temporarily pausing new orders. Feel free to leave your details in contact us form—we'll notify you once we're back!"
+          message="We're currently processing a high volume of orders! To ensure quality, we're temporarily pausing new orders. Feel free to leave your details in contact us form we'll notify you once we're back!"
           onClose={handleCloseNotification}
         />
       )}
@@ -259,17 +264,13 @@ const Index = () => {
             </div>
 
             {/* Right Image Container */}
-            <div className="relative">
+            <div className="relative max-w-4xl mx-auto">
               <div className="relative z-10 bg-white rounded-3xl shadow-2xl p-8 pulse-glow">
-                <div className="w-full h-64 md:h-80 lg:h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <div className="text-6xl mb-4">🖼️</div>
-                    <p className="text-lg font-medium">Your Image Here</p>
-                    <p className="text-sm">Responsive Container</p>
-                  </div>
+                <div className="w-full h-64 md:h-80 lg:h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center overflow-hidden">
+                  <img src={logo} alt="Logo" className="rounded-2xl object-contain w-full h-full" />
                 </div>
               </div>
-              
+
               {/* Background decorative elements */}
               <div className="absolute -top-6 -right-6 w-24 h-24 gradient-primary rounded-full opacity-20"></div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 gradient-tertiary rounded-lg rotate-12 opacity-15"></div>
