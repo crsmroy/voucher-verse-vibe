@@ -96,6 +96,10 @@ const ShippingDetails = () => {
   };
 
   const handleSubmit = async () => {
+    console.log("Cash on Delivery button clicked!");
+    console.log("CAPTCHA token:", captchaToken);
+    console.log("Form data:", formData);
+    
     if (!captchaToken) {
       toast({
         title: "CAPTCHA Required",
@@ -106,13 +110,19 @@ const ShippingDetails = () => {
     }
 
     try {
+      console.log("Starting order submission...");
+      
       // 1. Load order details from localStorage (built at previous checkout step)
       const orderDataStr = localStorage.getItem('currentOrder');
+      console.log("Order data string:", orderDataStr);
+      
       if (!orderDataStr) throw new Error('Order data not found. Please restart your order.');
       const orderData = JSON.parse(orderDataStr);
+      console.log("Parsed order data:", orderData);
 
       // 2. Generate/fallback to an orderId
       const orderId = orderData.orderId || Math.floor(Date.now() % 1e6).toString().padStart(6, "0");
+      console.log("Generated order ID:", orderId);
 
       // 4. Prepare and insert payload
       const { product = {}, pricing = {}, timestamp } = orderData;
@@ -149,12 +159,19 @@ const ShippingDetails = () => {
         second_product_quantity: product.freeProductQuantity || 0
       };
 
+      console.log("Order payload prepared:", orderPayload);
+
       // 5. Insert row into orders table
+      console.log("Calling insertOrder...");
       const error = await insertOrder(orderPayload);
+      console.log("Insert result error:", error);
 
       if (error) {
+        console.error("Database insertion error:", error);
         throw error;
       }
+      
+      console.log("Order inserted successfully!");
       
       // Show success notification instead of redirecting
       toast({
@@ -166,6 +183,7 @@ const ShippingDetails = () => {
       navigate('/');
 
     } catch (err: any) {
+      console.error("Order submission error:", err);
       
       // Show failure notification with WhatsApp contact info
       toast({
