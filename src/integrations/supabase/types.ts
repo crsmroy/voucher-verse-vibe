@@ -64,7 +64,6 @@ export type Database = {
           platform: string | null
           premium_price: number | null
           price: number | null
-          product: string | null
           product_link: string | null
           quantity: number | null
           referral_code: string | null
@@ -100,7 +99,6 @@ export type Database = {
           platform?: string | null
           premium_price?: number | null
           price?: number | null
-          product?: string | null
           product_link?: string | null
           quantity?: number | null
           referral_code?: string | null
@@ -136,7 +134,6 @@ export type Database = {
           platform?: string | null
           premium_price?: number | null
           price?: number | null
-          product?: string | null
           product_link?: string | null
           quantity?: number | null
           referral_code?: string | null

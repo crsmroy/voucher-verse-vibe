@@ -119,7 +119,6 @@ const ShippingDetails = () => {
       const orderPayload = {
         order_id: orderId,
         product_link: product.productLink || '',
-        product: product.productName || '',
         price: Number(product.price) || 0,
         quantity: Number(product.quantity) || 1,
         category: product.category || '',
