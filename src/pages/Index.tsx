@@ -266,7 +266,7 @@ const Index = () => {
             {/* Right Image Container */}
             <div className="relative max-w-4xl mx-auto">
               <div className="relative z-10 bg-white rounded-3xl shadow-2xl p-8 pulse-glow">
-                <div className="min-w-full h-64 md:h-80 lg:h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center overflow-hidden">
+                <div className="w-full h-64 md:h-80 lg:h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center overflow-hidden">
                   <img src={logo} alt="Logo" className="rounded-2xl object-contain w-full h-full" />
                 </div>
               </div>
