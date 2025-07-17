@@ -106,7 +106,7 @@ const Contact = () => {
       {/* Contact Hero Section */}
       <section className="pt-20 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 bg-white rounded-xl py-5">
+          <div className="text-center mb-12 bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-xl py-5">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-neon-pink via-electric-blue to-lime-green bg-clip-text text-transparent">
                 Get in Touch
@@ -119,7 +119,7 @@ const Contact = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <Card className="shadow-xl border-0 bg-white/95 backdrop-blur-sm">
+            <Card className="shadow-xl border-0 bg-gradient-to-br from-gray-50 to-blue-50/30 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold text-gray-900">Send us a Message</CardTitle>
               </CardHeader>
@@ -182,7 +182,7 @@ const Contact = () => {
             </Card>
 
             {/* Contact Information */}
-            <div className="space-y-8 bg-white rounded-lg py-8">
+            <div className="space-y-8 bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-lg py-8">
               <div className="space-y-8">
                 <div className="funky-card text-center float" style={{animationDelay: '0s'}}>
                   <div className="text-4xl mb-4">🎨</div>

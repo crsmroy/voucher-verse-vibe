@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,9 @@ import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 
 const ReplacementReturn = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [])
   const [formData, setFormData] = useState({
     productLink: '',
     quantity: 1,
@@ -44,7 +47,6 @@ const ReplacementReturn = () => {
           order_date: formData.orderDate,
           request_type: formData.requestType,
           return_reason: formData.returnReason,
-          product_image: null,
           full_name: formData.fullName,
           phone_number: formData.phoneNumber,
           amount_paid: parseFloat(formData.amountPaid),
@@ -110,7 +112,7 @@ const ReplacementReturn = () => {
       
       <div className="pt-20 pb-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-lg p-4">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent mb-4">
               Replacement / Return Request
             </h1>

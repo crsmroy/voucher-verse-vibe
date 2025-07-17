@@ -2,8 +2,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useEffect, useState } from 'react';
+import Footer from '@/components/Footer';
 
 const HowItWorks = () => {
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [])
+
   const steps = [
     {
       number: '01',
@@ -11,49 +18,118 @@ const HowItWorks = () => {
       description: 'Find any product you want from popular online stores like Amazon, Flipkart, Myntra, and more.',
       icon: '🛍️',
       color: 'from-neon-pink to-warm-orange',
-      details: ['Copy the product link', 'Enter the price', 'Select quantity', 'Choose category']
+      details: ["Copy & Paste the product link", "Enter the product's price as on marketplace final checkout page", "Select quantity", "Choose product category"]
     },
     {
       number: '02',
-      title: 'Select Voucher',
-      description: 'Pick from our collection of premium vouchers to maximize your savings on the purchase.',
+      title: 'Select Voucher or Free Second Product',
+      description: 'Pick from our collection of premium vouchers or get a complimentary product that you want to buy.',
       icon: '🎫',
       color: 'from-electric-blue to-teal',
-      details: ['10-20% discount vouchers', 'Platform-specific offers', 'Seasonal promotions', 'Bulk order discounts']
+      details: ["On Choosing Voucher :->", "Choose voucher amount", "Choose any Listed Platform", "On choosing complimentary product :->", "Copy & Paste the product link", "Enter the product's price as on marketplace final checkout page", "Select quantity", "Choose product category"]
     },
     {
       number: '03',
-      title: 'Secure Payment',
-      description: 'Pay through our secure payment system and upload your transaction proof for verification.',
+      title: 'Place your order through Cash on Delivery',
+      description: '1st time user? Still having doubt on us. No problem, we got you covered.',
       icon: '💳',
       color: 'from-lime-green to-electric-blue',
-      details: ['UPI payments', 'QR code scanning', 'Transaction verification', 'Instant confirmation']
+      details: ["Fill your complete address details", "Place COD and", "Order is placed successfully within minutes", "Order details will be shared directly to your marketplace app like Flipkart and Amazon"]
     },
     {
       number: '04',
-      title: 'We Purchase',
-      description: 'Our team uses the vouchers to buy your product at the discounted price from the retailer.',
+      title: 'Get your Order in your hands',
+      description: 'Be satisfied first, pay later.',
       icon: '🛒',
       color: 'from-warm-orange to-neon-pink',
-      details: ['Professional buyers', 'Best price guarantee', 'Quality verification', 'Fast processing']
+      details: ["Shipping and delivery will be handled by marketplace itself", "Verify your order at your doorstep first", "Pay the actual product amount reflecting in marketplace app."]
     },
     {
       number: '05',
-      title: 'Direct Delivery',
-      description: 'The product is shipped directly to your address with full tracking and insurance.',
+      title: 'Claim your reimbursement',
+      description: 'Get back the full amount you paid us for the product.',
       icon: '📦',
-      color: 'from-teal to-lime-green',
-      details: ['Direct shipping', 'Package tracking', 'Insurance coverage', '3-7 day delivery']
+      color: 'from-electric-blue to-teal',
+      details: ["Pay the remaining amount to us and get your invoice", "Generated GST Invoice will be sent over your email and whatsapp", "Upload our invoice and claim your full refund from your company", "Hurray! You just got double benefits"]
     },
     {
       number: '06',
-      title: 'Save Money',
-      description: 'Enjoy your new product while saving money compared to buying it yourself!',
+      title: 'Get your Voucher(Only in case if you choosed voucher)',
+      description: 'Voucher will be sent along with redeem code and password to your email and WhatsApp.',
       icon: '💰',
       color: 'from-electric-blue to-neon-pink',
-      details: ['Guaranteed savings', '24/7 support', 'Return policy', 'Happy customers']
+      details: ["Pay the remaining amount to us and get your voucher and GST invoice", "Reedem your voucher on the voucher's respective platform", "Return and Replacement will be handled by marketplace directly"]
+    },
+    {
+      number: '07',
+      title: 'Raise Replacement or Return',
+      description: "Raise Replacement in case of defective product or Return the product if you don't like it. No Questions asked.",
+      icon: '💰',
+      color: 'from-neon-pink to-warm-orange',
+      details: ["Our suggestion would be to not accept any defective product on open box delivery.", "Since you haven't paid yet till this time, you will not be charged even a single penny.", "Even if you missed it during open box delivery and paid for the product, raise replacement/return on our website.", "We will organise a pickup from your same delivered address.", "Return and Replacement will be handled by marketplace directly", "In case of product return, voucher will not be returned/replaced", "In case of product return, product price and its GST would be refunded only", "In case of replacement, you would not be eligible for any refund."]
     }
   ];
+
+  const steps2 = [
+    {
+      number: '01',
+      title: 'Browse & Choose',
+      description: 'Find any product you want from popular online stores like Amazon, Flipkart, Myntra, and more.',
+      icon: '🛍️',
+      color: 'from-neon-pink to-warm-orange',
+      details: ["Copy & Paste the product link", "Enter the product's price as on marketplace final checkout page", "Select quantity", "Choose product category"]
+    },
+    {
+      number: '02',
+      title: 'Select Voucher or Free Second Product',
+      description: 'Pick from our collection of premium vouchers or get a complimentary product that you want to buy.',
+      icon: '🎫',
+      color: 'from-electric-blue to-teal',
+      details: ["On Choosing Voucher :->", "Choose voucher amount", "Choose any Listed Platform", "On choosing complimentary product :->", "Copy & Paste the product link", "Enter the product's price as on marketplace final checkout page", "Select quantity", "Choose product category"]
+    },
+    {
+      number: '03',
+      title: 'Place your order and make payment',
+      description: 'Scan our QR and pay through your own secure payment app.',
+      icon: '💳',
+      color: 'from-lime-green to-electric-blue',
+      details: ["Fill your complete address details and proceed for payments", "Scan QR code or type our UPI ID in your payment app", "Once paid, Take screenshot of transaction and upload the screenshot", "Type down transaction id (for quick verification)", "Within couple of minutes your payment will be verified", "If not verified, we will contact you with the details"]
+    },
+    {
+      number: '04',
+      title: 'Get your Order in your hands',
+      description: 'Be satisfied first, pay later.',
+      icon: '🛒',
+      color: 'from-warm-orange to-neon-pink',
+      details: ["Order is placed successfully within minutes", "Order details will be shared directly to your marketplace app like Flipkart and Amazon", "Shipping and delivery will be handled by marketplace itself", "Verify your order at your doorstep"]
+    },
+    {
+      number: '05',
+      title: 'Claim your reimbursement',
+      description: 'Get back the full amount you paid us for the product.',
+      icon: '📦',
+      color: 'from-electric-blue to-teal',
+      details: ["Pay the remaining amount to us and get your invoice", "Generated GST Invoice will be sent over your email and whatsapp", "Upload our invoice and claim your full refund from your company", "Hurray! You just got double benefits"]
+    },
+    {
+      number: '06',
+      title: 'Get your Voucher(Only in case if you choosed voucher)',
+      description: 'Voucher will be sent along with redeem code and password to your email and WhatsApp.',
+      icon: '💰',
+      color: 'from-electric-blue to-neon-pink',
+      details: ["Pay the remaining amount to us and get your voucher and GST invoice", "Reedem your voucher on the voucher's respective platform", "Return and Replacement will be handled by marketplace directly"]
+    },
+    {
+      number: '07',
+      title: 'Raise Replacement or Return',
+      description: "Raise Replacement in case of defective product or Return the product if you don't like it. No Questions asked.",
+      icon: '💰',
+      color: 'from-neon-pink to-warm-orange',
+      details: ["Our suggestion would be to not accept any defective product on open box delivery.", "Since you haven't paid yet till this time, you will not be charged even a single penny.", "Even if you missed it during open box delivery and paid for the product, raise replacement/return on our website.", "We will organise a pickup from your same delivered address.", "Return and Replacement will be handled by marketplace directly", "In case of product return, voucher will not be returned/replaced", "In case of product return, product price and its GST would be refunded only", "In case of replacement, you would not be eligible for any refund."]
+    }
+  ];
+
+  const [activeTab, setActiveTab] = useState('voucher');
 
   return (
     <div className="min-h-screen">
@@ -83,7 +159,7 @@ const HowItWorks = () => {
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto rounded-lg">
           {/* Header */}
-          <div className="text-center mb-16 slide-in bg-white py-5 rounded-lg">
+          <div className="text-center mb-5 slide-in bg-white py-5 rounded-lg">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
               How It <span className="bg-gradient-to-r from-neon-pink via-electric-blue to-teal bg-clip-text text-transparent">Works</span>
             </h1>
@@ -100,48 +176,114 @@ const HowItWorks = () => {
             </div>
           </div>
 
-          {/* Steps */}
-          <div className="space-y-12">
-            {steps.map((step, index) => (
-              <div key={index} className={`flex flex-col lg:flex-row gap-8 items-center ${
-                index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-              }`}>
-                {/* Step Content */}
-                <div className="flex-1 space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${step.color} flex items-center justify-center text-white text-2xl font-bold`}>
-                      {step.number}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger 
+                value="voucher" 
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-lime-green data-[state=active]:to-electric-blue data-[state=active]:text-white"
+              >
+                🎫 Cash On Delivery
+              </TabsTrigger>
+              <TabsTrigger 
+                value="freeProduct" 
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-electric-blue data-[state=active]:to-teal data-[state=active]:text-white"
+              >
+                🎁 Prepaid Orders
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="voucher" className="space-y-4 animate-fade-in py-16 bg-gradient-to-br from-gray-50 to-blue-50/30 p-6 rounded-xl">
+              {/* Steps */}
+              <div className="space-y-12">
+                {steps.map((step, index) => (
+                  <div key={index} className={`flex flex-col lg:flex-row gap-8 items-center ${
+                    index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                  }`}>
+                    {/* Step Content */}
+                    <div className="flex-1 space-y-6">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${step.color} flex items-center justify-center text-white text-2xl font-bold`}>
+                          {step.number}
+                        </div>
+                        <div>
+                          <h2 className="text-3xl font-bold text-gray-900">{step.title}</h2>
+                          <p className="text-lg text-gray-600 mt-2">{step.description}</p>
+                        </div>
+                      </div>
+                      
+                      <ul className="space-y-2 ml-20">
+                        {step.details.map((detail, idx) => (
+                          <li key={idx} className="flex items-center gap-3 text-gray-700">
+                            <span className="w-2 h-2 bg-gradient-to-r from-neon-pink to-electric-blue rounded-full"></span>
+                            {detail}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <div>
-                      <h2 className="text-3xl font-bold text-gray-900">{step.title}</h2>
-                      <p className="text-lg text-gray-600 mt-2">{step.description}</p>
+
+                    {/* Step Visual */}
+                    <div className="flex-1 flex justify-center">
+                      <Card className="hover:shadow-xl transition-all duration-500 hover:-translate-y-2 w-full max-w-md">
+                        <CardContent className="p-8 text-center">
+                          <div className="text-6xl mb-4">{step.icon}</div>
+                          <div className={`w-full h-2 bg-gradient-to-r ${step.color} rounded-full mb-4`}></div>
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
+                          <p className="text-gray-600">Step {step.number} of our process</p>
+                        </CardContent>
+                      </Card>
                     </div>
                   </div>
-                  
-                  <ul className="space-y-2 ml-20">
-                    {step.details.map((detail, idx) => (
-                      <li key={idx} className="flex items-center gap-3 text-gray-700">
-                        <span className="w-2 h-2 bg-gradient-to-r from-neon-pink to-electric-blue rounded-full"></span>
-                        {detail}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Step Visual */}
-                <div className="flex-1 flex justify-center">
-                  <Card className="hover:shadow-xl transition-all duration-500 hover:-translate-y-2 w-full max-w-md">
-                    <CardContent className="p-8 text-center">
-                      <div className="text-6xl mb-4">{step.icon}</div>
-                      <div className={`w-full h-2 bg-gradient-to-r ${step.color} rounded-full mb-4`}></div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
-                      <p className="text-gray-600">Step {step.number} of our process</p>
-                    </CardContent>
-                  </Card>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </TabsContent>
+
+            <TabsContent value="freeProduct" className="space-y-4 animate-fade-in bg-gradient-to-br from-gray-50 to-blue-50/30 p-6 rounded-xl">
+              {/* Steps */}
+              <div className="space-y-12">
+                {steps2.map((step, index) => (
+                  <div key={index} className={`flex flex-col lg:flex-row gap-8 items-center ${
+                    index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                  }`}>
+                    {/* Step Content */}
+                    <div className="flex-1 space-y-6">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${step.color} flex items-center justify-center text-white text-2xl font-bold`}>
+                          {step.number}
+                        </div>
+                        <div>
+                          <h2 className="text-3xl font-bold text-gray-900">{step.title}</h2>
+                          <p className="text-lg text-gray-600 mt-2">{step.description}</p>
+                        </div>
+                      </div>
+                      
+                      <ul className="space-y-2 ml-20">
+                        {step.details.map((detail, idx) => (
+                          <li key={idx} className="flex items-center gap-3 text-gray-700">
+                            <span className="w-2 h-2 bg-gradient-to-r from-neon-pink to-electric-blue rounded-full"></span>
+                            {detail}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Step Visual */}
+                    <div className="flex-1 flex justify-center">
+                      <Card className="hover:shadow-xl transition-all duration-500 hover:-translate-y-2 w-full max-w-md">
+                        <CardContent className="p-8 text-center">
+                          <div className="text-6xl mb-4">{step.icon}</div>
+                          <div className={`w-full h-2 bg-gradient-to-r ${step.color} rounded-full mb-4`}></div>
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
+                          <p className="text-gray-600">Step {step.number} of our process</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          
 
           {/* Benefits Section */}
           <section className="mt-20 py-16 bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-3xl">
@@ -207,6 +349,7 @@ const HowItWorks = () => {
           </section>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

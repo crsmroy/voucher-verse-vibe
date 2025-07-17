@@ -7,7 +7,7 @@ import Navigation from '@/components/Navigation';
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
 import Noti from "@/components/ui/Noti"
-import logo from "@/asset/images/img.png"
+import logo from "@/asset/images/img1.jpg"
 
 const Index = () => {
   useEffect(() => {
@@ -333,7 +333,7 @@ const Index = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-white relative">
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -387,7 +387,7 @@ const Index = () => {
       {/* What We Do Section */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl shadow-lg p-8 md:p-12 lg:p-16">
+          <div className="bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-3xl shadow-lg p-8 md:p-12 lg:p-16">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 What We <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Do</span> and How We <span className="bg-gradient-to-r from-warm-orange to-lime-green bg-clip-text text-transparent">Serve</span> You?

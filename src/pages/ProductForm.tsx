@@ -317,7 +317,7 @@ const ProductForm = () => {
           </div>
 
           {/* Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 ">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Shop <span className="bg-gradient-to-r from-neon-pink to-electric-blue bg-clip-text text-transparent">Smart</span>
             </h1>
