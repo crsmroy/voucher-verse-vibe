@@ -8,12 +8,13 @@ import Navigation from '@/components/Navigation';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import ReCAPTCHA from 'react-google-recaptcha';
+import MathCaptcha from '@/components/MathCaptcha';
 
 const ShippingDetails = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [isPaymentCaptchaVerified, setIsPaymentCaptchaVerified] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     phoneNumber: '',
@@ -30,7 +31,7 @@ const ShippingDetails = () => {
 
   // Load data from localStorage on component mount
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
     const orderDataStr = localStorage.getItem('currentOrder');
     if (orderDataStr) {
       try {
@@ -58,18 +59,18 @@ const ShippingDetails = () => {
   }, []);
 
   const isFormValid = () => {
-    if (!formData.fullName || !formData.phoneNumber || !formData.address || !formData.city || !formData.state || !formData.pincode || !captchaToken) {
+    if (!formData.fullName || !formData.phoneNumber || !formData.address || !formData.city || !formData.state || !formData.pincode || !isPaymentCaptchaVerified) {
       return false;
     }
     return true;
   };
 
   const handleContinue = () => {
-    if (!captchaToken) {
+    if (!isPaymentCaptchaVerified) {
       toast({
-        title: "CAPTCHA Required",
-        description: "Please complete the CAPTCHA verification before proceeding.",
-        variant: "destructive"
+        title: "Security Verification Required! 🔐",
+        description: "Please complete the math captcha to proceed with payment.",
+        variant: "destructive",
       });
       return;
     }
@@ -423,22 +424,11 @@ const ShippingDetails = () => {
                 </div>
 
                 {/* CAPTCHA Section */}
-                <div className="space-y-3 pt-4">
-                  <Label className="text-base font-medium text-gray-700">
-                    Security Verification *
-                  </Label>
-                  <div className="flex justify-center">
-                    <ReCAPTCHA
-                      sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-                      onChange={handleCaptchaChange}
-                      theme="light"
-                    />
-                  </div>
-                  {!captchaToken && (
-                    <p className="text-sm text-red-600 text-center">
-                      Please complete the CAPTCHA verification to proceed
-                    </p>
-                  )}
+                <div className="max-w-sm mx-auto mb-8">
+                  <MathCaptcha 
+                    onVerify={setIsPaymentCaptchaVerified} 
+                    isVerified={isPaymentCaptchaVerified}
+                  />
                 </div>
               </div>
 

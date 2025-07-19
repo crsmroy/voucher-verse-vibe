@@ -280,7 +280,7 @@ const ProductForm = () => {
     const firstProductPrice = parseFloat(formData.price) || 0;
     const secondProductPrice = parseFloat(formData.freeProductPrice) || 0;
     
-    return secondProductPrice <= firstProductPrice;
+    return secondProductPrice * formData.freeProductQuantity <= firstProductPrice * formData.quantity;
   };
 
   return (
@@ -525,7 +525,7 @@ const ProductForm = () => {
                           />
                           {!isSecondProductPriceValid() && (
                             <p className="text-red-500 text-sm mt-1">
-                              Second product price cannot exceed first product price (₹{formData.price})
+                              Second product price value cannot exceed first product price value (₹{parseFloat(formData.price) * formData.quantity})
                             </p>
                           )}
                         </div>

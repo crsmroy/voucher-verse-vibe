@@ -1,4 +1,3 @@
-
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
@@ -29,9 +28,9 @@ const Privacy = () => {
       </div>
       
       <div className="pt-32 pb-20 px-4">
-        <div className="max-w-4xl mx-auto bg-gradient-to-br from-gray-50 to-blue-50/30 p-6 rounded-lg">
-          <h1 className="page-title text-center mb-8 bounce-in text-shadow">
-            🔒 Privacy Policy
+        <div className="max-w-4xl mx-auto">
+          <h1 className="font-semibold text-center mb-10 bounce-in text-shadow text-5xl">
+            🔒 <span className="page-title">Privacy Policy</span>
           </h1>
           
           <div className="funky-card">

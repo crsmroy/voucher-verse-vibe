@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
 import { supabase } from '@/integrations/supabase/client';
+import PaymentQRCode from "@/components/PaymentQRCode";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -25,7 +26,6 @@ const Payment = () => {
     
     try {
       const parsedData = JSON.parse(storedOrderData);
-      console.log('Loaded order data:', parsedData);
       setOrderData(parsedData);
     } catch (error) {
       console.error('Error parsing order data:', error);
@@ -80,18 +80,11 @@ const Payment = () => {
     setUploading(true);
 
     try {
-      console.log('Starting payment completion process...');
-      console.log('Order data being processed:', orderData);
-
       // Upload payment proof
       const paymentProofUrl = await uploadPaymentProof(paymentProof, orderData.orderId);
-      console.log('Payment proof uploaded:', paymentProofUrl);
 
       // Prepare order payload
       const { product, shipping, pricing } = orderData;
-      console.log('Product data:', product);
-      console.log('Shipping data:', shipping);
-      console.log('Pricing data:', pricing);
 
       // Build the order payload with proper field mapping
       const orderPayload = {
@@ -110,8 +103,6 @@ const Payment = () => {
         second_product_link: product?.selectedTab === 'freeProduct' ? product?.freeProductLink || null : null,
         second_product_price: product?.selectedTab === 'freeProduct' ? (product?.freeProductPrice ? parseFloat(product.freeProductPrice) : null) : null,
         second_product_quantity: product?.selectedTab === 'freeProduct' ? product?.freeProductQuantity || null : null,
-        second_product_category: product?.selectedTab === 'freeProduct' ? product?.freeProductCategory || null : null,
-        second_product_gst_percentage: product?.selectedTab === 'freeProduct' && product?.freeProductCategory ? getGSTPercentage(product.freeProductCategory) : null,
         
         // Shipping details
         full_name: shipping?.fullName || null,
@@ -137,8 +128,6 @@ const Payment = () => {
         status: 'pending',
         date_time: new Date().toISOString()
       };
-
-      console.log('Final order payload being sent to database:', orderPayload);
 
       const { data, error } = await supabase
         .from('orders')
@@ -215,7 +204,7 @@ const Payment = () => {
       </div>
       
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto bg-gradient-to-br from-gray-50 to-blue-50/30 p-6 rounded-lg">
+        <div className="max-w-6xl mx-auto bg-gradient-to-br from-gray-50 to-blue-50/30 p-6 rounded-lg">
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -227,93 +216,93 @@ const Payment = () => {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Order Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  {/* <div className="flex justify-between">
-                    <span>Order ID</span>
-                    <span className="font-mono">{orderData.orderId}</span>
-                  </div> */}
-                  
-                  <div className="flex justify-between">
-                    <span>Premium Price</span>
-                    <span>₹{orderData.pricing?.premiumPrice?.toFixed(2)}</span>
-                  </div>
-                  
-                  <div className="flex justify-between text-orange-600">
-                    <span>Service Fee</span>
-                    <span>₹{orderData.pricing?.serviceFee?.toFixed(2)}</span>
-                  </div>
-                  
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>GST</span>
-                    <span>₹{orderData.pricing?.gstAmount?.toFixed(2)}</span>
-                  </div>
-                  
-                  <div className="border-t pt-3">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>Total Amount</span>
-                      <span className="text-electric-blue">₹{orderData.pricing?.totalPrice?.toFixed(2)}</span>
+            <div className="funky-card">
+              <PaymentQRCode 
+                amount={orderData.pricing?.totalPrice}
+                orderId={orderData.orderId}
+                merchantName="Freedom Vouchers"
+                merchantUPI="xyz@paytm"
+              />
+            </div>
+            <div className="grid lg:grid-row-2 gap-8">
+              {/* Order Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Order Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    {/* <div className="flex justify-between">
+                      <span>Order ID</span>
+                      <span className="font-mono">{orderData.orderId}</span>
+                    </div> */}
+                    
+                    <div className="flex justify-between">
+                      <span>Premium Price</span>
+                      <span>₹{orderData.pricing?.premiumPrice?.toFixed(2)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between text-orange-600">
+                      <span>Service Fee</span>
+                      <span>₹{orderData.pricing?.serviceFee?.toFixed(2)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>GST</span>
+                      <span>₹{orderData.pricing?.gstAmount?.toFixed(2)}</span>
+                    </div>
+                    
+                    <div className="border-t pt-3">
+                      <div className="flex justify-between text-lg font-bold">
+                        <span>Total Amount</span>
+                        <span className="text-electric-blue">₹{orderData.pricing?.totalPrice?.toFixed(2)}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </CardContent>
+              </Card>
 
-                {/* Payment Instructions */}
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <h3 className="font-semibold text-blue-900 mb-2">Payment Instructions</h3>
-                  <div className="text-sm text-blue-800 space-y-1">
-                    <p><strong>UPI ID:</strong> payment@example.com</p>
-                    <p><strong>Bank Account:</strong> 1234567890</p>
-                    <p><strong>IFSC:</strong> ABCD0123456</p>
+              {/* Payment Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Payment Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <Label htmlFor="transactionId">Transaction ID *</Label>
+                    <Input
+                      id="transactionId"
+                      placeholder="Enter your transaction ID"
+                      value={transactionId}
+                      onChange={(e) => setTransactionId(e.target.value)}
+                      className="mt-2"
+                    />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
 
-            {/* Payment Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <Label htmlFor="transactionId">Transaction ID *</Label>
-                  <Input
-                    id="transactionId"
-                    placeholder="Enter your transaction ID"
-                    value={transactionId}
-                    onChange={(e) => setTransactionId(e.target.value)}
-                    className="mt-2"
-                  />
-                </div>
+                  <div>
+                    <Label htmlFor="paymentProof">Payment Proof *</Label>
+                    <Input
+                      id="paymentProof"
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={handleFileChange}
+                      className="mt-2"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Upload screenshot or receipt of your payment
+                    </p>
+                  </div>
 
-                <div>
-                  <Label htmlFor="paymentProof">Payment Proof *</Label>
-                  <Input
-                    id="paymentProof"
-                    type="file"
-                    accept="image/*,.pdf"
-                    onChange={handleFileChange}
-                    className="mt-2"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Upload screenshot or receipt of your payment
-                  </p>
-                </div>
-
-                <Button 
-                  onClick={handleCompletePayment}
-                  disabled={uploading || !paymentProof || !transactionId.trim()}
-                  className="w-full gradient-primary text-white"
-                >
-                  {uploading ? 'Processing...' : 'Complete Payment'}
-                </Button>
-              </CardContent>
-            </Card>
+                  <Button 
+                    onClick={handleCompletePayment}
+                    disabled={uploading || !paymentProof || !transactionId.trim()}
+                    className="w-full gradient-primary text-white"
+                  >
+                    {uploading ? 'Processing...' : 'Complete Payment'}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>

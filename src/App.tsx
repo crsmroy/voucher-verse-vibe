@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,7 +7,7 @@ import Index from "./pages/Index";
 import ProductForm from "./pages/ProductForm";
 import ShippingDetails from "./pages/ShippingDetails";
 import Payment from "./pages/Payment";
-import PaymentGateway from "./pages/PaymentGateway";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import HowItWorks from "./pages/HowItWorks";
 import Contact from "./pages/Contact";
 import ReplacementReturn from "./pages/ReplacementReturn";
@@ -34,7 +33,7 @@ const App = () => (
           <Route path="/product" element={<ProductForm />} />
           <Route path="/shipping" element={<ShippingDetails />} />
           <Route path="/payment" element={<Payment />} />
-          <Route path="/payment-gateway" element={<PaymentGateway />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/replacement-return" element={<ReplacementReturn />} />

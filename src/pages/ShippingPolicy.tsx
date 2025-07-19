@@ -1,4 +1,3 @@
-
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
@@ -8,7 +7,7 @@ const ShippingPolicy = () => {
     window.scrollTo(0, 0);
   }, [])
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100">
+    <div className="min-h-screen">
       <Navigation />
       
       {/* Enhanced Animated Background */}
@@ -30,8 +29,8 @@ const ShippingPolicy = () => {
       
       <div className="pt-32 pb-20 px-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="page-title text-center mb-8 bounce-in text-shadow">
-            🚚 Shipping Policy
+          <h1 className="font-semibold text-center mb-14 bounce-in text-shadow text-5xl">
+            🚚 <span className="page-title">Shipping Policy</span>
           </h1>
           
           <div className="funky-card">

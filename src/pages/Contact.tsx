@@ -182,7 +182,7 @@ const Contact = () => {
             </Card>
 
             {/* Contact Information */}
-            <div className="space-y-8 bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-lg py-8">
+            <div className="space-y-8">
               <div className="space-y-8">
                 <div className="funky-card text-center float" style={{animationDelay: '0s'}}>
                   <div className="text-4xl mb-4">🎨</div>
