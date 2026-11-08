@@ -433,7 +433,6 @@ const AdminPanel = () => {
     const payload = {
       order_id: orderId,
       product_link: addForm.productLink,
-      product: addForm.product,
       price: parseFloat(addForm.price) || null,
       quantity: Number(addForm.quantity) || 1,
       category: addForm.category,
